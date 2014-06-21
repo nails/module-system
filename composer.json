@@ -1,0 +1,29 @@
+{
+	"name": "nailsapp/module-system",
+	"keywords": ["Nails","Shed Collective","CodeIgniter", "System Module"],
+	"homepage": "http://nailsapp.co.uk/modules/system",
+	"description": "This the \"System\" module for Nails.",
+	"license":"MIT",
+	"authors": [
+		{
+			"name": "Pablo de la Pena",
+			"email": "p@shedcollective.org",
+			"homepage": "http://shedcollective.org",
+			"role": "Developer"
+		},
+		{
+			"name": "Gary Duncan",
+			"email": "g@shedcollective.org",
+			"homepage": "http://shedcollective.org",
+			"role": "Developer"
+		}
+	],
+	"support": {
+		"email": "hello@shedcollective.org"
+	},
+	"require":
+	{
+		"php": ">=5.4.0",
+		"nailsapp/common" : "dev-master"
+	}
+}
