@@ -2,6 +2,11 @@
 
 ---
 
+## Version 0.1.2
+
+Release date: 21st June 2014
+- Corrected typo in dependency package name. *DERP*
+
 ## Version 0.1.1
 
 Release date: 21st June 2014
