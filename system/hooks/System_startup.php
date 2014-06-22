@@ -29,7 +29,7 @@ class NAILS_System_startup
 	protected function _load_nails_config()
 	{
 		//	Load up nails.json and set NAILS_DATA
-		$_nails_data = @file_get_contents( NAILS_PATH . 'nails.json' );
+		$_nails_data = @file_get_contents( NAILS_COMMON_PATH . 'nails.json' );
 
 		if ( empty( $_nails_data ) ) :
 
@@ -46,6 +46,7 @@ class NAILS_System_startup
 		endif;
 
 		$this->_nails_data = $_nails_data;
+		set_nails_data($this->_nails_data);
 	}
 
 
@@ -185,11 +186,11 @@ class NAILS_System_startup
 
 			if ( APP_SSL_ROUTING && page_is_secure() ) :
 
-				define( 'NAILS_URL', SECURE_BASE_URL . 'vendor/nailsapp/common/' );
+				define( 'NAILS_URL', SECURE_BASE_URL . 'vendor/nailsapp/' );
 
 			else :
 
-				define( 'NAILS_URL', BASE_URL . 'vendor/nailsapp/common/' );
+				define( 'NAILS_URL', BASE_URL . 'vendor/nailsapp/' );
 
 			endif;
 
@@ -200,7 +201,7 @@ class NAILS_System_startup
 		//	Set the NAILS_ASSETS_URL
 		if ( ! defined( 'NAILS_ASSETS_URL') ) :
 
-			define( 'NAILS_ASSETS_URL', NAILS_URL . 'assets/' );
+			define( 'NAILS_ASSETS_URL', NAILS_URL . 'common/assets/' );
 
 		endif;
 
@@ -754,7 +755,7 @@ class NAILS_System_startup
 
 			foreach( $this->_nails_data->modules AS $module ) :
 
-				$this->_module_locations[FCPATH . 'vendor/nailsapp/' . $module . '/']		= '../../vendor/nailsapp/' . $module . '/';
+				$this->_module_locations[NAILS_PATH . $module . '/']		= '../../vendor/nailsapp/' . $module . '/';
 
 			endforeach;
 
