@@ -292,8 +292,6 @@ class NAILS_User_model extends NAILS_Model
 
 		elseif ( is_string( $id ) ) :
 
-			$this->load->helper( 'email' );
-
 			if ( valid_email( $id ) ) :
 
 				$_user	= $this->get_by_email( $id );
@@ -1520,8 +1518,6 @@ class NAILS_User_model extends NAILS_Model
 			//	If an email has been passed then attempt to update the user's email too
 			if ( $_data_email ) :
 
-				$this->load->helper( 'email' );
-
 				if ( valid_email( $_data_email ) ) :
 
 					//	Check if the email is already being used
@@ -1575,8 +1571,6 @@ class NAILS_User_model extends NAILS_Model
 
 				//	If the user's password was updated send them a notification
 				if ( $_password_updated ) :
-
-					$this->load->library( 'emailer' );
 
 					$_email						= new stdClass();
 					$_email->type				= 'password_updated';
@@ -1735,8 +1729,6 @@ class NAILS_User_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Make sure the email is valid
-		$this->load->helper( 'email' );
-
 		if ( ! valid_email( $_email ) ) :
 
 			$this->_set_error( '"' . $_email . '" is not a valid email address' );
@@ -1828,8 +1820,6 @@ class NAILS_User_model extends NAILS_Model
 		endif;
 
 		// --------------------------------------------------------------------------
-
-		$this->load->library( 'emailer' );
 
 		$_email						= new stdClass();
 		$_email->type				= 'verify_email_' . $_e->group_id;
@@ -2953,8 +2943,6 @@ class NAILS_User_model extends NAILS_Model
 
 			//	Send the user the welcome email
 			if ( $send_welcome ) :
-
-				$this->load->library( 'emailer' );
 
 				$_email					= new stdClass();
 				$_email->type			= 'new_user_' . $_group->id;

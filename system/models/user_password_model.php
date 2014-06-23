@@ -506,8 +506,6 @@ class NAILS_User_password_model extends CI_Model
 			case 'BOTH' :
 			default:
 
-				$this->load->helper( 'email' );
-
 				if ( valid_email( $identifier ) ) :
 
 					$_user = $this->_user->get_by_email( $identifier );

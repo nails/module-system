@@ -359,7 +359,7 @@ class NAILS_Test extends NAILS_System_Controller
 
 		else :
 
-			$this->load->library( 'cdn' );
+			$this->load->library( 'cdn/cdn' );
 
 		endif;
 
@@ -416,7 +416,7 @@ class NAILS_Test extends NAILS_System_Controller
 		// --------------------------------------------------------------------------
 
 		//	Execute tests
-		$this->load->library( 'cdn' );
+		$this->load->library( 'cdn/cdn' );
 		if ( ! $this->cdn->run_tests() ) :
 
 			$this->_result->pass	= FALSE;
@@ -531,23 +531,10 @@ class NAILS_Test extends NAILS_System_Controller
 			//	Send the email
 			$_email->to_email = APP_DEVELOPER_EMAIL;
 
-			$_config = array( 'graceful_startup' => TRUE );
-			$this->load->library( 'emailer', $_config );
+			if ( ! $this->emailer->send( $_email, TRUE ) ) :
 
-			//	Any startup errors?
-			if ( $this->emailer->get_errors() ) :
-
-				$this->_result->pass	= FALSE;
-				$this->_result->errors	= $this->_result->errors + $this->emailer->get_errors();
-
-			else :
-
-				if ( ! $this->emailer->send( $_email, TRUE ) ) :
-
-					$this->_result->pass		= FALSE;
-					$this->_result->errors[]	= 'Email failed to send; error: ' . implode( ', ', $this->emailer->get_errors() );
-
-				endif;
+				$this->_result->pass		= FALSE;
+				$this->_result->errors[]	= 'Email failed to send; error: ' . implode( ', ', $this->emailer->get_errors() );
 
 			endif;
 

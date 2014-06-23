@@ -45,6 +45,42 @@ class NAILS_System_startup
 
 		endif;
 
+		//	App version?
+		$_app_nails_data = @file_get_contents( FCPATH . 'nails.json' );
+
+		if ( ! empty( $_app_nails_data ) ) :
+
+			$_app_nails_data = json_decode( $_app_nails_data );
+
+			if ( empty( $_app_nails_data ) ) :
+
+				_NAILS_ERROR( 'Could not parse the app\'s nails.json.' );
+
+			endif;
+
+			//	Merge
+			if ( ! empty( $_app_nails_data->modules ) ) :
+
+				foreach( $_app_nails_data->modules AS $vendor => $modules ) :
+
+					if ( empty( $_nails_data->modules->{$vendor} ) ) :
+
+						$_nails_data->modules->{$vendor} = array();
+
+					endif;
+
+					foreach( $modules AS $module ) :
+
+						$_nails_data->modules->{$vendor}[] = $module;
+
+					endforeach;
+
+				endforeach;
+
+			endif;
+
+		endif;
+
 		$this->_nails_data = $_nails_data;
 		set_nails_data($this->_nails_data);
 	}
@@ -201,7 +237,7 @@ class NAILS_System_startup
 		//	Set the NAILS_ASSETS_URL
 		if ( ! defined( 'NAILS_ASSETS_URL') ) :
 
-			define( 'NAILS_ASSETS_URL', NAILS_URL . 'common/assets/' );
+			define( 'NAILS_ASSETS_URL', NAILS_URL . 'module-asset/asset/assets/' );
 
 		endif;
 
@@ -751,11 +787,15 @@ class NAILS_System_startup
 		$this->_module_locations[FCPATH . APPPATH . 'modules/']	= '../modules/';
 
 		//	Individual "official" Nails module locations
-		if ( ! empty( $this->_nails_data->modules ) && is_array( $this->_nails_data->modules ) ) :
+		if ( ! empty( $this->_nails_data->modules ) ) :
 
-			foreach( $this->_nails_data->modules AS $module ) :
+			foreach( $this->_nails_data->modules AS $vendor => $modules ) :
 
-				$this->_module_locations[NAILS_PATH . $module . '/']		= '../../vendor/nailsapp/' . $module . '/';
+				foreach ( $modules AS $module ) :
+
+					$this->_module_locations[FCPATH . 'vendor/' . $vendor . '/' . $module . '/']		= '../../vendor/' . $vendor . '/' . $module . '/';
+
+				endforeach;
 
 			endforeach;
 
