@@ -327,7 +327,7 @@ class NAILS_User_password_model extends CI_Model
 	 */
 	protected function _get_password_rules()
 	{
-		$this->config->load( 'auth' );
+		$this->config->load( 'auth/auth' );
 
 		$_pw_str		= '';
 		$_pw_rules		= $this->config->item( 'auth_password_rules' );

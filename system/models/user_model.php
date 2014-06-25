@@ -89,7 +89,7 @@ class NAILS_User_model extends NAILS_Model
 	protected function _login_remembered_user()
 	{
 		//	Is remember me functionality enabled?
-		$this->config->load( 'auth' );
+		$this->config->load( 'auth/auth' );
 
 		if ( ! $this->config->item( 'auth_enable_remember_me' ) ) :
 
@@ -1468,7 +1468,7 @@ class NAILS_User_model extends NAILS_Model
 			// --------------------------------------------------------------------------
 
 			//	Resetting security questions?
-			$this->config->load( 'auth' );
+			$this->config->load( 'auth/auth' );
 
 			if ( $this->config->item( 'auth_two_factor_enable' ) && $_data_reset_security_questions ) :
 
@@ -2073,7 +2073,7 @@ class NAILS_User_model extends NAILS_Model
 	public function set_remember_cookie( $id = NULL, $password = NULL, $email = NULL )
 	{
 		//	Is remember me functionality enabled?
-		$this->config->load( 'auth' );
+		$this->config->load( 'auth/auth' );
 
 		if ( ! $this->config->item( 'auth_enable_remember_me' ) ) :
 

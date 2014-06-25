@@ -20,7 +20,7 @@ class NAILS_Language_model extends NAILS_Model
 	public function __construct()
 	{
 		parent::__construct();
-		$this->config->load( 'languages' );
+		$this->config->load( 'system/languages' );
 	}
 
 
