@@ -51,7 +51,13 @@ class NAILS_App_setting_model extends NAILS_Model
 
 			foreach ( $_settings AS $setting ) :
 
-				$this->_settings[$grouping][ $setting->key ] = unserialize( $setting->value );
+				$this->_settings[$grouping][$setting->key] = unserialize( $setting->value );
+
+				if ( ! empty( $setting->is_encrypted ) ) :
+
+					$this->_settings[$grouping][$setting->key] = $this->encrypt->decode( $this->_settings[$grouping][$setting->key], APP_PRIVATE_KEY );
+
+				endif;
 
 			endforeach;
 
@@ -77,12 +83,13 @@ class NAILS_App_setting_model extends NAILS_Model
 	/**
 	 * Set a group/key either by passing an array of key=>value pairs as the $key
 	 * or by passing a string to $key and setting $value
-	 * @param mixed  $key      The key to set, or an array of key => value pairs
-	 * @param string $grouping The grouping to store the keys under
-	 * @param mixed  $value    The data to store, only used if $key is a string
+	 * @param mixed   $key      The key to set, or an array of key => value pairs
+	 * @param string  $grouping The grouping to store the keys under
+	 * @param mixed   $value    The data to store, only used if $key is a string
+	 * @param boolean $encrypt  Whether to encrypt the data or not
 	 * @return boolean
 	 */
-	public function set( $key, $grouping = 'app', $value = NULL )
+	public function set( $key, $grouping = 'app', $value = NULL, $encrypt = FALSE )
 	{
 		$this->db->trans_begin();
 
@@ -90,13 +97,13 @@ class NAILS_App_setting_model extends NAILS_Model
 
 			foreach ( $key AS $key => $value ) :
 
-				$this->_set( $key, $grouping, $value );
+				$this->_set( $key, $grouping, $value, $encrypt );
 
 			endforeach;
 
 		else :
 
-			$this->_set( $key, $grouping, $value );
+			$this->_set( $key, $grouping, $value, $encrypt );
 
 		endif;
 
@@ -119,27 +126,42 @@ class NAILS_App_setting_model extends NAILS_Model
 
 	/**
 	 * Inserts/Updates a group/key value
-	 * @param string $key      The key to set
-	 * @param string $grouping The key's grouping
-	 * @param mixed  $value    The value of the group/key
+	 * @param string  $key      The key to set
+	 * @param string  $grouping The key's grouping
+	 * @param mixed   $value    The value of the group/key
+	 * @param boolean $encrypt  Whether to encrypt the data or not
 	 * @return void
 	 */
-	protected function _set( $key, $grouping, $value )
+	protected function _set( $key, $grouping, $value, $encrypt )
 	{
+		if ( $encrypt ) :
+
+			$value			= $this->encrypt->encode( $value, APP_PRIVATE_KEY );
+			$_is_encrypted	= TRUE;
+
+		else :
+
+			$_is_encrypted	= FALSE;
+
+		endif;
+
 		$this->db->where( 'key', $key );
 		$this->db->where( 'grouping', $grouping );
+
 		if ( $this->db->count_all_results( $this->_table ) ) :
 
+			$this->db->set( 'value', serialize( $value ) );
+			$this->db->set( 'is_encrypted', $_is_encrypted );
 			$this->db->where( 'grouping', $grouping );
 			$this->db->where( 'key', $key );
-			$this->db->set( 'value', serialize( $value ) );
 			$this->db->update( $this->_table);
 
 		else :
 
+			$this->db->set( 'value', serialize( $value ) );
 			$this->db->set( 'grouping', $grouping );
 			$this->db->set( 'key', $key );
-			$this->db->set( 'value', serialize( $value ) );
+			$this->db->set( 'is_encrypted', $_is_encrypted );
 			$this->db->insert( $this->_table );
 
 		endif;
