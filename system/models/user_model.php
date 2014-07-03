@@ -856,7 +856,9 @@ class NAILS_User_model extends NAILS_Model
 			//	Search is a simple string, no columns are being specified to search across
 			//	so define a default set to search across
 
-			$search							= array( 'keywords' => $search, 'columns' => array() );
+			$search							= array();
+			$search['keywords']				= $this->db->escape( $search );
+			$search['columns']				= array();
 			$search['columns']['id']		= 'u.id';
 			$search['columns']['email']		= 'ue.email';
 			$search['columns']['username']	= 'u.username';
@@ -864,8 +866,14 @@ class NAILS_User_model extends NAILS_Model
 
 		endif;
 
+		if ( ! empty( $search[ 'keywords' ] ) ) :
+
+			$search[ 'keywords' ] = $this->db->escape_like_str( $search[ 'keywords' ] );
+
+		endif;
+
 		//	If there is a search term to use then build the search query
-		if ( isset( $search[ 'keywords' ] ) && $search[ 'keywords' ] ) :
+		if ( ! empty( $search[ 'keywords' ] ) ) :
 
 			//	Parse the keywords, look for specific column searches
 			preg_match_all( '/\(([a-zA-Z0-9\.\- \_]+)=\"(.+?)\"\)/', $search['keywords'], $_matches );
@@ -934,7 +942,7 @@ class NAILS_User_model extends NAILS_Model
 
 				$_where  = '(';
 
-				if ( isset( $search[ 'columns' ] ) && $search[ 'columns' ] ) :
+				if ( ! empty( $search[ 'columns' ] ) ) :
 
 					//	We have some specifics
 					foreach( $search[ 'columns' ] AS $col ) :
