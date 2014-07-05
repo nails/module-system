@@ -88,7 +88,7 @@ class NAILS_Test extends NAILS_System_Controller
 		// --------------------------------------------------------------------------
 
 		//	Clear assets
-		$this->asset->clear_all();
+		$this->asset->clear();
 
 		// --------------------------------------------------------------------------
 
