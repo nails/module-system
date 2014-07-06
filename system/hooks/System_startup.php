@@ -238,7 +238,7 @@ class NAILS_System_startup
 		//	Database Debug
 		if ( ! defined( 'DEPLOY_DB_DEBUG' ) ) :
 
-			if ( ENVIRONMENT == 'production' ) :
+			if ( strtoupper( ENVIRONMENT ) == 'PRODUCTION' ) :
 
 				define( 'DEPLOY_DB_DEBUG', FALSE );
 
