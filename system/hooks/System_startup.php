@@ -105,7 +105,7 @@ class NAILS_System_startup
 		// --------------------------------------------------------------------------
 
 		//	Environment
-		if ( ! defined( 'ENVIRONMENT' ) ) define( 'ENVIRONMENT', 'development' );
+		if ( ! defined( 'ENVIRONMENT' ) ) define( 'ENVIRONMENT', 'DEVELOPMENT' );
 
 		// --------------------------------------------------------------------------
 
@@ -157,12 +157,10 @@ class NAILS_System_startup
 		if ( ! defined( 'NAILS_DB_PREFIX' ) )			define( 'NAILS_DB_PREFIX',			'nails_' );
 		if ( ! defined( 'APP_PRIVATE_KEY' ) )			define( 'APP_PRIVATE_KEY',			'' );
 		if ( ! defined( 'APP_NAME' ) )					define( 'APP_NAME',					'Untitled' );
-		if ( ! defined( 'APP_NAILS_MODULES' ) )			define( 'APP_NAILS_MODULES',		'' );
 		if ( ! defined( 'APP_STAGING_USERPASS' ) )		define( 'APP_STAGING_USERPASS',		serialize( array() ) );
 		if ( ! defined( 'APP_SSL_ROUTING' ) )			define( 'APP_SSL_ROUTING',			FALSE );
 		if ( ! defined( 'APP_NATIVE_LOGIN_USING' ) )	define( 'APP_NATIVE_LOGIN_USING',	'EMAIL' );	//	[EMAIL|USERNAME|BOTH]
 		if ( ! defined( 'APP_ADMIN_IP_WHITELIST' ) )	define( 'APP_ADMIN_IP_WHITELIST',	json_encode( array() ) );
-
 
 		// --------------------------------------------------------------------------
 
@@ -178,12 +176,6 @@ class NAILS_System_startup
 
 		//	Email
 		if ( ! defined( 'APP_DEVELOPER_EMAIL' ) )	define( 'APP_DEVELOPER_EMAIL',	'' );
-		if ( ! defined( 'APP_EMAIL_FROM_NAME' ) )	define( 'APP_EMAIL_FROM_NAME',	APP_NAME );
-		if ( ! defined( 'APP_EMAIL_FROM_EMAIL' ) )	define( 'APP_EMAIL_FROM_EMAIL',	'' );
-		if ( ! defined( 'DEPLOY_SMTP_HOST' ) )		define( 'DEPLOY_SMTP_HOST',		'localhost' );
-		if ( ! defined( 'DEPLOY_SMTP_USERNAME' ) )	define( 'DEPLOY_SMTP_USERNAME',	'' );
-		if ( ! defined( 'DEPLOY_SMTP_PASSWORD' ) )	define( 'DEPLOY_SMTP_PASSWORD',	'' );
-		if ( ! defined( 'DEPLOY_SMTP_PORT' ) )		define( 'DEPLOY_SMTP_PORT',		'25' );
 		if ( ! defined( 'EMAIL_DEBUG' ) )			define( 'EMAIL_DEBUG',			FALSE );
 		if ( ! defined( 'EMAIL_OVERRIDE' ) )		define( 'EMAIL_OVERRIDE',		'' );
 
