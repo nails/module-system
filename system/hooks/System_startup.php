@@ -137,18 +137,7 @@ class NAILS_System_startup
 		if ( ! defined( 'DEPLOY_DB_USERNAME' ) )	define( 'DEPLOY_DB_USERNAME',	'' );
 		if ( ! defined( 'DEPLOY_DB_PASSWORD' ) )	define( 'DEPLOY_DB_PASSWORD',	'' );
 		if ( ! defined( 'DEPLOY_DB_DATABASE' ) )	define( 'DEPLOY_DB_DATABASE',	'' );
-
-		// --------------------------------------------------------------------------
-
-		//	These settings can be specified wherever it makes most sense (e.g if
-		//	maintenance mode needs enabled app wide, then specify it in app.php, if
-		//	only a single server needs to be put in maintenance mode then define in
-		//	deploy.php
-
-		if ( ! defined( 'PROFILING') )				define( 'PROFILING',				FALSE );
-		if ( ! defined( 'MAINTENANCE') )			define( 'MAINTENANCE',				FALSE );
-		if ( ! defined( 'MAINTENANCE_WHITELIST') )	define( 'MAINTENANCE_WHITELIST',	'127.0.0.1' );
-
+		
 		// --------------------------------------------------------------------------
 
 		//	Default app constants (if not already defined)
