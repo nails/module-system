@@ -711,7 +711,6 @@ class NAILS_User_password_model extends CI_Model
 	public function clear_errors()
 	{
 		$this->_errors = array();
-		return array();
 	}
 }
 
