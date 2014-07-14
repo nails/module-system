@@ -137,7 +137,7 @@ class NAILS_System_startup
 		if ( ! defined( 'DEPLOY_DB_USERNAME' ) )	define( 'DEPLOY_DB_USERNAME',	'' );
 		if ( ! defined( 'DEPLOY_DB_PASSWORD' ) )	define( 'DEPLOY_DB_PASSWORD',	'' );
 		if ( ! defined( 'DEPLOY_DB_DATABASE' ) )	define( 'DEPLOY_DB_DATABASE',	'' );
-		
+
 		// --------------------------------------------------------------------------
 
 		//	Default app constants (if not already defined)
@@ -148,7 +148,7 @@ class NAILS_System_startup
 		if ( ! defined( 'APP_NAME' ) )					define( 'APP_NAME',					'Untitled' );
 		if ( ! defined( 'APP_STAGING_USERPASS' ) )		define( 'APP_STAGING_USERPASS',		serialize( array() ) );
 		if ( ! defined( 'APP_SSL_ROUTING' ) )			define( 'APP_SSL_ROUTING',			FALSE );
-		if ( ! defined( 'APP_NATIVE_LOGIN_USING' ) )	define( 'APP_NATIVE_LOGIN_USING',	'EMAIL' );	//	[EMAIL|USERNAME|BOTH]
+		if ( ! defined( 'APP_NATIVE_LOGIN_USING' ) )	define( 'APP_NATIVE_LOGIN_USING',	'BOTH' );	//	[EMAIL|USERNAME|BOTH]
 
 		// --------------------------------------------------------------------------
 

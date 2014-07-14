@@ -211,6 +211,24 @@ class NAILS_User_password_model extends CI_Model
 		// --------------------------------------------------------------------------
 
 		//	Password is valid, generate a salt
+		return $this->_generate_hash( $password );
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	public function generate_null_hash()
+	{
+		return $this->_generate_hash( NULL );
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	protected function _generate_hash( $password )
+	{
 		$_salt = $this->salt();
 
 		// --------------------------------------------------------------------------
@@ -503,7 +521,6 @@ class NAILS_User_password_model extends CI_Model
 
 			// --------------------------------------------------------------------------
 
-			case 'BOTH' :
 			default:
 
 				if ( valid_email( $identifier ) ) :

@@ -572,7 +572,6 @@ class NAILS_User_model extends NAILS_Model
 		$this->db->select( 'u.*' );
 		$this->db->select( 'ue.email, ue.code email_verification_code, ue.is_verified email_is_verified, ue.date_verified email_is_verified_on' );
 		$this->db->select( $this->_get_meta_columns( 'um' ) );
-		$this->db->select( 'uam.type AS `auth_type`' );
 		$this->db->select( 'ug.label AS `group_name`' );
 		$this->db->select( 'ug.default_homepage AS `group_homepage`' );
 		$this->db->select( 'ug.acl AS `group_acl`' );
@@ -836,7 +835,6 @@ class NAILS_User_model extends NAILS_Model
 	{
 		$this->db->join( NAILS_DB_PREFIX . 'user_email ue',			'u.id = ue.user_id AND ue.is_primary = 1',	'LEFT' );
 		$this->db->join( NAILS_DB_PREFIX . 'user_meta um',			'u.id = um.user_id',						'LEFT' );
-		$this->db->join( NAILS_DB_PREFIX . 'user_auth_method uam',	'u.auth_method_id = uam.id',				'LEFT' );
 		$this->db->join( NAILS_DB_PREFIX . 'user_group ug',			'u.group_id = ug.id',						'LEFT' );
 
 		// --------------------------------------------------------------------------
@@ -979,15 +977,7 @@ class NAILS_User_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
-		$_cols[]	= 'auth_method_id';
 		$_cols[]	= 'group_id';
-		$_cols[]	= 'fb_id';
-		$_cols[]	= 'fb_token';
-		$_cols[]	= 'tw_id';
-		$_cols[]	= 'tw_token';
-		$_cols[]	= 'tw_secret';
-		$_cols[]	= 'li_id';
-		$_cols[]	= 'li_token';
 		$_cols[]	= 'ip_address';
 		$_cols[]	= 'last_ip';
 		$_cols[]	= 'password';
@@ -1015,6 +1005,7 @@ class NAILS_User_model extends NAILS_Model
 		$_cols[]	= 'first_name';
 		$_cols[]	= 'last_name';
 		$_cols[]	= 'gender';
+		$_cols[]	= 'dob';
 		$_cols[]	= 'profile_img';
 		$_cols[]	= 'timezone';
 		$_cols[]	= 'datetime_format_date';
@@ -1163,70 +1154,6 @@ class NAILS_User_model extends NAILS_Model
 
 
 	// --------------------------------------------------------------------------
-
-
-	/**
-	 * Get a specific user by their Facebook ID
-	 *
-	 * @access	public
-	 * @param	int		$fbid		The user's Facebook ID
-	 * @param	mixed	$extended	Specific extra tables to join, TRUE for all user_meta_*
-	 * @return	object
-	 *
-	 **/
-	public function get_by_fbid( $fbid, $extended = FALSE )
-	{
-		$this->db->where( 'u.fb_id', $fbid );
-		$user = $this->get_all( $extended );
-
-		return empty( $user ) ? FALSE : $user[0];
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	/**
-	 * Get a specific user by their Twitter ID
-	 *
-	 * @access	public
-	 * @param	int		$twid		The user's Twitter ID
-	 * @param	mixed	$extended	Specific extra tables to join, TRUE for all user_meta_*
-	 * @return	object
-	 *
-	 **/
-	public function get_by_twid( $twid, $extended = FALSE )
-	{
-		$this->db->where( 'u.tw_id', $twid );
-		$user = $this->get_all( $extended );
-
-		return empty( $user ) ? FALSE : $user[0];
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	/**
-	 * Get a specific user by their LinkedIn ID
-	 *
-	 * @access	public
-	 * @param	int		$fbid		The user's LinkedIn ID
-	 * @param	mixed	$extended	Specific extra tables to join, TRUE for all user_meta_*
-	 * @return	object
-	 *
-	 **/
-	public function get_by_liid( $linkedinid, $extended = FALSE )
-	{
-		$this->db->where( 'u.li_id', $linkedinid );
-		$user = $this->get_all( $extended );
-
-		return empty( $user ) ? FALSE : $user[0];
-	}
-
-
-	// --------------------------------------------------------------------------
-
 
 
 
@@ -2686,12 +2613,19 @@ class NAILS_User_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	If a password has been passed then generate the encrypted strings, otherwise
-		//	just generate a salt.
+		//	have a NULL password - the user won't be able to login and will be informed
+		//	that they need to set a password using forgotten password.
 
 		if ( empty( $data['password'] ) ) :
 
-			$_password[] = NULL;
-			$_password[] = $this->user_password_model->salt();
+			$_password = $this->user_password_model->generate_null_hash();
+
+			if ( ! $_password ) :
+
+				$this->_set_error( $this->user_password_model->last_error() );
+				return FALSE;
+
+			endif;
 
 		else :
 
@@ -2739,58 +2673,6 @@ class NAILS_User_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
-		//	Check we're dealing with a valid auth_method
-		if ( ! empty( $data['auth_method_id'] ) ) :
-
-			if ( is_numeric( $data['auth_method_id'] ) ) :
-
-				$this->db->where( 'id', (int) $data['auth_method_id'] );
-
-			else :
-
-				//	TODO: Change this column to be called `slug`
-				$this->db->where( 'type', $data['auth_method_id'] );
-
-			endif;
-
-			$_auth_method = $this->db->get( NAILS_DB_PREFIX . 'user_auth_method' )->row();
-
-			if ( ! $_auth_method ) :
-
-				//	Define a use friendly error (this may be shown to them)
-				$this->_set_error( 'There was an error creating the user account - Error #001' );
-
-				//	This is a problem, email devs
-				send_developer_mail( 'No auth method available for the supplied auth_method_id', 'The user_model->create() method was called with an invalid auth_method_id ("' . $data['auth_method_id'] . '"). This needs investigated and corrected.' );
-
-				return FALSE;
-
-			endif;
-
-		else :
-
-			//	TODO: this column should be `slug`
-			$this->db->where( 'type', 'native' );
-			$_auth_method = $this->db->get( NAILS_DB_PREFIX . 'user_auth_method' )->row();
-
-			if ( ! $_auth_method ) :
-
-				//	Define a use friendly error (this may be shown to them)
-				$this->_set_error( 'There was an error creating the user account - Error #002' );
-
-				//	This is a problem, email devs
-				send_developer_mail( 'No Native Authentication Method', 'There is no authentication method defined in the database for native registrations.' );
-
-				return FALSE;
-
-			endif;
-
-		endif;
-
-		$_user_data['auth_method_id'] = $_auth_method->id;
-
-		// --------------------------------------------------------------------------
-
 		if ( ! empty( $data['username'] ) ) :
 
 			$_user_data['username'] = $data['username'];
@@ -2814,20 +2696,6 @@ class NAILS_User_model extends NAILS_Model
 		$_user_data['last_update']		= date( 'Y-m-d H:i:s' );
 		$_user_data['is_suspended']		= ! empty( $data['is_suspended'] );
 		$_user_data['temp_pw']			= ! empty( $data['temp_pw'] );
-		$_user_data['auth_method_id']	= $_auth_method->id;
-
-		//	Facebook oauth details
-		$_user_data['fb_token']			= ! empty( $data['fb_token'] )	? $data['fb_token']		: NULL ;
-		$_user_data['fb_id']			= ! empty( $data['fb_id'] )		? $data['fb_id']		: NULL ;
-
-		//	Twitter oauth details
-		$_user_data['tw_id']			= ! empty( $data['tw_id'] )		? $data['tw_id']		: NULL ;
-		$_user_data['tw_token']			= ! empty( $data['tw_token'] )	? $data['tw_token']		: NULL ;
-		$_user_data['tw_secret']		= ! empty( $data['tw_secret'] )	? $data['tw_secret']	: NULL ;
-
-		//	Linkedin oauth details
-		$_user_data['li_id']			= ! empty( $data['li_id'] )		? $data['li_id']		: NULL ;
-		$_user_data['li_token']			= ! empty( $data['li_token'] )	? $data['li_token']		: NULL ;
 
 		//	Referral code
 		$_user_data['referral']			= $this->_generate_referral();
@@ -2956,7 +2824,6 @@ class NAILS_User_model extends NAILS_Model
 				$_email->type			= 'new_user_' . $_group->id;
 				$_email->to_id			= $_id;
 				$_email->data			= array();
-				$_email->data['method']	= $_auth_method;
 
 				//	If this user is created by an admin then take note of that.
 				if ( $this->is_admin() ) :
@@ -3142,7 +3009,6 @@ class NAILS_User_model extends NAILS_Model
 
 			//	Ints
 			$user->id					= (int) $user->id;
-			$user->auth_method_id		= (int) $user->auth_method_id;
 			$user->group_id				= (int) $user->group_id;
 			$user->login_count			= (int) $user->login_count;
 			$user->referred_by			= (int) $user->referred_by;
