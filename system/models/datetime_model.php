@@ -17,8 +17,8 @@
 
 class NAILS_Datetime_model extends NAILS_Model
 {
-	public $_timezone_nails;
-	public $_timezone_user;
+	public $timezone_nails;
+	public $timezone_user;
 	protected $_format_date;
 	protected $_format_time;
 
@@ -175,11 +175,11 @@ class NAILS_Datetime_model extends NAILS_Model
 	{
 		$_formats = $this->config->item( 'datetime_format_time' );
 
-		if ( $this->_timezone_user ) :
+		if ( $this->timezone_user ) :
 
 			foreach ( $_formats AS $format ) :
 
-				$format->example = date( $format->format, strtotime( $this->convert_datetime( time(), $this->_timezone_user ) ) );
+				$format->example = date( $format->format, strtotime( $this->convert_datetime( time(), $this->timezone_user ) ) );
 
 			endforeach;
 
@@ -312,14 +312,14 @@ class NAILS_Datetime_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Create the new DateTime object
-		$_datetime = new DateTime( $timestamp, new DateTimeZone( $this->_timezone_nails ) );
+		$_datetime = new DateTime( $timestamp, new DateTimeZone( $this->timezone_nails ) );
 
 		// --------------------------------------------------------------------------
 
 		//	If the user's timezone is different from the Nails. timezone then set it so.
-		if ( $this->_timezone_nails != $this->_timezone_user ) :
+		if ( $this->timezone_nails != $this->timezone_user ) :
 
-			$_datetime->setTimeZone( new DateTimeZone( $this->_timezone_user ) );
+			$_datetime->setTimeZone( new DateTimeZone( $this->timezone_user ) );
 
 		endif;
 
@@ -376,14 +376,14 @@ class NAILS_Datetime_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Create the new DateTime object
-		$_datetime = new DateTime( $timestamp, new DateTimeZone( $this->_timezone_nails ) );
+		$_datetime = new DateTime( $timestamp, new DateTimeZone( $this->timezone_nails ) );
 
 		// --------------------------------------------------------------------------
 
 		//	If the user's timezone is different from the Nails. timezone then set it so.
-		if ( $this->_timezone_nails != $this->_timezone_user ) :
+		if ( $this->timezone_nails != $this->timezone_user ) :
 
-			$_datetime->setTimeZone( new DateTimeZone( $this->_timezone_user ) );
+			$_datetime->setTimeZone( new DateTimeZone( $this->timezone_user ) );
 
 		endif;
 
@@ -424,14 +424,14 @@ class NAILS_Datetime_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Create the new DateTime object
-		$_datetime = new DateTime( $timestamp, new DateTimeZone( $this->_timezone_user ) );
+		$_datetime = new DateTime( $timestamp, new DateTimeZone( $this->timezone_user ) );
 
 		// --------------------------------------------------------------------------
 
 		//	If the user's timezone is different from the Nails. timezone then set it so.
-		if ( $this->_timezone_nails != $this->_timezone_user ) :
+		if ( $this->timezone_nails != $this->timezone_user ) :
 
-			$_datetime->setTimeZone( new DateTimeZone( $this->_timezone_nails ) );
+			$_datetime->setTimeZone( new DateTimeZone( $this->timezone_nails ) );
 
 		endif;
 
@@ -468,8 +468,17 @@ class NAILS_Datetime_model extends NAILS_Model
 
 	public function set_timezones( $tz_nails, $tz_user )
 	{
-		$this->_timezone_nails	= $tz_nails;
+		$this->set_nails_timezone( $tz_nails );
 		$this->set_user_timezone( $tz_user );
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	public function set_nails_timezone( $tz )
+	{
+		$this->timezone_nails = $tz;
 	}
 
 
@@ -478,7 +487,7 @@ class NAILS_Datetime_model extends NAILS_Model
 
 	public function set_user_timezone( $tz )
 	{
-		$this->_timezone_user = $tz;
+		$this->timezone_user = $tz;
 	}
 
 
