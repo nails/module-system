@@ -1353,11 +1353,11 @@ class NAILS_User_model extends NAILS_Model
 
 				elseif ( $key == 'email' ) :
 
-					$_data_email = trim( $val );
+					$_data_email = strtolower( trim( $val ) );
 
 				elseif ( $key == 'username' ) :
 
-					$_data_username = trim( $val );
+					$_data_username = strtolower( trim( $val ) );
 
 				elseif ( $key == 'reset_security_questions' ) :
 
