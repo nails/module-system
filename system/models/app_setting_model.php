@@ -154,7 +154,7 @@ class NAILS_App_setting_model extends NAILS_Model
 			$this->db->set( 'is_encrypted', $_is_encrypted );
 			$this->db->where( 'grouping', $grouping );
 			$this->db->where( 'key', $key );
-			$this->db->update( $this->_table);
+			$this->db->update( $this->_table );
 
 		else :
 
@@ -165,6 +165,83 @@ class NAILS_App_setting_model extends NAILS_Model
 			$this->db->insert( $this->_table );
 
 		endif;
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Deletes a key for a particular group
+	 * @param string  $key      The key to delete
+	 * @param string  $grouping The key's grouping
+	 * @return bool
+	 */
+	public function delete( $key, $grouping )
+	{
+		$this->db->trans_begin();
+
+		if ( is_array( $key ) ) :
+
+			foreach ( $key AS $key ) :
+
+				$this->_delete( $key, $grouping );
+
+			endforeach;
+
+		else :
+
+			$this->_delete( $key, $grouping );
+
+		endif;
+
+		if ( $this->db->trans_status() === FALSE ) :
+
+			$this->db->trans_rollback();
+			return FALSE;
+
+		else :
+
+			$this->db->trans_commit();
+			return TRUE;
+
+		endif;
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Actually performs the deletion of the row.
+	 * @param  string $key      The key to delete
+	 * @param  string $grouping They key's grouping
+	 * @return bool
+	 */
+	protected function _delete( $key, $grouping )
+	{
+		$this->db->where( 'key', $key );
+		$this->db->where( 'grouping', $grouping );
+		$this->db->delete( $this->_table );
+
+		return (bool) $this->db->affected_rows();
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Deletes all keys for a particular group.
+	 * @param  string $grouping The group to delete
+	 * @return bool
+	 */
+	public function delete_group( $grouping )
+	{
+		$this->db->where( 'grouping', $grouping );
+		$this->db->delete( $this->_table );
+
+		return (bool) $this->db->affected_rows();
 	}
 }
 
