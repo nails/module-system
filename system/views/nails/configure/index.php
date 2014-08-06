@@ -2,7 +2,7 @@
 	<div id="nails-configure">
 		<h1>Nails. Configuration Manager</h1>
 		<p class="system-alert notice testing">
-			<?=img( NAILS_ASSETS_URL . 'img/loader/20px-TRANS.gif' )?>
+			<b class="fa fa-refresh fa-spin fa-2x"></b>
 			<strong>Hey!</strong> Please exscuse me while I run some tests...
 		</p>
 
