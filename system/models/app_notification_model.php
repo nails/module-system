@@ -11,6 +11,7 @@
 class NAILS_App_notification_model extends NAILS_Model
 {
 	protected $_notifications;
+	protected $_emails;
 
 
 	// --------------------------------------------------------------------------
@@ -28,6 +29,128 @@ class NAILS_App_notification_model extends NAILS_Model
 		$this->_table			= NAILS_DB_PREFIX . 'app_notification';
 		$this->_table_prefix	= 'n';
 		$this->_notifications	= array();
+		$this->_emails			= array();
+
+		// --------------------------------------------------------------------------
+
+		$this->_set_definitions();
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Defines the notifications
+	 */
+	protected function _set_definitions()
+	{
+		//	Generic Site notifications
+		$this->_notifications['app']													= $this->_get_blank_grouping();
+		$this->_notifications['app']->label												= 'Site';
+		$this->_notifications['app']->description										= 'General site notifications.';
+
+		$this->_notifications['app']->options['default']								= $this->_get_blank_option();
+		$this->_notifications['app']->options['default']->label							= 'Generic';
+
+		// --------------------------------------------------------------------------
+
+		if ( module_is_enabled( 'shop' ) ) :
+
+			$this->_notifications['shop']												= $this->_get_blank_grouping();
+			$this->_notifications['shop']->label										= 'Shop';
+			$this->_notifications['shop']->description									= 'Shop related notifications.';
+
+			$this->_notifications['shop']->options['new_order']							= $this->_get_blank_option();
+			$this->_notifications['shop']->options['new_order']->label					= 'Order Notifications';
+			$this->_notifications['shop']->options['new_order']->email_subject			= 'An order has been placed';
+
+			$this->_notifications['shop']->options['product_enquiry']					= $this->_get_blank_option();
+			$this->_notifications['shop']->options['product_enquiry']->label			= 'Product Enquiries';
+			$this->_notifications['shop']->options['product_enquiry']->email_subject	= 'New Product Enquiry';
+
+			$this->_notifications['shop']->options['delivery_enquiry']					= $this->_get_blank_option();
+			$this->_notifications['shop']->options['delivery_enquiry']->label			= 'Delivery Enquiries';
+			$this->_notifications['shop']->options['delivery_enquiry']->email_subject	= 'New Delivery Enquiry';
+
+		endif;
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	protected function _get_blank_grouping()
+	{
+		$_definition = new stdClass();
+
+		//	Human readable label for this type of grouping
+		$_definition->label = '';
+
+		//	Text for the fieldset, rendered in admin
+		$_definition->description = '';
+
+		//	An empty object array
+		$_definition->options = array();
+
+		return $_definition;
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	protected function _get_blank_option()
+	{
+		$_option = new stdClass();
+
+		//	Human readable label for this type of notification
+		$_option->label = '';
+
+		//	A sub label which will be rendered within admin
+		$_option->sub_label = '';
+
+		//	A helpful tip, also rendered in admin
+		$_option->tip = '';
+
+		//	The subject to give the outgoing email
+		$_option->email_subject = '';
+
+		//	The template to use
+		$_option->email_tpl = '';
+
+		//	Alternatively, send a message by populating this field
+		$_option->email_message = '';
+
+		// --------------------------------------------------------------------------
+
+		return $_option;
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Returns the notification defnintions, optionally limited per group
+	 * @param  string $grouping The group to limit to
+	 * @return array
+	 */
+	public function get_definitions( $grouping = NULL )
+	{
+		if ( is_null( $grouping ) ) :
+
+			return $this->_notifications;
+
+		elseif ( isset( $this->_notifications[$grouping] ) ) :
+
+			return $this->_notifications[$grouping];
+
+		else :
+
+			return array();
+
+		endif;
 	}
 
 
@@ -43,15 +166,25 @@ class NAILS_App_notification_model extends NAILS_Model
 	 */
 	public function get( $key = NULL, $grouping = 'app', $force_refresh = FALSE )
 	{
-		if ( empty( $this->_notifications[$grouping] ) || $force_refresh ) :
+		//	Check that it's a valid key/grouping pair
+		if ( ! isset( $this->_notifications[$grouping]->options[$key] ) ) :
+
+			$this->_set_error( $grouping . '/' . $key . ' is not a valid group/key pair.' );
+			return FALSE;
+
+		endif;
+
+		// --------------------------------------------------------------------------
+
+		if ( empty( $this->_emails[$grouping] ) || $force_refresh ) :
 
 			$this->db->where( 'grouping', $grouping );
 			$_notifications = $this->db->get( $this->_table )->result();
-			$this->_notifications[$grouping] = array();
+			$this->_emails[$grouping] = array();
 
 			foreach ( $_notifications AS $setting ) :
 
-				$this->_notifications[$grouping][ $setting->key ] = unserialize( $setting->value );
+				$this->_emails[$grouping][ $setting->key ] = unserialize( $setting->value );
 
 			endforeach;
 
@@ -61,11 +194,11 @@ class NAILS_App_notification_model extends NAILS_Model
 
 		if ( empty( $key ) ) :
 
-			return $this->_notifications[$grouping];
+			return $this->_emails[$grouping];
 
 		else :
 
-			return isset( $this->_notifications[$grouping][$key] ) ? $this->_notifications[$grouping][$key] : array();
+			return isset( $this->_emails[$grouping][$key] ) ? $this->_emails[$grouping][$key] : array();
 
 		endif;
 	}
@@ -126,6 +259,16 @@ class NAILS_App_notification_model extends NAILS_Model
 	 */
 	protected function _set( $key, $grouping, $value )
 	{
+		//	Check that it's a valid key/grouping pair
+		if ( ! isset( $this->_notifications[$grouping]->options[$key] ) ) :
+
+			$this->_set_error( $grouping . '/' . $key . ' is not a valid group/key pair.' );
+			return FALSE;
+
+		endif;
+
+		// --------------------------------------------------------------------------
+
 		$this->db->where( 'key', $key );
 		$this->db->where( 'grouping', $grouping );
 		if ( $this->db->count_all_results( $this->_table ) ) :
@@ -150,15 +293,93 @@ class NAILS_App_notification_model extends NAILS_Model
 
 
 	/**
-	 * Trigger a notification
-	 * @param  string $key      The key to trigger
-	 * @param  string $grouping The group to trigger
-	 * @param  array  $data     Data to pass to the email
+	 * Sends a notification to the email addresses associated with a particular key/grouping
+	 * @param  string $key      The key to send to
+	 * @param  string $grouping The key's grouping
+	 * @param  array  $data     An array of values to pass to the email template
+	 * @param  array  $override Override any of the definition values (this time only). Useful for defining custom email templates etc.
 	 * @return boolean
 	 */
-	public function trigger( $key, $grouping, $data = array() )
+	public function notify( $key, $grouping = 'app', $data = array(), $override = array() )
 	{
-		//	TODO: need to be able to handle rich email templates
+		//	Check that it's a valid key/grouping pair
+		if ( ! isset( $this->_notifications[$grouping]->options[$key] ) ) :
+
+			$this->_set_error( $grouping . '/' . $key . ' is not a valid group/key pair.' );
+			return FALSE;
+
+		endif;
+
+		// --------------------------------------------------------------------------
+
+		//	Fetch emails
+		$_emails = $this->get( $key, $grouping );
+
+		if ( empty( $_emails ) ) :
+
+			//	Notification disabled, silently fail
+			return TRUE;
+
+		endif;
+
+		//	Definition to use; clone so overrides aren't permenant
+		$_definition = clone $this->_notifications[$grouping]->options[$key];
+
+		//	Overriding the definition?
+		if ( ! empty( $override ) && is_array( $override ) ) :
+
+			foreach ( $override AS $or_key => $or_value ) :
+
+				if ( isset( $_definition->{$or_key} ) ) :
+
+					$_definition->{$or_key} = $or_value;
+
+				endif;
+
+			endforeach;
+
+		endif;
+
+		if ( empty( $_definition->email_tpl ) ) :
+
+			$this->_set_error( 'No email template defined for ' . $grouping . '/' . $key );
+			return FALSE;
+
+		endif;
+
+		// --------------------------------------------------------------------------
+
+		//	Send the email
+		$this->load->library( 'emailer' );
+
+		//	Build the email
+		$_email			= new stdClass();
+		$_email->type	= 'app_notification';
+		$_email->data	= $data;
+
+		if ( ! empty( $_definition->email_subject ) ) :
+
+			$_email->data['email_subject'] = $_definition->email_subject;
+
+		endif;
+
+		if ( ! empty( $_definition->email_tpl ) ) :
+
+			$_email->data['email_template'] = $_definition->email_tpl;
+
+		endif;
+
+		foreach( $_emails AS $e ) :
+
+			log_message( 'debug', 'Sending notification (' . $grouping . '/' . $key . ') to ' . $e );
+
+			$_email->to_email = $e;
+
+			$this->emailer->send( $_email );
+
+		endforeach;
+
+		return TRUE;
 	}
 }
 
