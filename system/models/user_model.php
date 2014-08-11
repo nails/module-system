@@ -1028,6 +1028,7 @@ class NAILS_User_model extends NAILS_Model
 
 			$cols[] = 'shop_basket';
 			$cols[] = 'shop_currency';
+			$cols[] = 'shop_recently_viewed';
 
 		endif;
 
