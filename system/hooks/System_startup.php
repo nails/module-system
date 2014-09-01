@@ -11,14 +11,12 @@
 
 class NAILS_System_startup
 {
-	protected $_nails_data;
 	protected $_module_locations;
 
 	// --------------------------------------------------------------------------
 
 	public function init()
 	{
-		$this->_load_nails_config();
 		$this->_define_constants();
 		$this->_set_module_locations();
 	}
@@ -26,78 +24,9 @@ class NAILS_System_startup
 	// --------------------------------------------------------------------------
 
 
-	protected function _load_nails_config()
-	{
-		//	Load up nails.json and set NAILS_DATA
-		$_nails_data = @file_get_contents( NAILS_COMMON_PATH . 'nails.json' );
-
-		if ( empty( $_nails_data ) ) :
-
-			_NAILS_ERROR( 'Could not load nails.json.' );
-
-		endif;
-
-		$_nails_data = json_decode( $_nails_data );
-
-		if ( empty( $_nails_data ) ) :
-
-			_NAILS_ERROR( 'Could not parse nails.json.' );
-
-		endif;
-
-		//	App version?
-		$_app_nails_data = @file_get_contents( FCPATH . 'nails.json' );
-
-		if ( ! empty( $_app_nails_data ) ) :
-
-			$_app_nails_data = json_decode( $_app_nails_data );
-
-			if ( empty( $_app_nails_data ) ) :
-
-				_NAILS_ERROR( 'Could not parse the app\'s nails.json.' );
-
-			endif;
-
-			//	Merge
-			if ( ! empty( $_app_nails_data->modules ) ) :
-
-				foreach( $_app_nails_data->modules AS $vendor => $modules ) :
-
-					if ( empty( $_nails_data->modules->{$vendor} ) ) :
-
-						$_nails_data->modules->{$vendor} = array();
-
-					endif;
-
-					foreach( $modules AS $module ) :
-
-						$_nails_data->modules->{$vendor}[] = $module;
-
-					endforeach;
-
-				endforeach;
-
-			endif;
-
-		endif;
-
-		$this->_nails_data = $_nails_data;
-		set_nails_data($this->_nails_data);
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
 	protected function _define_constants()
 	{
-		$_nails_data = get_nails_data();
-
-		// --------------------------------------------------------------------------
-
 		//	Define some generic Nails constants, allow dev to override these - just in case
-		if ( ! defined( 'NAILS_VERSION' ) )				define( 'NAILS_VERSION',			$this->_nails_data->version );
-		if ( ! defined( 'NAILS_VERSION_RELEASED' ) )	define( 'NAILS_VERSION_RELEASED',	$this->_nails_data->released );
 		if ( ! defined( 'NAILS_PACKAGE_NAME' ) )		define( 'NAILS_PACKAGE_NAME',		'Nails' );
 		if ( ! defined( 'NAILS_PACKAGE_URL' ) )			define( 'NAILS_PACKAGE_URL',		'http://nailsapp.co.uk/' );
 		if ( ! defined( 'NAILS_APP_STRAPLINE' ) )		define( 'NAILS_APP_STRAPLINE',		'A webapp powered by <a href="' . NAILS_PACKAGE_URL . '">' . NAILS_PACKAGE_NAME . '</a>, ooh la la!' );
@@ -758,7 +687,8 @@ class NAILS_System_startup
 
 		//	Set the module locations, by default we include the App's path and then
 		//	follow it up with all known official Nails modules.
-		//	TODO: find a way to make this smarter and not rely on nails.json.
+
+		$_modules = _NAILS_GET_POTENTIAL_MODULES();
 
 		//	Note: Key is full path, value is relative path from the application controllers
 		//	directory to where the modules are.
@@ -767,19 +697,11 @@ class NAILS_System_startup
 		$this->_module_locations[FCPATH . APPPATH . 'modules/']	= '../modules/';
 
 		//	Individual "official" Nails module locations
-		if ( ! empty( $this->_nails_data->modules ) ) :
+		foreach( $_modules AS $module ) :
 
-			foreach( $this->_nails_data->modules AS $vendor => $modules ) :
+			$this->_module_locations[FCPATH . 'vendor/' . $module . '/'] = '../../vendor/' . $module . '/';
 
-				foreach ( $modules AS $module ) :
-
-					$this->_module_locations[FCPATH . 'vendor/' . $vendor . '/' . $module . '/']		= '../../vendor/' . $vendor . '/' . $module . '/';
-
-				endforeach;
-
-			endforeach;
-
-		endif;
+		endforeach;
 
 		// --------------------------------------------------------------------------
 

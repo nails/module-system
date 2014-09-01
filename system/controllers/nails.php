@@ -41,14 +41,6 @@ class NAILS_Nails extends NAILS_System_Controller
 		$_out						= new stdClass();
 		$_out->nails				= new stdClass();
 		$_out->app					= new stdClass();
-
-		$_version = explode( '.', NAILS_VERSION );
-
-		$_out->nails->version		= NAILS_VERSION;
-		$_out->nails->major			= isset( $_version[0] ) ? (int) $_version[0] : 0;
-		$_out->nails->minor			= isset( $_version[1] ) ? (int) $_version[1] : 0;
-		$_out->nails->patch			= isset( $_version[2] ) ? (int) $_version[2] : 0;
-
 		$_out->app->name			= APP_NAME;
 		$_out->app->path			= FCPATH;
 		$_out->app->url				= site_url();
