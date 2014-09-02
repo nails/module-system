@@ -689,7 +689,11 @@ class NAILS_Datetime_model extends NAILS_Model
 
 		if ( $difference . ' ' . $periods[$j] . ' ' . $tense == '1 day ago' ) :
 
-			return 'Yesterday';
+			return 'yesterday';
+
+		elseif ( $difference . ' ' . $periods[$j] . ' ' . $tense == '1 day from now' ) :
+
+			return 'tomorrow';
 
 		else :
 
