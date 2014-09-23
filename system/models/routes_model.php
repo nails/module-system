@@ -228,13 +228,18 @@ class NAILS_Routes_model extends NAILS_Model
 
 		if ( module_is_enabled( 'blog' ) ) :
 
-			$_settings = app_setting( NULL, 'blog' );
+			$this->load->model( 'blog/blog_model' );
+			$_blogs = $this->blog_model->get_all();
 
 			$_routes['//BEGIN BLOG'] = '';
+			foreach ( $_blogs AS $blog ) :
 
-			//	Blog front page route
-			$_routes[substr( $_settings['url'], 0, -1 ) . '(/(:any)?/?)?'] = 'blog/$2';
+				$_settings = app_setting( NULL, 'blog-' . $blog->id );
 
+				//	Blog front page route
+				$_routes[substr( $_settings['url'], 0, -1 ) . '(/(:any)?/?)?'] = 'blog/' . $blog->id . '/$2';
+
+			endforeach;
 			$_routes['//END BLOG'] = '';
 
 		endif;
