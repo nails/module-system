@@ -545,7 +545,7 @@ class NAILS_User_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Test ACL, making sure to clean any dangerous data first
-		$_permission = preg_replace( '/[^a-zA-Z\_\.]/', '', $permission );
+		$_permission = preg_replace( '/[^a-zA-Z\_\.\:0-9]/', '', $permission );
 		$_permission = explode( '.', $_permission );
 		eval( '$has_permission = isset( $_acl[\'' . implode( '\'][\'', $_permission ) .'\'] );' );
 		return $has_permission;
