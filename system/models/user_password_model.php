@@ -644,10 +644,7 @@ class NAILS_User_password_model extends CI_Model
 	}
 
 
-	// --------------------------------------------------------------------------
-
-
-/**
+	/**
 	 * --------------------------------------------------------------------------
 	 *
 	 * ERROR METHODS
@@ -660,11 +657,8 @@ class NAILS_User_password_model extends CI_Model
 
 	/**
 	 * Set a generic error
-	 *
-	 * @access	protected
-	 * @param	string	$error	The error message
-	 * @return void
-	 **/
+	 * @param string $error The error message
+	 */
 	protected function _set_error( $error )
 	{
 		$this->_errors[] = $error;
@@ -675,11 +669,9 @@ class NAILS_User_password_model extends CI_Model
 
 
 	/**
-	 * Get any errors
-	 *
-	 * @access	public
+	 * Return the error array
 	 * @return array
-	 **/
+	 */
 	public function get_errors()
 	{
 		return $this->_errors;
@@ -690,11 +682,9 @@ class NAILS_User_password_model extends CI_Model
 
 
 	/**
-	 * Get last error
-	 *
-	 * @access	public
-	 * @return mixed
-	 **/
+	 * Returns the last error
+	 * @return string
+	 */
 	public function last_error()
 	{
 		return end( $this->_errors );
@@ -705,11 +695,9 @@ class NAILS_User_password_model extends CI_Model
 
 
 	/**
-	 * Clear the last error
-	 *
-	 * @access	public
+	 * Clears the last error
 	 * @return mixed
-	 **/
+	 */
 	public function clear_last_error()
 	{
 		return array_pop( $this->_errors );
@@ -721,10 +709,8 @@ class NAILS_User_password_model extends CI_Model
 
 	/**
 	 * Clears all errors
-	 *
-	 * @access	public
-	 * @return mixed
-	 **/
+	 * @return void
+	 */
 	public function clear_errors()
 	{
 		$this->_errors = array();

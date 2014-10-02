@@ -207,7 +207,8 @@ class NAILS_Routes_model extends NAILS_Model
 			$_routes['//BEGIN SHOP'] = '';
 
 			//	Shop front page route
-			$_routes[substr( $_settings['url'], 0, -1 ) . '(/(:any)?/?)?'] = 'shop/$2';
+			$_url = isset( $_settings['url'] ) ? substr( $_settings['url'], 0, -1 ) : 'shop';
+			$_routes[$_url . '(/(:any)?/?)?'] = 'shop/$2';
 
 			//	TODO: all shop product/category/tag/sale routes etc
 
@@ -237,7 +238,8 @@ class NAILS_Routes_model extends NAILS_Model
 				$_settings = app_setting( NULL, 'blog-' . $blog->id );
 
 				//	Blog front page route
-				$_routes[substr( $_settings['url'], 0, -1 ) . '(/(:any)?/?)?'] = 'blog/' . $blog->id . '/$2';
+				$_url = isset( $_settings['url'] ) ? substr( $_settings['url'], 0, -1 ) : 'blog';
+				$_routes[$_url . '(/(:any)?/?)?'] = 'blog/' . $blog->id . '/$2';
 
 			endforeach;
 			$_routes['//END BLOG'] = '';
