@@ -17,8 +17,11 @@
 
 class NAILS_User_password_model extends CI_Model
 {
+	//	Class traits
+	use NAILS_COMMON_TRAIT_ERROR_HANDLING;
+	use NAILS_COMMON_TRAIT_CACHING;
+
 	protected $_user;
-	protected $_errors;
 	protected $_loaded_drivers;
 	protected $_pw_charset_symbol;
 	protected $_pw_charset_lower_alpha;
@@ -642,79 +645,6 @@ class NAILS_User_password_model extends CI_Model
 
 		return $_out;
 	}
-
-
-	/**
-	 * --------------------------------------------------------------------------
-	 *
-	 * ERROR METHODS
-	 * These methods provide a consistent interface for setting and retrieving
-	 * errors which are generated.
-	 *
-	 * --------------------------------------------------------------------------
-	 **/
-
-
-	/**
-	 * Set a generic error
-	 * @param string $error The error message
-	 */
-	protected function _set_error( $error )
-	{
-		$this->_errors[] = $error;
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	/**
-	 * Return the error array
-	 * @return array
-	 */
-	public function get_errors()
-	{
-		return $this->_errors;
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	/**
-	 * Returns the last error
-	 * @return string
-	 */
-	public function last_error()
-	{
-		return end( $this->_errors );
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	/**
-	 * Clears the last error
-	 * @return mixed
-	 */
-	public function clear_last_error()
-	{
-		return array_pop( $this->_errors );
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	/**
-	 * Clears all errors
-	 * @return void
-	 */
-	public function clear_errors()
-	{
-		$this->_errors = array();
-	}
 }
 
 
@@ -754,4 +684,4 @@ if ( ! defined( 'NAILS_ALLOW_EXTENSION_USER_PASSWORD_MODEL' ) ) :
 endif;
 
 /* End of file user_password_model.php */
-/* Location: ./system/application/models/user_password_model.php */
+/* Location: ./module-system/system/models/user_password_model.php */
