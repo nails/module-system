@@ -45,86 +45,45 @@ class NAILS_App_notification_model extends NAILS_Model
 	 */
 	protected function _set_definitions()
 	{
-		//	Generic Site notifications
-		$this->_notifications['app']													= $this->_get_blank_grouping();
-		$this->_notifications['app']->label												= 'Site';
-		$this->_notifications['app']->description										= 'General site notifications.';
+		//	Look for notification definitions defined by enabled modules
+		$_modules = _NAILS_GET_AVAILABLE_MODULES();
 
-		$this->_notifications['app']->options['default']								= $this->_get_blank_option();
-		$this->_notifications['app']->options['default']->label							= 'Generic';
+		foreach( $_modules AS $module ) :
 
-		// --------------------------------------------------------------------------
+			$_module	= explode( '-', $module );
+			$_path		= FCPATH . 'vendor/' . $module . '/' . $_module[1] . '/config/app_notifications.php';
 
-		if ( module_is_enabled( 'shop' ) ) :
+			if ( file_exists( $_path ) ) :
 
-			$this->_notifications['shop']												= $this->_get_blank_grouping();
-			$this->_notifications['shop']->label										= 'Shop';
-			$this->_notifications['shop']->description									= 'Shop related notifications.';
+				include $_path;
 
-			$this->_notifications['shop']->options['new_order']							= $this->_get_blank_option();
-			$this->_notifications['shop']->options['new_order']->label					= 'Order Notifications';
-			$this->_notifications['shop']->options['new_order']->email_subject			= 'An order has been placed';
+				if ( ! empty( $config['notification_definitions'] ) ) :
 
-			$this->_notifications['shop']->options['product_enquiry']					= $this->_get_blank_option();
-			$this->_notifications['shop']->options['product_enquiry']->label			= 'Product Enquiries';
-			$this->_notifications['shop']->options['product_enquiry']->email_subject	= 'New Product Enquiry';
+					$this->_notifications = array_merge( $this->_notifications, $config['notification_definitions'] );
 
-			$this->_notifications['shop']->options['delivery_enquiry']					= $this->_get_blank_option();
-			$this->_notifications['shop']->options['delivery_enquiry']->label			= 'Delivery Enquiries';
-			$this->_notifications['shop']->options['delivery_enquiry']->email_subject	= 'New Delivery Enquiry';
+				endif;
+
+			endif;
+
+		endforeach;
+
+		//	Finally, look for app notification definitions
+		$_path = FCPATH . APPPATH . 'config/app_notifications.php';
+
+		if ( file_exists( $_path ) ) :
+
+			include $_path;
+
+			if ( ! empty( $config['notification_definitions'] ) ) :
+
+				$this->_notifications = array_merge( $this->_notifications, $config['notification_definitions'] );
+
+			endif;
 
 		endif;
-	}
 
-
-	// --------------------------------------------------------------------------
-
-
-	protected function _get_blank_grouping()
-	{
-		$_definition = new stdClass();
-
-		//	Human readable label for this type of grouping
-		$_definition->label = '';
-
-		//	Text for the fieldset, rendered in admin
-		$_definition->description = '';
-
-		//	An empty object array
-		$_definition->options = array();
-
-		return $_definition;
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	protected function _get_blank_option()
-	{
-		$_option = new stdClass();
-
-		//	Human readable label for this type of notification
-		$_option->label = '';
-
-		//	A sub label which will be rendered within admin
-		$_option->sub_label = '';
-
-		//	A helpful tip, also rendered in admin
-		$_option->tip = '';
-
-		//	The subject to give the outgoing email
-		$_option->email_subject = '';
-
-		//	The template to use
-		$_option->email_tpl = '';
-
-		//	Alternatively, send a message by populating this field
-		$_option->email_message = '';
-
-		// --------------------------------------------------------------------------
-
-		return $_option;
+		//	Put into a vague order
+		ksort( $this->_notifications );
 	}
 
 
@@ -184,7 +143,7 @@ class NAILS_App_notification_model extends NAILS_Model
 
 			foreach ( $_notifications AS $setting ) :
 
-				$this->_emails[$grouping][ $setting->key ] = unserialize( $setting->value );
+				$this->_emails[$grouping][ $setting->key ] = json_decode( $setting->value );
 
 			endforeach;
 
@@ -275,14 +234,14 @@ class NAILS_App_notification_model extends NAILS_Model
 
 			$this->db->where( 'grouping', $grouping );
 			$this->db->where( 'key', $key );
-			$this->db->set( 'value', serialize( $value ) );
+			$this->db->set( 'value', json_encode( $value ) );
 			$this->db->update( $this->_table);
 
 		else :
 
 			$this->db->set( 'grouping', $grouping );
 			$this->db->set( 'key', $key );
-			$this->db->set( 'value', serialize( $value ) );
+			$this->db->set( 'value', json_encode( $value ) );
 			$this->db->insert( $this->_table );
 
 		endif;
@@ -375,7 +334,12 @@ class NAILS_App_notification_model extends NAILS_Model
 
 			$_email->to_email = $e;
 
-			$this->emailer->send( $_email );
+			if ( ! $this->emailer->send( $_email, TRUE ) ) :
+
+				$this->_set_error( $this->emailer->last_error() );
+				return FALSE;
+
+			endif;
 
 		endforeach;
 
