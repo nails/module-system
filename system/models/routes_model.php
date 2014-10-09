@@ -202,7 +202,7 @@ class NAILS_Routes_model extends NAILS_Model
 
 		if ( module_is_enabled( 'shop' ) ) :
 
-			$_settings = app_setting( NULL, 'shop' );
+			$_settings = app_setting( NULL, 'shop', TRUE );
 
 			$_routes['//BEGIN SHOP'] = '';
 
@@ -235,7 +235,7 @@ class NAILS_Routes_model extends NAILS_Model
 			$_routes['//BEGIN BLOG'] = '';
 			foreach ( $_blogs AS $blog ) :
 
-				$_settings = app_setting( NULL, 'blog-' . $blog->id );
+				$_settings = app_setting( NULL, 'blog-' . $blog->id, TRUE );
 
 				//	Blog front page route
 				$_url = isset( $_settings['url'] ) ? substr( $_settings['url'], 0, -1 ) : 'blog';
