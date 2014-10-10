@@ -997,8 +997,7 @@ class NAILS_User_model extends NAILS_Model
 		$_cols[]	= 'last_update';
 		$_cols[]	= 'user_acl';
 		$_cols[]	= 'login_count';
-		$_cols[]	= 'admin_nav';
-		$_cols[]	= 'admin_dashboard';
+		$_cols[]	= 'admin_data';
 		$_cols[]	= 'referral';
 		$_cols[]	= 'referred_by';
 		$_cols[]	= 'salutation';
