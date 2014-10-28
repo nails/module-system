@@ -27,6 +27,8 @@ class NAILS_User_password_model extends CI_Model
 	protected $_pw_charset_lower_alpha;
 	protected $_pw_charset_upper_alpha;
 	protected $_pw_charset_number;
+	protected $_pw_generate_seperator;
+	protected $_pw_generate_segment_length;
 
 
 	// --------------------------------------------------------------------------
@@ -39,10 +41,12 @@ class NAILS_User_password_model extends CI_Model
 		// --------------------------------------------------------------------------
 
 		//	Set defaults
-		$this->_pw_charset_symbol		= utf8_encode( '!@$^&*(){}":?<>~-=[];\'\\/.,' );
-		$this->_pw_charset_lower_alpha	= utf8_encode( 'abcdefghijklmnopqrstuvwxyz' );
-		$this->_pw_charset_upper_alpha	= utf8_encode( 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' );
-		$this->_pw_charset_number		= utf8_encode( '0123456789' );
+		$this->_pw_charset_symbol			= utf8_encode( '!@$^&*(){}":?<>~-=[];\'\\/.,' );
+		$this->_pw_charset_lower_alpha		= utf8_encode( 'abcdefghijklmnopqrstuvwxyz' );
+		$this->_pw_charset_upper_alpha		= utf8_encode( 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' );
+		$this->_pw_charset_number			= utf8_encode( '0123456789' );
+		$this->_pw_generate_seperator		= '-';
+		$this->_pw_generate_segment_length	= 4;
 	}
 
 
@@ -254,10 +258,16 @@ class NAILS_User_password_model extends CI_Model
 	 * password rules
 	 * @return string
 	 */
-	public function generate()
+	public function generate($seperator = null)
 	{
 		$_password_rules	= $this->_get_password_rules();
 		$_pw_out			= array();
+
+		// --------------------------------------------------------------------------
+
+		if (is_null($seperator)) {
+			$seperator = $this->_pw_generate_seperator;
+		}
 
 		// --------------------------------------------------------------------------
 
@@ -272,13 +282,22 @@ class NAILS_User_password_model extends CI_Model
 
 		foreach ( $_charsets AS $set => $chars ) :
 
-			if ( ! isset( $_password_rules['charsets'][$set] ) ) :
+			if ( isset( $_password_rules['charsets'][$set] ) ) :
 
 				$_password_rules['charsets'][$set] = $chars;
 
 			endif;
 
 		endforeach;
+
+		//	If there're no charsets defined, then define a default set
+		if (empty($_password_rules['charsets'])) {
+
+			$_password_rules['charsets']['lower_alpha']	= $this->_pw_charset_lower_alpha;
+			$_password_rules['charsets']['upper_alpha']	= $this->_pw_charset_upper_alpha;
+			$_password_rules['charsets']['number']		= $this->_pw_charset_number;
+
+		}
 
 		// --------------------------------------------------------------------------
 
@@ -334,6 +353,19 @@ class NAILS_User_password_model extends CI_Model
 		shuffle( $_pw_out );
 
 		// --------------------------------------------------------------------------
+
+		/**
+		 * Replace some chgaracters with the seperator (so as to maintain the correct
+		 * password length)
+		 */
+
+		$segmentLength = $this->_pw_generate_segment_length + 1;
+		for ($i=0;$i<count($_pw_out);$i++) {
+
+			if (($i % $segmentLength) == ($segmentLength-1)) {
+				$_pw_out[$i] = $this->_pw_generate_seperator;
+			}
+		}
 
 		return implode( '', $_pw_out );
 	}
