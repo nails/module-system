@@ -1622,6 +1622,16 @@ class NAILS_User_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
+		//	Make sure the email is valid
+		if ( ! valid_email( $_email ) ) :
+
+			$this->_set_error( '"' . $_email . '" is not a valid email address' );
+			return FALSE;
+
+		endif;
+
+		// --------------------------------------------------------------------------
+
 		//	Test email, if it's in use and for the same user then return true. If
 		//	it's in use by a different user then return an error.
 
@@ -1663,16 +1673,6 @@ class NAILS_User_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
-		//	Make sure the email is valid
-		if ( ! valid_email( $_email ) ) :
-
-			$this->_set_error( '"' . $_email . '" is not a valid email address' );
-			return FALSE;
-
-		endif;
-
-		// --------------------------------------------------------------------------
-
 		$_code = $this->user_password_model->salt();
 
 		$this->db->set( 'user_id',		$_u->id );
@@ -1680,6 +1680,11 @@ class NAILS_User_model extends NAILS_Model
 		$this->db->set( 'code',			$_code );
 		$this->db->set( 'is_verified',	(bool) $is_verified );
 		$this->db->set( 'date_added',	'NOW()', FALSE );
+
+		if ((bool) $is_verified) {
+
+			$this->db->set( 'date_verified', 'NOW()', FALSE );
+		}
 
 		$this->db->insert( NAILS_DB_PREFIX . 'user_email' );
 
@@ -1788,8 +1793,8 @@ class NAILS_User_model extends NAILS_Model
 	/**
 	 * Deletes a non-primary email from the user_email table, optionally filtering
 	 * by $user_id
-	 * @param  mixed $email_id The email address, or the Id of the email address to remove
-	 * @param  int $user_id    The ID of the user ot restrict to
+	 * @param  mixed $email_id The email address, or the ID of the email address to remove
+	 * @param  int $user_id    The ID of the user to restrict to
 	 * @return bool            TRUE on success, FALSE on failure
 	 */
 	public function email_delete( $email_id, $user_id = NULL )

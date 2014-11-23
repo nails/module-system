@@ -95,6 +95,10 @@ class NAILS_System_startup
 		if ( ! defined( 'APP_DEVELOPER_EMAIL' ) )	define( 'APP_DEVELOPER_EMAIL',	'' );
 		if ( ! defined( 'EMAIL_DEBUG' ) )			define( 'EMAIL_DEBUG',			FALSE );
 		if ( ! defined( 'EMAIL_OVERRIDE' ) )		define( 'EMAIL_OVERRIDE',		'' );
+		if ( ! defined( 'DEPLOY_EMAIL_HOST' ) )		define( 'DEPLOY_EMAIL_HOST',	'127.0.0.1' );
+		if ( ! defined( 'DEPLOY_EMAIL_USER' ) )		define( 'DEPLOY_EMAIL_USER',	'' );
+		if ( ! defined( 'DEPLOY_EMAIL_PASS' ) )		define( 'DEPLOY_EMAIL_PASS',	'' );
+		if ( ! defined( 'DEPLOY_EMAIL_PORT' ) )		define( 'DEPLOY_EMAIL_PORT',	'' );
 
 		// --------------------------------------------------------------------------
 
