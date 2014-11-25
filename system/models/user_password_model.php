@@ -146,7 +146,7 @@ class NAILS_User_password_model extends CI_Model
 		// --------------------------------------------------------------------------
 
 		//	Check password satisfies password rules
-		$_password_rules = $this->_get_password_rules();
+		$_password_rules = $this->getRules();
 
 		//	Lgng enough?
 		if ( strlen( $password ) < $_password_rules['min_length'] ) :
@@ -260,7 +260,7 @@ class NAILS_User_password_model extends CI_Model
 	 */
 	public function generate($seperator = null)
 	{
-		$_password_rules	= $this->_get_password_rules();
+		$_password_rules	= $this->getRules();
 		$_pw_out			= array();
 
 		// --------------------------------------------------------------------------
@@ -378,7 +378,7 @@ class NAILS_User_password_model extends CI_Model
 	 * Get's the app's password rules
 	 * @return array
 	 */
-	protected function _get_password_rules()
+	protected function getRules()
 	{
 		$this->config->load( 'auth/auth' );
 
@@ -472,6 +472,72 @@ class NAILS_User_password_model extends CI_Model
 		$_out['is_not']		= $_is_not;
 
 		return $_out;
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	public function getRulesAsString()
+	{
+		$rules	= $this->getRulesAsArray();
+
+		if (empty($rules)) {
+			return '';
+		}
+
+		$str = 'Passwords must ' . strtolower(implode(', ', $rules)) . '.';
+
+		$this->load->helper('string');
+		return str_lreplace(', ', ' and ', $str);
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	public function getRulesAsArray()
+	{
+		$rules	= $this->getRules();
+		$out	= array();
+
+		if (!empty($rules['min_length'])) {
+
+			$out[] = 'Be at least ' . $rules['min_length'] . ' characters';
+		}
+
+		if (!empty($rules['max_length'])) {
+
+			$out[] = 'Have at most ' . $rules['max_length'] . ' characters';
+		}
+
+		foreach($rules['charsets'] as $charset => $value) {
+
+			switch ($charset) {
+
+				case 'symbol':
+
+					$out[] = 'Contain a symbol';
+					break;
+
+				case 'lower_alpha':
+
+					$out[] = 'Contain a lowercase letter';
+					break;
+
+				case 'upper_alpha':
+
+					$out[] = 'Contain an upper case letter';
+					break;
+
+				case 'number':
+
+					$out[] = 'Contain a number';
+					break;
+			}
+		}
+
+		return $out;
 	}
 
 
