@@ -1374,25 +1374,18 @@ class NAILS_User_model extends NAILS_Model
 			// --------------------------------------------------------------------------
 
 			//	If a username has been passed then check if it's available
-			if ( $_data_username ) :
+			if (!empty($_data_username)) {
 
-				//	Check if the username is already being used
-				$this->db->where( 'username', $_data_username );
-				$this->db->where( 'id !=', $_uid );
-				$_username = $this->db->get( NAILS_DB_PREFIX . 'user' )->row();
+				//	Check username is valid
+				if (!$this->isValidUsername($_data_username, true, $_uid)) {
 
-				if ( $_username ) :
+					return false;
 
-					$this->_set_error( 'Username is already in use.' );
-					return FALSE;
-
-				else :
+				} else {
 
 					$_data_user['username'] = $_data_username;
-
-				endif;
-
-			endif;
+				}
+			}
 
 			// --------------------------------------------------------------------------
 
@@ -2528,87 +2521,66 @@ class NAILS_User_model extends NAILS_Model
 	 *
 	 * @access	public
 	 * @param	string	$data			An array of data to use for creating the user
-	 * @param	boolean	$send_welcome	Whether or not to send the welcome email or not
+	 * @param	boolean	$sendWelcome	Whether or not to send the welcome email or not
 	 * @return	boolean
 	 **/
-	public function create( $data = FALSE, $send_welcome = TRUE )
+	public function create($data = false, $sendWelcome = true)
 	{
-		//	Has an email or a suername been submitted?
-		if ( APP_NATIVE_LOGIN_USING == 'EMAIL' ) :
+		//	Has an email or a username been submitted?
+		if (APP_NATIVE_LOGIN_USING == 'EMAIL') {
 
 			//	Email defined?
-			if ( empty( $data['email'] ) ) :
+			if (empty($data['email'])) {
 
-				$this->_set_error( 'An email address must be supplied.' );
-				return FALSE;
-
-			endif;
+				$this->_set_error('An email address must be supplied.');
+				return false;
+			}
 
 			//	Check email against DB
-			$this->db->where( 'email', $data['email'] );
-			if ( $this->db->count_all_results( NAILS_DB_PREFIX . 'user_email' ) ) :
+			$this->db->where('email', $data['email']);
+			if ($this->db->count_all_results(NAILS_DB_PREFIX . 'user_email')) {
 
-				$this->_set_error( 'This email is already in use.' );
-				return FALSE;
+				$this->_set_error('This email is already in use.');
+				return false;
+			}
 
-			endif;
-
-		elseif ( APP_NATIVE_LOGIN_USING == 'USERNAME' ) :
+		} elseif (APP_NATIVE_LOGIN_USING == 'USERNAME') {
 
 			//	Username defined?
-			if ( empty( $data['username'] ) ) :
+			if (empty($data['username'])) {
 
-				$this->_set_error( 'A username must be supplied.' );
-				return FALSE;
+				$this->_set_error('A username must be supplied.');
+				return false;
+			}
 
-			endif;
+			if (!$this->isValidUsername($data['username'], true)) {
 
-			//	Check username against DB
-			$this->db->where( 'username', $data['username'] );
-			if ( $this->db->count_all_results( NAILS_DB_PREFIX . 'user' ) ) :
+				return false;
+			}
 
-				$this->_set_error( 'This username is already in use.' );
-				return FALSE;
+		} else {
 
-			endif;
+			//	Both a username and an email must be supplied
+			if (empty($data['email']) || empty($data['username'])) {
 
-		else :
+				$this->_set_error('An email address and a username must be supplied.');
+				return false;
+			}
 
-			//	Either a username or an email must be supplied
-			if ( empty( $data['email'] ) && empty( $data['username'] ) ) :
+			//	Check email against DB
+			$this->db->where('email', $data['email']);
+			if ($this->db->count_all_results(NAILS_DB_PREFIX . 'user_email')) {
 
-				$this->_set_error( 'An email address or a username must be supplied.' );
-				return FALSE;
+				$this->_set_error('This email is already in use.');
+				return false;
+			}
 
-			endif;
+			//	Check username
+			if (!$this->isValidUsername($data['username'], true)) {
 
-			if ( ! empty( $data['email'] ) ) :
-
-				//	Check email against DB
-				$this->db->where( 'email', $data['email'] );
-				if ( $this->db->count_all_results( NAILS_DB_PREFIX . 'user_email' ) ) :
-
-					$this->_set_error( 'This email is already in use.' );
-					return FALSE;
-
-				endif;
-
-			endif;
-
-			if ( ! empty( $data['username'] ) ) :
-
-				//	Check username against DB
-				$this->db->where( 'username', $data['username'] );
-				if ( $this->db->count_all_results( NAILS_DB_PREFIX . 'user' ) ) :
-
-					$this->_set_error( 'This username is already in use.' );
-					return FALSE;
-
-				endif;
-
-			endif;
-
-		endif;
+				return false;
+			}
+		}
 
 		// --------------------------------------------------------------------------
 
@@ -2680,7 +2652,7 @@ class NAILS_User_model extends NAILS_Model
 
 		if ( ! empty( $data['username'] ) ) :
 
-			$_user_data['username'] = $data['username'];
+			$_user_data['username'] = strtolower($data['username']);
 
 		endif;
 
@@ -2823,7 +2795,7 @@ class NAILS_User_model extends NAILS_Model
 			endif;
 
 			//	Send the user the welcome email
-			if ( $send_welcome ) :
+			if ( $sendWelcome ) :
 
 				$_email					= new stdClass();
 				$_email->type			= 'new_user_' . $_group->id;
@@ -2971,10 +2943,10 @@ class NAILS_User_model extends NAILS_Model
 	 * @param	int		$id	The ID of the user to suspend
 	 * @return	boolean
 	 **/
-	 public function suspend( $id )
-	 {
-	 	return $this->update( $id, array( 'is_suspended' => TRUE ) );
-	 }
+	public function suspend( $id )
+	{
+		return $this->update( $id, array( 'is_suspended' => TRUE ) );
+	}
 
 
 	 // --------------------------------------------------------------------------
@@ -2987,10 +2959,70 @@ class NAILS_User_model extends NAILS_Model
 	 * @param	int		$id	The ID of the user to unsuspend
 	 * @return	boolean
 	 **/
-	 public function unsuspend( $id )
-	 {
-	 	return $this->update( $id, array( 'is_suspended' => FALSE ) );
-	 }
+	public function unsuspend( $id )
+	{
+		return $this->update( $id, array( 'is_suspended' => FALSE ) );
+	}
+
+
+	// --------------------------------------------------------------------------
+
+	public function isValidUsername($username, $checkDb = false, $ignoreUserId = null)
+	{
+		/**
+		 * Check username doesn't contain invalid characters - we're actively looking
+		 * for characters which are invalid so we can say "Hey! The following
+		 * characters are invalid" rather than making the user guess, y'know, 'cause
+		 * we're good guys.
+		 */
+
+		$invalidChars = '/[^a-zA-Z0-9\-_\.]/';
+
+		//	Minimum length of the username
+		$minLength = 2;
+
+		// --------------------------------------------------------------------------
+
+		//	Check for illegal characters
+		$containsInvalidChars = preg_match($invalidChars, $username);
+
+		if ($containsInvalidChars) {
+
+			$msg = 'Username can only contain alpha numeric characters, underscores, periods and dashes (no spaces).';
+
+			$this->_set_error($msg);
+			return false;
+		}
+
+		// --------------------------------------------------------------------------
+
+		//	Check length
+		if (strlen($username) < $minLength) {
+
+			$this->_set_error('Usernames msut be at least ' . $minLength . ' characters long.');
+			return false;
+		}
+
+		// --------------------------------------------------------------------------
+
+		if ($checkDb) {
+
+			$this->db->where('username', $username);
+
+			if (!empty($ignoreUserId)) {
+
+				$this->db->where('id !=', $ignoreUserId);
+			}
+
+			if ($this->db->count_all_results(NAILS_DB_PREFIX . 'user')) {
+
+				$this->_set_error('Username is already in use.');
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 
 	// --------------------------------------------------------------------------
