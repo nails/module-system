@@ -831,7 +831,7 @@ class NAILS_User_model extends NAILS_Model
 	 * @return	int
 	 *
 	 **/
-	protected function _getcount_users_common( $where = NULL, $search = NULL )
+	protected function _getcount_users_common( $where = NULL, $searchTerm = NULL )
 	{
 		$this->db->join( NAILS_DB_PREFIX . 'user_email ue',			'u.id = ue.user_id AND ue.is_primary = 1',	'LEFT' );
 		$this->db->join( NAILS_DB_PREFIX . 'user_meta um',			'u.id = um.user_id',						'LEFT' );
@@ -849,13 +849,13 @@ class NAILS_User_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Set Search
-		if ( $search && is_string( $search ) ) :
+		if ($searchTerm && is_string($searchTerm)) :
 
 			//	Search is a simple string, no columns are being specified to search across
 			//	so define a default set to search across
 
 			$search							= array();
-			$search['keywords']				= $this->db->escape( $search );
+			$search['keywords']				= $searchTerm;
 			$search['columns']				= array();
 			$search['columns']['id']		= 'u.id';
 			$search['columns']['email']		= 'ue.email';
@@ -3022,6 +3022,22 @@ class NAILS_User_model extends NAILS_Model
 		}
 
 		return true;
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Merges users with id in $mergeIds into $userId
+	 * @param  int   $userId   The user ID to keep
+	 * @param  array $mergeIds An array of user ID's to merge into $userId
+	 * @return boolean
+	 */
+	public function merge($userId, $mergeIds)
+	{
+		$this->_set_error('This facility has not been completed.');
+		return false;
 	}
 
 
