@@ -569,12 +569,10 @@ class NAILS_User_model extends NAILS_Model
 	public function get_all( $extended = NULL, $order = NULL, $limit = NULL, $where = NULL, $search = NULL )
 	{
 		//	Write selects
-		$this->db->select( 'u.*' );
-		$this->db->select( 'ue.email, ue.code email_verification_code, ue.is_verified email_is_verified, ue.date_verified email_is_verified_on' );
-		$this->db->select( $this->_get_meta_columns( 'um' ) );
-		$this->db->select( 'ug.label AS `group_name`' );
-		$this->db->select( 'ug.default_homepage AS `group_homepage`' );
-		$this->db->select( 'ug.acl AS `group_acl`' );
+		$this->db->select('u.*');
+		$this->db->select('ue.email, ue.code email_verification_code, ue.is_verified email_is_verified, ue.date_verified email_is_verified_on');
+		$this->db->select($this->_get_meta_columns('um'));
+		$this->db->select('ug.slug group_slug,ug.label group_name,ug.default_homepage group_homepage,ug.acl group_acl');
 
 		// --------------------------------------------------------------------------
 
@@ -1063,23 +1061,64 @@ class NAILS_User_model extends NAILS_Model
 	 * Get a specific user by their ID
 	 *
 	 * @access	public
+	 * @param	string	$userId	The user's ID
+	 * @param	mixed	$extended	Specific extra tables to join, TRUE for all user_meta_*
+	 * @return	object
+	 *
+	 **/
+	public function get_by_id($userId, $extended = false)
+	{
+		if (!is_numeric($userId)) {
+
+			return false;
+		}
+
+		if (!$extended) {
+
+			$cachedUser = $this->getCacheUser($userId);
+
+			if ($cachedUser)
+			 {
+			 	return $cachedUser;
+			 }
+		}
+
+		$this->db->where('u.id', (int) $userId);
+		$user = $this->get_all($extended);
+
+		if ($user){
+
+			$this->setCacheUserObj($user[0]);
+			return $user[0];
+
+		} else {
+
+			return false;
+		}
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Get a specific user by their IDs
+	 *
+	 * @access	public
 	 * @param	string	$user_id	The user's ID
 	 * @param	mixed	$extended	Specific extra tables to join, TRUE for all user_meta_*
 	 * @return	object
 	 *
 	 **/
-	public function get_by_id( $user_id, $extended = FALSE )
+	public function get_by_ids($userIds, $extended = false)
 	{
-		if ( ! is_numeric( $user_id ) ) :
+		if (empty($userIds)) {
 
-			return FALSE;
+			return array();
+		}
 
-		endif;
-
-		$this->db->where( 'u.id', (int) $user_id );
-		$user = $this->get_all( $extended );
-
-		return empty( $user ) ? FALSE : $user[0];
+		$this->db->where_in('u.id', $userIds);
+		return $this->get_all($extended);
 	}
 
 
@@ -1584,7 +1623,74 @@ class NAILS_User_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
+		$this->setCacheUser($_uid);
+
+		// --------------------------------------------------------------------------
+
 		return TRUE;
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Returns a user from the cache
+	 * @param  int $userId The ID of the user to return
+	 * @return mixed
+	 */
+	public function getCacheUser($userId)
+	{
+		return $this->_get_cache('user-' . $userId);
+	}
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Saves a user object to the persistent cache
+	 * @param int $userId The user ID to cache
+	 */
+	public function setCacheUser($userId)
+	{
+		$user = $this->get_by_id($userId);
+
+		if (empty($user)) {
+
+			return false;
+		}
+
+		$this->setCacheUserObj($user);
+
+		return true;
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Sets the user's object into the cache
+	 * @param stdClass $userObj The complete user Object to cache
+	 */
+	protected function setCacheUserObj($userObj)
+	{
+		$this->_set_cache('user-' . $userObj->id, $userObj);
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Removes a user object from the persistent cache
+	 * @param int $userId The user ID to remove from cache
+	 */
+	public function unsetCacheUser($userId)
+	{
+		$this->_unset_cache('user-' . $userId);
+
+		return true;
 	}
 
 
