@@ -3172,6 +3172,15 @@ class NAILS_User_model extends NAILS_Model
 
 				foreach($tables[$i]->columns as $column) {
 
+					//	Additional updates for certain tables
+					switch($tables[$i]->name) {
+
+						case NAILS_DB_PREFIX . 'user_email':
+
+							$this->db->set('is_primary', false);
+							break;
+					}
+
 					$this->db->set($column, $userId);
 					$this->db->where_in($column, $mergeIds);
 					if (!$this->db->update($tables[$i]->name)) {
