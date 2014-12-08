@@ -2879,17 +2879,29 @@ class NAILS_User_model extends NAILS_Model
 	 * Delete a user
 	 *
 	 * @access	public
-	 * @param	int		$id	The ID of the user to delete
+	 * @param	int		$userId	The ID of the user to delete
 	 * @return	boolean
 	 **/
-	public function destroy( $id )
+	public function destroy($userId)
 	{
-		$this->db->where( 'id', $id );
-		$this->db->delete( NAILS_DB_PREFIX . 'user' );
-
-		// --------------------------------------------------------------------------
+		$this->db->where('id', $userId);
+		$this->db->delete(NAILS_DB_PREFIX . 'user');
 
 		return (bool) $this->db->affected_rows();
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
+	/**
+	 * Alias to destroy()
+	 * @param  int $userId The ID of the user to delete
+	 * @return boolean
+	 */
+	public function delete($userId)
+	{
+		return $this->destroy($userId);
 	}
 
 
@@ -3034,10 +3046,169 @@ class NAILS_User_model extends NAILS_Model
 	 * @param  array $mergeIds An array of user ID's to merge into $userId
 	 * @return boolean
 	 */
-	public function merge($userId, $mergeIds)
+	public function merge($userId, $mergeIds, $preview = false)
 	{
-		$this->_set_error('This facility has not been completed.');
-		return false;
+		if (!is_numeric($userId)) {
+
+			$this->_set_error('"userId" must be numeric.');
+			return false;
+		}
+
+		if (!is_array($mergeIds)) {
+
+			$this->_set_error('"mergeIDs" must be an array.');
+			return false;
+		}
+
+		for($i=0; $i<count($mergeIds); $i++) {
+
+			if (!is_numeric($mergeIds[$i])) {
+				$this->_set_error('"mergeIDs" must contain only numerical values.');
+				return false;
+			}
+
+			$mergeIds[$i] = $this->db->escape((int) $mergeIds[$i]);
+		}
+
+		if (in_array($userId, $mergeIds)) {
+
+			$this->_set_error('"userId" cannot be listed as a merge user.');
+			return false;
+		}
+
+		// --------------------------------------------------------------------------
+
+		//	Look for tables which contain a user ID column in them.
+		$userCols   = array();
+		$userCols[] = 'user_id';
+		$userCols[] = 'userId';
+		$userCols[] = 'created_by';
+		$userCols[] = 'createdBy';
+		$userCols[] = 'modified_by';
+		$userCols[] = 'modifiedBy';
+		$userCols[] = 'author_id';
+		$userCols[] = 'authorId';
+
+		$userColsStr   = "'" . implode("','", $userCols) . "'";
+
+		$ignoreTables   = array();
+		$ignoreTables[] = NAILS_DB_PREFIX . 'user';
+		$ignoreTables[] = NAILS_DB_PREFIX . 'user_meta';
+		$ignoreTables[] = NAILS_DB_PREFIX . 'user_auth_two_factor_question';
+		$ignoreTables[] = NAILS_DB_PREFIX . 'user_auth_two_factor_token';
+		$ignoreTables[] = NAILS_DB_PREFIX . 'user_social';
+
+		$ignoreTablesStr   = "'" . implode("','", $ignoreTables) . "'";
+
+		$tables = array();
+		$query	= " SELECT COLUMN_NAME,TABLE_NAME
+					FROM INFORMATION_SCHEMA.COLUMNS
+					WHERE COLUMN_NAME IN (" . $userColsStr . ")
+					AND TABLE_NAME NOT IN (" . $ignoreTablesStr . ")
+					AND TABLE_SCHEMA='" . DEPLOY_DB_DATABASE . "';";
+
+		$result = $this->db->query($query);
+
+		while($table = $result->_fetch_object()) {
+
+			if (!isset($tables[$table->TABLE_NAME])) {
+
+				$tables[$table->TABLE_NAME] = new stdClass();
+				$tables[$table->TABLE_NAME]->name = $table->TABLE_NAME;
+				$tables[$table->TABLE_NAME]->columns = array();
+			}
+
+			$tables[$table->TABLE_NAME]->columns[] = $table->COLUMN_NAME;
+		}
+
+		$tables = array_values($tables);
+
+		//	Grab a count of the number of rows which will be affected
+		for ($i=0; $i<count($tables); $i++) {
+
+			$columnConditional = array();
+			foreach ($tables[$i]->columns as $column) {
+
+				$columnConditional[] = $column . ' IN (' . implode(',', $mergeIds) . ')';
+			}
+
+			$query	= 'SELECT COUNT(*) as numrows FROM  ' . $tables[$i]->name . ' WHERE ' . implode(' OR ', $columnConditional);
+			$result = $this->db->query($query)->row();
+
+			if (empty($result->numrows)) {
+
+				$tables[$i] = null;
+
+			} else {
+
+				$tables[$i]->numRows = $result->numrows;
+			}
+		}
+
+		$tables = array_values(array_filter($tables));
+
+		// --------------------------------------------------------------------------
+
+		if ($preview) {
+
+			$out = new stdClass;
+			$out->user = $this->get_by_id($userId);
+			$out->merge = array();
+
+			foreach($mergeIds AS $mergeUserId) {
+
+				$out->merge[] = $this->get_by_id($mergeUserId);
+			}
+
+			$out->tables = $tables;
+			$out->ignoreTables = $ignoreTables;
+
+		} else {
+
+			$this->db->trans_begin();
+
+			//	For each table update the user columns
+			for ($i=0; $i<count($tables); $i++) {
+
+				foreach($tables[$i]->columns as $column) {
+
+					$this->db->set($column, $userId);
+					$this->db->where_in($column, $mergeIds);
+					if (!$this->db->update($tables[$i]->name)) {
+
+						$errMsg = 'Failed to migrate column "' . $column . '" in table "' . $tables[$i]->name . '"';
+						$this->_set_error($errMsg);
+						$this->db->trans_rollback();
+						return false;
+					}
+				}
+			}
+
+			//	Now delete each user
+			for ($i=0; $i<count($mergeIds); $i++) {
+
+				if (!$this->destroy($mergeIds[$i])) {
+
+					$errMsg = 'Failed to delete user "' . $mergeIds[$i] . '" ';
+					$this->_set_error($errMsg);
+					$this->db->trans_rollback();
+					return false;
+				}
+			}
+
+			if ($this->db->trans_status() === FALSE)
+			{
+				$this->db->trans_rollback();
+				$out = false;
+
+			} else {
+
+				$this->db->trans_commit();
+				$out = true;
+			}
+		}
+
+		return $out;
 	}
 
 
