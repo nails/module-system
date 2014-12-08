@@ -133,6 +133,66 @@ class NAILS_User_group_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
+	public function changeUserGroup($userIds, $newGroupId)
+	{
+		$group = $this->get_by_id($newGroupId);
+
+		if (empty($group)) {
+
+			$this->_set_error('"' . $newGroupId . '" is not a valid group ID.');
+			return false;
+		}
+
+		$users = $this->user_model->get_by_ids((array) $userIds);
+
+		$this->db->trans_begin();
+
+		foreach($users AS $user) {
+
+			$preMethod  = 'changeUserGroup_pre_' . $user->group_slug . '_' . $group->slug;
+			$postMethod = 'changeUserGroup_post_' . $user->group_slug . '_' . $group->slug;
+
+			if (method_exists($this, $preMethod)) {
+
+				if (!$this->$preMethod($user)) {
+
+					$this->db->trans_rollback();
+					$msg = '"' . $preMethod. '()" returned false for user ' . $user->id . ', rolling back changes';
+					$this->_set_error($msg);
+					return false;
+				}
+			}
+
+			$data = array('group_id' => $group->id);
+			if (!$this->user_model->update($user->id, $data)) {
+
+				$this->db->trans_rollback();
+				$msg = 'Failed to update group ID for user ' . $user->id;
+				$this->_set_error($msg);
+				return false;
+			}
+
+			if (method_exists($this, $postMethod)) {
+
+				if (!$this->$postMethod($user))
+				{
+					$this->db->trans_rollback();
+					$msg = '"' . $postMethod. '()" returned false for user ' . $user->id . ', rolling back changes';
+					$this->_set_error($msg);
+					return false;
+				}
+			}
+
+		}
+
+		$this->db->trans_commit();
+		return true;
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
 	protected function _format_object( &$obj )
 	{
 		$obj->acl = @unserialize( $obj->acl );
