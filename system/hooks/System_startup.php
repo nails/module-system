@@ -72,12 +72,13 @@ class NAILS_System_startup
 		//	Default app constants (if not already defined)
 		//	These should be specified in config/app.php
 
-		if ( ! defined( 'NAILS_DB_PREFIX' ) )			define( 'NAILS_DB_PREFIX',			'nails_' );
-		if ( ! defined( 'APP_PRIVATE_KEY' ) )			define( 'APP_PRIVATE_KEY',			'' );
-		if ( ! defined( 'APP_NAME' ) )					define( 'APP_NAME',					'Untitled' );
-		if ( ! defined( 'APP_STAGING_USERPASS' ) )		define( 'APP_STAGING_USERPASS',		serialize( array() ) );
-		if ( ! defined( 'APP_SSL_ROUTING' ) )			define( 'APP_SSL_ROUTING',			FALSE );
-		if ( ! defined( 'APP_NATIVE_LOGIN_USING' ) )	define( 'APP_NATIVE_LOGIN_USING',	'BOTH' );	//	[EMAIL|USERNAME|BOTH]
+		if (!defined('NAILS_DB_PREFIX'))             define('NAILS_DB_PREFIX',             'nails_');
+		if (!defined('APP_PRIVATE_KEY'))             define('APP_PRIVATE_KEY',             '');
+		if (!defined('APP_NAME'))                    define('APP_NAME',                    'Untitled');
+		if (!defined('APP_STAGING_USERPASS'))        define('APP_STAGING_USERPASS',        serialize(array()));
+		if (!defined('APP_SSL_ROUTING'))             define('APP_SSL_ROUTING',             FALSE);
+		if (!defined('APP_NATIVE_LOGIN_USING'))      define('APP_NATIVE_LOGIN_USING',      'BOTH');	//	[EMAIL|USERNAME|BOTH]
+		if (!defined('APP_ERROR_REPORTING_HANDLER')) define('APP_ERROR_REPORTING_HANDLER', 'NAILS');
 
 		// --------------------------------------------------------------------------
 
