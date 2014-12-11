@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 
 /**
@@ -27,92 +27,98 @@ class NAILS_System_startup
 	protected function _define_constants()
 	{
 		//	Define some generic Nails constants, allow dev to override these - just in case
-		if ( ! defined( 'NAILS_PACKAGE_NAME' ) )		define( 'NAILS_PACKAGE_NAME',		'Nails' );
-		if ( ! defined( 'NAILS_PACKAGE_URL' ) )			define( 'NAILS_PACKAGE_URL',		'http://nailsapp.co.uk/' );
-		if ( ! defined( 'NAILS_APP_STRAPLINE' ) )		define( 'NAILS_APP_STRAPLINE',		'A webapp powered by <a href="' . NAILS_PACKAGE_URL . '">' . NAILS_PACKAGE_NAME . '</a>, ooh la la!' );
+		if (!defined('NAILS_PACKAGE_NAME'))  define('NAILS_PACKAGE_NAME',  'Nails');
+		if (!defined('NAILS_PACKAGE_URL'))   define('NAILS_PACKAGE_URL',   'http://nailsapp.co.uk/');
+		if (!defined('NAILS_APP_STRAPLINE')) define('NAILS_APP_STRAPLINE', 'A webapp powered by <a href="' . NAILS_PACKAGE_URL . '">' . NAILS_PACKAGE_NAME . '</a>, ooh la la!');
 
 		// --------------------------------------------------------------------------
 
 		//	Environment
-		if ( ! defined( 'ENVIRONMENT' ) ) define( 'ENVIRONMENT', 'DEVELOPMENT' );
+		if (!defined('ENVIRONMENT')) define('ENVIRONMENT', 'DEVELOPMENT');
 
 		// --------------------------------------------------------------------------
 
 		//	Cache Directory
-		if ( ! defined( 'DEPLOY_CACHE_DIR' ) ) define( 'DEPLOY_CACHE_DIR', FCPATH . APPPATH . 'cache/' );
+		if (!defined('DEPLOY_CACHE_DIR')) define('DEPLOY_CACHE_DIR', FCPATH . APPPATH . 'cache/');
+
+		// --------------------------------------------------------------------------
+
+		//	Default Error Handler
+		if (!defined('DEPLOY_ERROR_REPORTING_HANDLER')) define('DEPLOY_ERROR_REPORTING_HANDLER', 'NAILS');
 
 		// --------------------------------------------------------------------------
 
 		//	Check routes_app.php exists
-		if ( ! defined( 'NAILS_STARTUP_GENERATE_APP_ROUTES' ) ) :
+		if (!defined('NAILS_STARTUP_GENERATE_APP_ROUTES')) {
 
-			if ( is_file( DEPLOY_CACHE_DIR . 'routes_app.php' ) ) :
+			if (is_file(DEPLOY_CACHE_DIR . 'routes_app.php')) {
 
-				define( 'NAILS_STARTUP_GENERATE_APP_ROUTES', FALSE );
+				define('NAILS_STARTUP_GENERATE_APP_ROUTES', FALSE);
 
-			else :
+			} else {
 
 				//	Not found, crude hook seeing as basically nothing has loaded yet
-				define( 'NAILS_STARTUP_GENERATE_APP_ROUTES', TRUE );
-
-			endif;
-
-		endif;
+				define('NAILS_STARTUP_GENERATE_APP_ROUTES', TRUE);
+			}
+		}
 
 		// --------------------------------------------------------------------------
 
 		//	Database
-		if ( ! defined( 'DEPLOY_DB_HOST' ) )		define( 'DEPLOY_DB_HOST',		'localhost' );
-		if ( ! defined( 'DEPLOY_DB_USERNAME' ) )	define( 'DEPLOY_DB_USERNAME',	'' );
-		if ( ! defined( 'DEPLOY_DB_PASSWORD' ) )	define( 'DEPLOY_DB_PASSWORD',	'' );
-		if ( ! defined( 'DEPLOY_DB_DATABASE' ) )	define( 'DEPLOY_DB_DATABASE',	'' );
+		if (!defined('DEPLOY_DB_HOST'))     define('DEPLOY_DB_HOST',     'localhost');
+		if (!defined('DEPLOY_DB_USERNAME')) define('DEPLOY_DB_USERNAME', '');
+		if (!defined('DEPLOY_DB_PASSWORD')) define('DEPLOY_DB_PASSWORD', '');
+		if (!defined('DEPLOY_DB_DATABASE')) define('DEPLOY_DB_DATABASE', '');
 
 		// --------------------------------------------------------------------------
 
-		//	Default app constants (if not already defined)
-		//	These should be specified in config/app.php
+		/**
+		 * Default app constants (if not already defined)
+		 * These should be specified in config/app.php
+		 */
 
-		if (!defined('NAILS_DB_PREFIX'))             define('NAILS_DB_PREFIX',             'nails_');
-		if (!defined('APP_PRIVATE_KEY'))             define('APP_PRIVATE_KEY',             '');
-		if (!defined('APP_NAME'))                    define('APP_NAME',                    'Untitled');
-		if (!defined('APP_STAGING_USERPASS'))        define('APP_STAGING_USERPASS',        serialize(array()));
-		if (!defined('APP_SSL_ROUTING'))             define('APP_SSL_ROUTING',             FALSE);
-		if (!defined('APP_NATIVE_LOGIN_USING'))      define('APP_NATIVE_LOGIN_USING',      'BOTH');	//	[EMAIL|USERNAME|BOTH]
-		if (!defined('APP_ERROR_REPORTING_HANDLER')) define('APP_ERROR_REPORTING_HANDLER', 'NAILS');
+		if (!defined('NAILS_DB_PREFIX'))        define('NAILS_DB_PREFIX',        'nails_');
+		if (!defined('APP_PRIVATE_KEY'))        define('APP_PRIVATE_KEY',        '');
+		if (!defined('APP_NAME'))               define('APP_NAME',               'Untitled');
+		if (!defined('APP_STAGING_USERPASS'))   define('APP_STAGING_USERPASS',   serialize(array()));
+		if (!defined('APP_SSL_ROUTING'))        define('APP_SSL_ROUTING',        FALSE);
+		if (!defined('APP_NATIVE_LOGIN_USING')) define('APP_NATIVE_LOGIN_USING', 'BOTH'); //	[EMAIL|USERNAME|BOTH]
 
 		// --------------------------------------------------------------------------
 
 		//	Deployment specific constants (if not already defined)
 		//	These should be specified in config/deploy.php
 
-		if ( ! defined( 'DEPLOY_SYSTEM_TIMEZONE') ) define( 'DEPLOY_SYSTEM_TIMEZONE', 'UTC' );
+		if (!defined('DEPLOY_SYSTEM_TIMEZONE')) define('DEPLOY_SYSTEM_TIMEZONE', 'UTC');
 
 		//	If this is changed, update CORE_NAILS_Log.php too
-		if ( ! defined( 'DEPLOY_LOG_DIR') ) define( 'DEPLOY_LOG_DIR', FCPATH . APPPATH . 'logs/' );
+		if (!defined('DEPLOY_LOG_DIR')) define('DEPLOY_LOG_DIR', FCPATH . APPPATH . 'logs/');
 
 		// --------------------------------------------------------------------------
 
 		//	Email
-		if ( ! defined( 'APP_DEVELOPER_EMAIL' ) )	define( 'APP_DEVELOPER_EMAIL',	'' );
-		if ( ! defined( 'EMAIL_DEBUG' ) )			define( 'EMAIL_DEBUG',			FALSE );
-		if ( ! defined( 'EMAIL_OVERRIDE' ) )		define( 'EMAIL_OVERRIDE',		'' );
-		if ( ! defined( 'DEPLOY_EMAIL_HOST' ) )		define( 'DEPLOY_EMAIL_HOST',	'127.0.0.1' );
-		if ( ! defined( 'DEPLOY_EMAIL_USER' ) )		define( 'DEPLOY_EMAIL_USER',	'' );
-		if ( ! defined( 'DEPLOY_EMAIL_PASS' ) )		define( 'DEPLOY_EMAIL_PASS',	'' );
-		if ( ! defined( 'DEPLOY_EMAIL_PORT' ) )		define( 'DEPLOY_EMAIL_PORT',	'' );
+		if (!defined('APP_DEVELOPER_EMAIL')) define('APP_DEVELOPER_EMAIL', '');
+		if (!defined('EMAIL_DEBUG'))         define('EMAIL_DEBUG',         FALSE);
+		if (!defined('EMAIL_OVERRIDE'))      define('EMAIL_OVERRIDE',      '');
+		if (!defined('DEPLOY_EMAIL_HOST'))   define('DEPLOY_EMAIL_HOST',   '127.0.0.1');
+		if (!defined('DEPLOY_EMAIL_USER'))   define('DEPLOY_EMAIL_USER',   '');
+		if (!defined('DEPLOY_EMAIL_PASS'))   define('DEPLOY_EMAIL_PASS',   '');
+		if (!defined('DEPLOY_EMAIL_PORT'))   define('DEPLOY_EMAIL_PORT',   '');
 
 		// --------------------------------------------------------------------------
 
 		//	CDN
-		if ( ! defined( 'APP_CDN_DRIVER' ) )	define( 'APP_CDN_DRIVER',	'LOCAL' );
-		if ( ! defined( 'DEPLOY_CDN_MAGIC') )	define( 'DEPLOY_CDN_MAGIC',	'' );
-		if ( ! defined( 'DEPLOY_CDN_PATH') )	define( 'DEPLOY_CDN_PATH',	FCPATH . 'assets/uploads/' );
+		if (!defined('APP_CDN_DRIVER'))   define('APP_CDN_DRIVER',   'LOCAL');
+		if (!defined('DEPLOY_CDN_MAGIC')) define('DEPLOY_CDN_MAGIC', '');
+		if (!defined('DEPLOY_CDN_PATH'))  define('DEPLOY_CDN_PATH',  FCPATH . 'assets/uploads/');
 
-		//	Define how long CDN items should be cached for, this is a maximum age in seconds
-		//	According to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html this shouldn't be
-		//	more than 1 year.
+		/**
+		 * Define how long CDN items should be cached for, this is a maximum age in seconds
+		 * According to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html this shouldn't be
+		 * more than 1 year.
+		 */
 
-		if ( ! defined( 'APP_CDN_CACHE_MAX_AGE' ) ) define( 'APP_CDN_CACHE_MAX_AGE', '31536000' ); // 1 year
+		if (!defined('APP_CDN_CACHE_MAX_AGE')) define('APP_CDN_CACHE_MAX_AGE', '31536000'); // 1 year
 
 		// --------------------------------------------------------------------------
 
@@ -120,315 +126,310 @@ class NAILS_System_startup
 		//	If a SECURE_BASE_URL is not defined then assume the secure URL is simply
 		//	https://BASE_URL
 
-		if ( ! defined( 'SECURE_BASE_URL' ) ) :
+		if (!defined('SECURE_BASE_URL')) {
 
 			//	Not defined, play it safe and just copy the BASE_URL
-			define( 'SECURE_BASE_URL', BASE_URL );
-
-		endif;
+			define('SECURE_BASE_URL', BASE_URL);
+		}
 
 		// --------------------------------------------------------------------------
 
 		//	Set NAILS_URL here as it's dependent on knowing whether SSL is set or not
 		//	and if the current page is secure.
 
-		if ( ! defined( 'NAILS_URL') ) :
+		if (!defined('NAILS_URL')) {
 
-			if ( APP_SSL_ROUTING && page_is_secure() ) :
+			if (APP_SSL_ROUTING && page_is_secure()) {
 
-				define( 'NAILS_URL', SECURE_BASE_URL . 'vendor/nailsapp/' );
+				define('NAILS_URL', SECURE_BASE_URL . 'vendor/nailsapp/');
 
-			else :
+			} else {
 
-				define( 'NAILS_URL', BASE_URL . 'vendor/nailsapp/' );
-
-			endif;
-
-		endif;
+				define('NAILS_URL', BASE_URL . 'vendor/nailsapp/');
+			}
+		}
 
 		// --------------------------------------------------------------------------
 
 		//	Set the NAILS_ASSETS_URL
-		if ( ! defined( 'NAILS_ASSETS_URL') ) :
+		if (!defined('NAILS_ASSETS_URL')) {
 
-			define( 'NAILS_ASSETS_URL', NAILS_URL . 'module-asset/asset/assets/' );
-
-		endif;
+			define('NAILS_ASSETS_URL', NAILS_URL . 'module-asset/asset/assets/');
+		}
 
 		// --------------------------------------------------------------------------
 
 		//	Database Debug
-		if ( ! defined( 'DEPLOY_DB_DEBUG' ) ) :
+		if (!defined('DEPLOY_DB_DEBUG')) {
 
-			if ( strtoupper( ENVIRONMENT ) == 'PRODUCTION' ) :
+			if (strtoupper(ENVIRONMENT) == 'PRODUCTION') {
 
-				define( 'DEPLOY_DB_DEBUG', FALSE );
+				define('DEPLOY_DB_DEBUG', FALSE);
 
-			else :
+			} else {
 
-				define( 'DEPLOY_DB_DEBUG', TRUE );
-
-			endif;
-
-		endif;
+				define('DEPLOY_DB_DEBUG', TRUE);
+			}
+		}
 
 		// --------------------------------------------------------------------------
 
-		//	Bootstrap columns
-		//	Define constants for Bootstrap columns and offsets. Two flavours of the
-		//	Bootstrap grid are available: 12 col and 24 col. Modules use these constants
-		//	to specify their column widths so that it can accommodate either grid cleanly.
+		/**
+		 * Bootstrap columns
+		 * Define constants for Bootstrap columns and offsets. Two flavours of the
+		 * Bootstrap grid are available: 12 col and 24 col. Modules use these constants
+		 * to specify their column widths so that it can accommodate either grid cleanly.
+		 */
 
 		//	Firstly, which grid? Assume 12 unless specified otherwise
-		if ( ! defined( 'APP_BOOTSTRAP_GRID' ) ) :
+		if (!defined('APP_BOOTSTRAP_GRID')) {
 
-			define( 'APP_BOOTSTRAP_GRID', 12 );
+			define('APP_BOOTSTRAP_GRID', 12);
+		}
 
-		endif;
-
-		switch( (int) APP_BOOTSTRAP_GRID ) :
+		switch((int) APP_BOOTSTRAP_GRID) {
 
 			case 24 :
 
 				//	COLUMNS
 
 				//	LG
-				if ( ! defined( 'BS_COL_LG_1' ) ) define( 'BS_COL_LG_1', 'col-lg-2' );
-				if ( ! defined( 'BS_COL_LG_2' ) ) define( 'BS_COL_LG_2', 'col-lg-4' );
-				if ( ! defined( 'BS_COL_LG_3' ) ) define( 'BS_COL_LG_3', 'col-lg-6' );
-				if ( ! defined( 'BS_COL_LG_4' ) ) define( 'BS_COL_LG_4', 'col-lg-8' );
-				if ( ! defined( 'BS_COL_LG_5' ) ) define( 'BS_COL_LG_5', 'col-lg-10' );
-				if ( ! defined( 'BS_COL_LG_6' ) ) define( 'BS_COL_LG_6', 'col-lg-12' );
-				if ( ! defined( 'BS_COL_LG_7' ) ) define( 'BS_COL_LG_7', 'col-lg-14' );
-				if ( ! defined( 'BS_COL_LG_8' ) ) define( 'BS_COL_LG_8', 'col-lg-16' );
-				if ( ! defined( 'BS_COL_LG_9' ) ) define( 'BS_COL_LG_9', 'col-lg-18' );
-				if ( ! defined( 'BS_COL_LG_10' ) ) define( 'BS_COL_LG_10', 'col-lg-20' );
-				if ( ! defined( 'BS_COL_LG_11' ) ) define( 'BS_COL_LG_11', 'col-lg-22' );
-				if ( ! defined( 'BS_COL_LG_12' ) ) define( 'BS_COL_LG_12', 'col-lg-24' );
+				if (!defined('BS_COL_LG_1')) define('BS_COL_LG_1', 'col-lg-2');
+				if (!defined('BS_COL_LG_2')) define('BS_COL_LG_2', 'col-lg-4');
+				if (!defined('BS_COL_LG_3')) define('BS_COL_LG_3', 'col-lg-6');
+				if (!defined('BS_COL_LG_4')) define('BS_COL_LG_4', 'col-lg-8');
+				if (!defined('BS_COL_LG_5')) define('BS_COL_LG_5', 'col-lg-10');
+				if (!defined('BS_COL_LG_6')) define('BS_COL_LG_6', 'col-lg-12');
+				if (!defined('BS_COL_LG_7')) define('BS_COL_LG_7', 'col-lg-14');
+				if (!defined('BS_COL_LG_8')) define('BS_COL_LG_8', 'col-lg-16');
+				if (!defined('BS_COL_LG_9')) define('BS_COL_LG_9', 'col-lg-18');
+				if (!defined('BS_COL_LG_10')) define('BS_COL_LG_10', 'col-lg-20');
+				if (!defined('BS_COL_LG_11')) define('BS_COL_LG_11', 'col-lg-22');
+				if (!defined('BS_COL_LG_12')) define('BS_COL_LG_12', 'col-lg-24');
 
 				//	MD
-				if ( ! defined( 'BS_COL_MD_1' ) ) define( 'BS_COL_MD_1', 'col-md-2' );
-				if ( ! defined( 'BS_COL_MD_2' ) ) define( 'BS_COL_MD_2', 'col-md-4' );
-				if ( ! defined( 'BS_COL_MD_3' ) ) define( 'BS_COL_MD_3', 'col-md-6' );
-				if ( ! defined( 'BS_COL_MD_4' ) ) define( 'BS_COL_MD_4', 'col-md-8' );
-				if ( ! defined( 'BS_COL_MD_5' ) ) define( 'BS_COL_MD_5', 'col-md-10' );
-				if ( ! defined( 'BS_COL_MD_6' ) ) define( 'BS_COL_MD_6', 'col-md-12' );
-				if ( ! defined( 'BS_COL_MD_7' ) ) define( 'BS_COL_MD_7', 'col-md-14' );
-				if ( ! defined( 'BS_COL_MD_8' ) ) define( 'BS_COL_MD_8', 'col-md-16' );
-				if ( ! defined( 'BS_COL_MD_9' ) ) define( 'BS_COL_MD_9', 'col-md-18' );
-				if ( ! defined( 'BS_COL_MD_10' ) ) define( 'BS_COL_MD_10', 'col-md-20' );
-				if ( ! defined( 'BS_COL_MD_11' ) ) define( 'BS_COL_MD_11', 'col-md-22' );
-				if ( ! defined( 'BS_COL_MD_12' ) ) define( 'BS_COL_MD_12', 'col-md-24' );
+				if (!defined('BS_COL_MD_1')) define('BS_COL_MD_1', 'col-md-2');
+				if (!defined('BS_COL_MD_2')) define('BS_COL_MD_2', 'col-md-4');
+				if (!defined('BS_COL_MD_3')) define('BS_COL_MD_3', 'col-md-6');
+				if (!defined('BS_COL_MD_4')) define('BS_COL_MD_4', 'col-md-8');
+				if (!defined('BS_COL_MD_5')) define('BS_COL_MD_5', 'col-md-10');
+				if (!defined('BS_COL_MD_6')) define('BS_COL_MD_6', 'col-md-12');
+				if (!defined('BS_COL_MD_7')) define('BS_COL_MD_7', 'col-md-14');
+				if (!defined('BS_COL_MD_8')) define('BS_COL_MD_8', 'col-md-16');
+				if (!defined('BS_COL_MD_9')) define('BS_COL_MD_9', 'col-md-18');
+				if (!defined('BS_COL_MD_10')) define('BS_COL_MD_10', 'col-md-20');
+				if (!defined('BS_COL_MD_11')) define('BS_COL_MD_11', 'col-md-22');
+				if (!defined('BS_COL_MD_12')) define('BS_COL_MD_12', 'col-md-24');
 
 				//	SM
-				if ( ! defined( 'BS_COL_SM_1' ) ) define( 'BS_COL_SM_1', 'col-sm-2' );
-				if ( ! defined( 'BS_COL_SM_2' ) ) define( 'BS_COL_SM_2', 'col-sm-4' );
-				if ( ! defined( 'BS_COL_SM_3' ) ) define( 'BS_COL_SM_3', 'col-sm-6' );
-				if ( ! defined( 'BS_COL_SM_4' ) ) define( 'BS_COL_SM_4', 'col-sm-8' );
-				if ( ! defined( 'BS_COL_SM_5' ) ) define( 'BS_COL_SM_5', 'col-sm-10' );
-				if ( ! defined( 'BS_COL_SM_6' ) ) define( 'BS_COL_SM_6', 'col-sm-12' );
-				if ( ! defined( 'BS_COL_SM_7' ) ) define( 'BS_COL_SM_7', 'col-sm-14' );
-				if ( ! defined( 'BS_COL_SM_8' ) ) define( 'BS_COL_SM_8', 'col-sm-16' );
-				if ( ! defined( 'BS_COL_SM_9' ) ) define( 'BS_COL_SM_9', 'col-sm-18' );
-				if ( ! defined( 'BS_COL_SM_10' ) ) define( 'BS_COL_SM_10', 'col-sm-20' );
-				if ( ! defined( 'BS_COL_SM_11' ) ) define( 'BS_COL_SM_11', 'col-sm-22' );
-				if ( ! defined( 'BS_COL_SM_12' ) ) define( 'BS_COL_SM_12', 'col-sm-24' );
+				if (!defined('BS_COL_SM_1')) define('BS_COL_SM_1', 'col-sm-2');
+				if (!defined('BS_COL_SM_2')) define('BS_COL_SM_2', 'col-sm-4');
+				if (!defined('BS_COL_SM_3')) define('BS_COL_SM_3', 'col-sm-6');
+				if (!defined('BS_COL_SM_4')) define('BS_COL_SM_4', 'col-sm-8');
+				if (!defined('BS_COL_SM_5')) define('BS_COL_SM_5', 'col-sm-10');
+				if (!defined('BS_COL_SM_6')) define('BS_COL_SM_6', 'col-sm-12');
+				if (!defined('BS_COL_SM_7')) define('BS_COL_SM_7', 'col-sm-14');
+				if (!defined('BS_COL_SM_8')) define('BS_COL_SM_8', 'col-sm-16');
+				if (!defined('BS_COL_SM_9')) define('BS_COL_SM_9', 'col-sm-18');
+				if (!defined('BS_COL_SM_10')) define('BS_COL_SM_10', 'col-sm-20');
+				if (!defined('BS_COL_SM_11')) define('BS_COL_SM_11', 'col-sm-22');
+				if (!defined('BS_COL_SM_12')) define('BS_COL_SM_12', 'col-sm-24');
 
 				//	XS
-				if ( ! defined( 'BS_COL_XS_1' ) ) define( 'BS_COL_XS_1', 'col-xs-2' );
-				if ( ! defined( 'BS_COL_XS_2' ) ) define( 'BS_COL_XS_2', 'col-xs-4' );
-				if ( ! defined( 'BS_COL_XS_3' ) ) define( 'BS_COL_XS_3', 'col-xs-6' );
-				if ( ! defined( 'BS_COL_XS_4' ) ) define( 'BS_COL_XS_4', 'col-xs-8' );
-				if ( ! defined( 'BS_COL_XS_5' ) ) define( 'BS_COL_XS_5', 'col-xs-10' );
-				if ( ! defined( 'BS_COL_XS_6' ) ) define( 'BS_COL_XS_6', 'col-xs-12' );
-				if ( ! defined( 'BS_COL_XS_7' ) ) define( 'BS_COL_XS_7', 'col-xs-14' );
-				if ( ! defined( 'BS_COL_XS_8' ) ) define( 'BS_COL_XS_8', 'col-xs-16' );
-				if ( ! defined( 'BS_COL_XS_9' ) ) define( 'BS_COL_XS_9', 'col-xs-18' );
-				if ( ! defined( 'BS_COL_XS_10' ) ) define( 'BS_COL_XS_10', 'col-xs-20' );
-				if ( ! defined( 'BS_COL_XS_11' ) ) define( 'BS_COL_XS_11', 'col-xs-22' );
-				if ( ! defined( 'BS_COL_XS_12' ) ) define( 'BS_COL_XS_12', 'col-xs-24' );
+				if (!defined('BS_COL_XS_1')) define('BS_COL_XS_1', 'col-xs-2');
+				if (!defined('BS_COL_XS_2')) define('BS_COL_XS_2', 'col-xs-4');
+				if (!defined('BS_COL_XS_3')) define('BS_COL_XS_3', 'col-xs-6');
+				if (!defined('BS_COL_XS_4')) define('BS_COL_XS_4', 'col-xs-8');
+				if (!defined('BS_COL_XS_5')) define('BS_COL_XS_5', 'col-xs-10');
+				if (!defined('BS_COL_XS_6')) define('BS_COL_XS_6', 'col-xs-12');
+				if (!defined('BS_COL_XS_7')) define('BS_COL_XS_7', 'col-xs-14');
+				if (!defined('BS_COL_XS_8')) define('BS_COL_XS_8', 'col-xs-16');
+				if (!defined('BS_COL_XS_9')) define('BS_COL_XS_9', 'col-xs-18');
+				if (!defined('BS_COL_XS_10')) define('BS_COL_XS_10', 'col-xs-20');
+				if (!defined('BS_COL_XS_11')) define('BS_COL_XS_11', 'col-xs-22');
+				if (!defined('BS_COL_XS_12')) define('BS_COL_XS_12', 'col-xs-24');
 
 				// --------------------------------------------------------------------------
 
 				//	OFFSETS
 
 				//	LG
-				if ( ! defined( 'BS_COL_LG_OFFSET_1' ) ) define( 'BS_COL_LG_OFFSET_1', 'col-lg-offset-2' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_2' ) ) define( 'BS_COL_LG_OFFSET_2', 'col-lg-offset-4' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_3' ) ) define( 'BS_COL_LG_OFFSET_3', 'col-lg-offset-6' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_4' ) ) define( 'BS_COL_LG_OFFSET_4', 'col-lg-offset-8' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_5' ) ) define( 'BS_COL_LG_OFFSET_5', 'col-lg-offset-10' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_6' ) ) define( 'BS_COL_LG_OFFSET_6', 'col-lg-offset-12' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_7' ) ) define( 'BS_COL_LG_OFFSET_7', 'col-lg-offset-14' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_8' ) ) define( 'BS_COL_LG_OFFSET_8', 'col-lg-offset-16' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_9' ) ) define( 'BS_COL_LG_OFFSET_9', 'col-lg-offset-18' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_10' ) ) define( 'BS_COL_LG_OFFSET_10', 'col-lg-offset-20' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_11' ) ) define( 'BS_COL_LG_OFFSET_11', 'col-lg-offset-22' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_12' ) ) define( 'BS_COL_LG_OFFSET_12', 'col-lg-offset-24' );
+				if (!defined('BS_COL_LG_OFFSET_1')) define('BS_COL_LG_OFFSET_1', 'col-lg-offset-2');
+				if (!defined('BS_COL_LG_OFFSET_2')) define('BS_COL_LG_OFFSET_2', 'col-lg-offset-4');
+				if (!defined('BS_COL_LG_OFFSET_3')) define('BS_COL_LG_OFFSET_3', 'col-lg-offset-6');
+				if (!defined('BS_COL_LG_OFFSET_4')) define('BS_COL_LG_OFFSET_4', 'col-lg-offset-8');
+				if (!defined('BS_COL_LG_OFFSET_5')) define('BS_COL_LG_OFFSET_5', 'col-lg-offset-10');
+				if (!defined('BS_COL_LG_OFFSET_6')) define('BS_COL_LG_OFFSET_6', 'col-lg-offset-12');
+				if (!defined('BS_COL_LG_OFFSET_7')) define('BS_COL_LG_OFFSET_7', 'col-lg-offset-14');
+				if (!defined('BS_COL_LG_OFFSET_8')) define('BS_COL_LG_OFFSET_8', 'col-lg-offset-16');
+				if (!defined('BS_COL_LG_OFFSET_9')) define('BS_COL_LG_OFFSET_9', 'col-lg-offset-18');
+				if (!defined('BS_COL_LG_OFFSET_10')) define('BS_COL_LG_OFFSET_10', 'col-lg-offset-20');
+				if (!defined('BS_COL_LG_OFFSET_11')) define('BS_COL_LG_OFFSET_11', 'col-lg-offset-22');
+				if (!defined('BS_COL_LG_OFFSET_12')) define('BS_COL_LG_OFFSET_12', 'col-lg-offset-24');
 
 				//	MD
-				if ( ! defined( 'BS_COL_MD_OFFSET_1' ) ) define( 'BS_COL_MD_OFFSET_1', 'col-md-offset-2' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_2' ) ) define( 'BS_COL_MD_OFFSET_2', 'col-md-offset-4' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_3' ) ) define( 'BS_COL_MD_OFFSET_3', 'col-md-offset-6' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_4' ) ) define( 'BS_COL_MD_OFFSET_4', 'col-md-offset-8' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_5' ) ) define( 'BS_COL_MD_OFFSET_5', 'col-md-offset-10' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_6' ) ) define( 'BS_COL_MD_OFFSET_6', 'col-md-offset-12' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_7' ) ) define( 'BS_COL_MD_OFFSET_7', 'col-md-offset-14' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_8' ) ) define( 'BS_COL_MD_OFFSET_8', 'col-md-offset-16' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_9' ) ) define( 'BS_COL_MD_OFFSET_9', 'col-md-offset-18' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_10' ) ) define( 'BS_COL_MD_OFFSET_10', 'col-md-offset-20' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_11' ) ) define( 'BS_COL_MD_OFFSET_11', 'col-md-offset-22' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_12' ) ) define( 'BS_COL_MD_OFFSET_12', 'col-md-offset-24' );
+				if (!defined('BS_COL_MD_OFFSET_1')) define('BS_COL_MD_OFFSET_1', 'col-md-offset-2');
+				if (!defined('BS_COL_MD_OFFSET_2')) define('BS_COL_MD_OFFSET_2', 'col-md-offset-4');
+				if (!defined('BS_COL_MD_OFFSET_3')) define('BS_COL_MD_OFFSET_3', 'col-md-offset-6');
+				if (!defined('BS_COL_MD_OFFSET_4')) define('BS_COL_MD_OFFSET_4', 'col-md-offset-8');
+				if (!defined('BS_COL_MD_OFFSET_5')) define('BS_COL_MD_OFFSET_5', 'col-md-offset-10');
+				if (!defined('BS_COL_MD_OFFSET_6')) define('BS_COL_MD_OFFSET_6', 'col-md-offset-12');
+				if (!defined('BS_COL_MD_OFFSET_7')) define('BS_COL_MD_OFFSET_7', 'col-md-offset-14');
+				if (!defined('BS_COL_MD_OFFSET_8')) define('BS_COL_MD_OFFSET_8', 'col-md-offset-16');
+				if (!defined('BS_COL_MD_OFFSET_9')) define('BS_COL_MD_OFFSET_9', 'col-md-offset-18');
+				if (!defined('BS_COL_MD_OFFSET_10')) define('BS_COL_MD_OFFSET_10', 'col-md-offset-20');
+				if (!defined('BS_COL_MD_OFFSET_11')) define('BS_COL_MD_OFFSET_11', 'col-md-offset-22');
+				if (!defined('BS_COL_MD_OFFSET_12')) define('BS_COL_MD_OFFSET_12', 'col-md-offset-24');
 
 				//	SM
-				if ( ! defined( 'BS_COL_SM_OFFSET_1' ) ) define( 'BS_COL_SM_OFFSET_1', 'col-sm-offset-2' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_2' ) ) define( 'BS_COL_SM_OFFSET_2', 'col-sm-offset-4' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_3' ) ) define( 'BS_COL_SM_OFFSET_3', 'col-sm-offset-6' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_4' ) ) define( 'BS_COL_SM_OFFSET_4', 'col-sm-offset-8' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_5' ) ) define( 'BS_COL_SM_OFFSET_5', 'col-sm-offset-10' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_6' ) ) define( 'BS_COL_SM_OFFSET_6', 'col-sm-offset-12' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_7' ) ) define( 'BS_COL_SM_OFFSET_7', 'col-sm-offset-14' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_8' ) ) define( 'BS_COL_SM_OFFSET_8', 'col-sm-offset-16' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_9' ) ) define( 'BS_COL_SM_OFFSET_9', 'col-sm-offset-18' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_10' ) ) define( 'BS_COL_SM_OFFSET_10', 'col-sm-offset-20' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_11' ) ) define( 'BS_COL_SM_OFFSET_11', 'col-sm-offset-22' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_12' ) ) define( 'BS_COL_SM_OFFSET_12', 'col-sm-offset-24' );
+				if (!defined('BS_COL_SM_OFFSET_1')) define('BS_COL_SM_OFFSET_1', 'col-sm-offset-2');
+				if (!defined('BS_COL_SM_OFFSET_2')) define('BS_COL_SM_OFFSET_2', 'col-sm-offset-4');
+				if (!defined('BS_COL_SM_OFFSET_3')) define('BS_COL_SM_OFFSET_3', 'col-sm-offset-6');
+				if (!defined('BS_COL_SM_OFFSET_4')) define('BS_COL_SM_OFFSET_4', 'col-sm-offset-8');
+				if (!defined('BS_COL_SM_OFFSET_5')) define('BS_COL_SM_OFFSET_5', 'col-sm-offset-10');
+				if (!defined('BS_COL_SM_OFFSET_6')) define('BS_COL_SM_OFFSET_6', 'col-sm-offset-12');
+				if (!defined('BS_COL_SM_OFFSET_7')) define('BS_COL_SM_OFFSET_7', 'col-sm-offset-14');
+				if (!defined('BS_COL_SM_OFFSET_8')) define('BS_COL_SM_OFFSET_8', 'col-sm-offset-16');
+				if (!defined('BS_COL_SM_OFFSET_9')) define('BS_COL_SM_OFFSET_9', 'col-sm-offset-18');
+				if (!defined('BS_COL_SM_OFFSET_10')) define('BS_COL_SM_OFFSET_10', 'col-sm-offset-20');
+				if (!defined('BS_COL_SM_OFFSET_11')) define('BS_COL_SM_OFFSET_11', 'col-sm-offset-22');
+				if (!defined('BS_COL_SM_OFFSET_12')) define('BS_COL_SM_OFFSET_12', 'col-sm-offset-24');
 
 				//	XS
-				if ( ! defined( 'BS_COL_XS_OFFSET_1' ) ) define( 'BS_COL_XS_OFFSET_1', 'col-xs-offset-2' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_2' ) ) define( 'BS_COL_XS_OFFSET_2', 'col-xs-offset-4' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_3' ) ) define( 'BS_COL_XS_OFFSET_3', 'col-xs-offset-6' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_4' ) ) define( 'BS_COL_XS_OFFSET_4', 'col-xs-offset-8' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_5' ) ) define( 'BS_COL_XS_OFFSET_5', 'col-xs-offset-10' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_6' ) ) define( 'BS_COL_XS_OFFSET_6', 'col-xs-offset-12' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_7' ) ) define( 'BS_COL_XS_OFFSET_7', 'col-xs-offset-14' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_8' ) ) define( 'BS_COL_XS_OFFSET_8', 'col-xs-offset-16' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_9' ) ) define( 'BS_COL_XS_OFFSET_9', 'col-xs-offset-18' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_10' ) ) define( 'BS_COL_XS_OFFSET_10', 'col-xs-offset-20' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_11' ) ) define( 'BS_COL_XS_OFFSET_11', 'col-xs-offset-22' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_12' ) ) define( 'BS_COL_XS_OFFSET_12', 'col-xs-offset-24' );
+				if (!defined('BS_COL_XS_OFFSET_1')) define('BS_COL_XS_OFFSET_1', 'col-xs-offset-2');
+				if (!defined('BS_COL_XS_OFFSET_2')) define('BS_COL_XS_OFFSET_2', 'col-xs-offset-4');
+				if (!defined('BS_COL_XS_OFFSET_3')) define('BS_COL_XS_OFFSET_3', 'col-xs-offset-6');
+				if (!defined('BS_COL_XS_OFFSET_4')) define('BS_COL_XS_OFFSET_4', 'col-xs-offset-8');
+				if (!defined('BS_COL_XS_OFFSET_5')) define('BS_COL_XS_OFFSET_5', 'col-xs-offset-10');
+				if (!defined('BS_COL_XS_OFFSET_6')) define('BS_COL_XS_OFFSET_6', 'col-xs-offset-12');
+				if (!defined('BS_COL_XS_OFFSET_7')) define('BS_COL_XS_OFFSET_7', 'col-xs-offset-14');
+				if (!defined('BS_COL_XS_OFFSET_8')) define('BS_COL_XS_OFFSET_8', 'col-xs-offset-16');
+				if (!defined('BS_COL_XS_OFFSET_9')) define('BS_COL_XS_OFFSET_9', 'col-xs-offset-18');
+				if (!defined('BS_COL_XS_OFFSET_10')) define('BS_COL_XS_OFFSET_10', 'col-xs-offset-20');
+				if (!defined('BS_COL_XS_OFFSET_11')) define('BS_COL_XS_OFFSET_11', 'col-xs-offset-22');
+				if (!defined('BS_COL_XS_OFFSET_12')) define('BS_COL_XS_OFFSET_12', 'col-xs-offset-24');
 
 				// --------------------------------------------------------------------------
 
 				//	ORDERING - PULL
 
 				//	LG
-				if ( ! defined( 'BS_COL_LG_PULL_1' ) ) define( 'BS_COL_LG_PULL_1', 'col-lg-pull-2' );
-				if ( ! defined( 'BS_COL_LG_PULL_2' ) ) define( 'BS_COL_LG_PULL_2', 'col-lg-pull-4' );
-				if ( ! defined( 'BS_COL_LG_PULL_3' ) ) define( 'BS_COL_LG_PULL_3', 'col-lg-pull-6' );
-				if ( ! defined( 'BS_COL_LG_PULL_4' ) ) define( 'BS_COL_LG_PULL_4', 'col-lg-pull-8' );
-				if ( ! defined( 'BS_COL_LG_PULL_5' ) ) define( 'BS_COL_LG_PULL_5', 'col-lg-pull-10' );
-				if ( ! defined( 'BS_COL_LG_PULL_6' ) ) define( 'BS_COL_LG_PULL_6', 'col-lg-pull-12' );
-				if ( ! defined( 'BS_COL_LG_PULL_7' ) ) define( 'BS_COL_LG_PULL_7', 'col-lg-pull-14' );
-				if ( ! defined( 'BS_COL_LG_PULL_8' ) ) define( 'BS_COL_LG_PULL_8', 'col-lg-pull-16' );
-				if ( ! defined( 'BS_COL_LG_PULL_9' ) ) define( 'BS_COL_LG_PULL_9', 'col-lg-pull-18' );
-				if ( ! defined( 'BS_COL_LG_PULL_10' ) ) define( 'BS_COL_LG_PULL_10', 'col-lg-pull-20' );
-				if ( ! defined( 'BS_COL_LG_PULL_11' ) ) define( 'BS_COL_LG_PULL_11', 'col-lg-pull-22' );
-				if ( ! defined( 'BS_COL_LG_PULL_12' ) ) define( 'BS_COL_LG_PULL_12', 'col-lg-pull-24' );
+				if (!defined('BS_COL_LG_PULL_1')) define('BS_COL_LG_PULL_1', 'col-lg-pull-2');
+				if (!defined('BS_COL_LG_PULL_2')) define('BS_COL_LG_PULL_2', 'col-lg-pull-4');
+				if (!defined('BS_COL_LG_PULL_3')) define('BS_COL_LG_PULL_3', 'col-lg-pull-6');
+				if (!defined('BS_COL_LG_PULL_4')) define('BS_COL_LG_PULL_4', 'col-lg-pull-8');
+				if (!defined('BS_COL_LG_PULL_5')) define('BS_COL_LG_PULL_5', 'col-lg-pull-10');
+				if (!defined('BS_COL_LG_PULL_6')) define('BS_COL_LG_PULL_6', 'col-lg-pull-12');
+				if (!defined('BS_COL_LG_PULL_7')) define('BS_COL_LG_PULL_7', 'col-lg-pull-14');
+				if (!defined('BS_COL_LG_PULL_8')) define('BS_COL_LG_PULL_8', 'col-lg-pull-16');
+				if (!defined('BS_COL_LG_PULL_9')) define('BS_COL_LG_PULL_9', 'col-lg-pull-18');
+				if (!defined('BS_COL_LG_PULL_10')) define('BS_COL_LG_PULL_10', 'col-lg-pull-20');
+				if (!defined('BS_COL_LG_PULL_11')) define('BS_COL_LG_PULL_11', 'col-lg-pull-22');
+				if (!defined('BS_COL_LG_PULL_12')) define('BS_COL_LG_PULL_12', 'col-lg-pull-24');
 
 				//	MD
-				if ( ! defined( 'BS_COL_MD_PULL_1' ) ) define( 'BS_COL_MD_PULL_1', 'col-md-pull-2' );
-				if ( ! defined( 'BS_COL_MD_PULL_2' ) ) define( 'BS_COL_MD_PULL_2', 'col-md-pull-4' );
-				if ( ! defined( 'BS_COL_MD_PULL_3' ) ) define( 'BS_COL_MD_PULL_3', 'col-md-pull-6' );
-				if ( ! defined( 'BS_COL_MD_PULL_4' ) ) define( 'BS_COL_MD_PULL_4', 'col-md-pull-8' );
-				if ( ! defined( 'BS_COL_MD_PULL_5' ) ) define( 'BS_COL_MD_PULL_5', 'col-md-pull-10' );
-				if ( ! defined( 'BS_COL_MD_PULL_6' ) ) define( 'BS_COL_MD_PULL_6', 'col-md-pull-12' );
-				if ( ! defined( 'BS_COL_MD_PULL_7' ) ) define( 'BS_COL_MD_PULL_7', 'col-md-pull-14' );
-				if ( ! defined( 'BS_COL_MD_PULL_8' ) ) define( 'BS_COL_MD_PULL_8', 'col-md-pull-16' );
-				if ( ! defined( 'BS_COL_MD_PULL_9' ) ) define( 'BS_COL_MD_PULL_9', 'col-md-pull-18' );
-				if ( ! defined( 'BS_COL_MD_PULL_10' ) ) define( 'BS_COL_MD_PULL_10', 'col-md-pull-20' );
-				if ( ! defined( 'BS_COL_MD_PULL_11' ) ) define( 'BS_COL_MD_PULL_11', 'col-md-pull-22' );
-				if ( ! defined( 'BS_COL_MD_PULL_12' ) ) define( 'BS_COL_MD_PULL_12', 'col-md-pull-24' );
+				if (!defined('BS_COL_MD_PULL_1')) define('BS_COL_MD_PULL_1', 'col-md-pull-2');
+				if (!defined('BS_COL_MD_PULL_2')) define('BS_COL_MD_PULL_2', 'col-md-pull-4');
+				if (!defined('BS_COL_MD_PULL_3')) define('BS_COL_MD_PULL_3', 'col-md-pull-6');
+				if (!defined('BS_COL_MD_PULL_4')) define('BS_COL_MD_PULL_4', 'col-md-pull-8');
+				if (!defined('BS_COL_MD_PULL_5')) define('BS_COL_MD_PULL_5', 'col-md-pull-10');
+				if (!defined('BS_COL_MD_PULL_6')) define('BS_COL_MD_PULL_6', 'col-md-pull-12');
+				if (!defined('BS_COL_MD_PULL_7')) define('BS_COL_MD_PULL_7', 'col-md-pull-14');
+				if (!defined('BS_COL_MD_PULL_8')) define('BS_COL_MD_PULL_8', 'col-md-pull-16');
+				if (!defined('BS_COL_MD_PULL_9')) define('BS_COL_MD_PULL_9', 'col-md-pull-18');
+				if (!defined('BS_COL_MD_PULL_10')) define('BS_COL_MD_PULL_10', 'col-md-pull-20');
+				if (!defined('BS_COL_MD_PULL_11')) define('BS_COL_MD_PULL_11', 'col-md-pull-22');
+				if (!defined('BS_COL_MD_PULL_12')) define('BS_COL_MD_PULL_12', 'col-md-pull-24');
 
 				//	SM
-				if ( ! defined( 'BS_COL_SM_PULL_1' ) ) define( 'BS_COL_SM_PULL_1', 'col-sm-pull-2' );
-				if ( ! defined( 'BS_COL_SM_PULL_2' ) ) define( 'BS_COL_SM_PULL_2', 'col-sm-pull-4' );
-				if ( ! defined( 'BS_COL_SM_PULL_3' ) ) define( 'BS_COL_SM_PULL_3', 'col-sm-pull-6' );
-				if ( ! defined( 'BS_COL_SM_PULL_4' ) ) define( 'BS_COL_SM_PULL_4', 'col-sm-pull-8' );
-				if ( ! defined( 'BS_COL_SM_PULL_5' ) ) define( 'BS_COL_SM_PULL_5', 'col-sm-pull-10' );
-				if ( ! defined( 'BS_COL_SM_PULL_6' ) ) define( 'BS_COL_SM_PULL_6', 'col-sm-pull-12' );
-				if ( ! defined( 'BS_COL_SM_PULL_7' ) ) define( 'BS_COL_SM_PULL_7', 'col-sm-pull-14' );
-				if ( ! defined( 'BS_COL_SM_PULL_8' ) ) define( 'BS_COL_SM_PULL_8', 'col-sm-pull-16' );
-				if ( ! defined( 'BS_COL_SM_PULL_9' ) ) define( 'BS_COL_SM_PULL_9', 'col-sm-pull-18' );
-				if ( ! defined( 'BS_COL_SM_PULL_10' ) ) define( 'BS_COL_SM_PULL_10', 'col-sm-pull-20' );
-				if ( ! defined( 'BS_COL_SM_PULL_11' ) ) define( 'BS_COL_SM_PULL_11', 'col-sm-pull-22' );
-				if ( ! defined( 'BS_COL_SM_PULL_12' ) ) define( 'BS_COL_SM_PULL_12', 'col-sm-pull-24' );
+				if (!defined('BS_COL_SM_PULL_1')) define('BS_COL_SM_PULL_1', 'col-sm-pull-2');
+				if (!defined('BS_COL_SM_PULL_2')) define('BS_COL_SM_PULL_2', 'col-sm-pull-4');
+				if (!defined('BS_COL_SM_PULL_3')) define('BS_COL_SM_PULL_3', 'col-sm-pull-6');
+				if (!defined('BS_COL_SM_PULL_4')) define('BS_COL_SM_PULL_4', 'col-sm-pull-8');
+				if (!defined('BS_COL_SM_PULL_5')) define('BS_COL_SM_PULL_5', 'col-sm-pull-10');
+				if (!defined('BS_COL_SM_PULL_6')) define('BS_COL_SM_PULL_6', 'col-sm-pull-12');
+				if (!defined('BS_COL_SM_PULL_7')) define('BS_COL_SM_PULL_7', 'col-sm-pull-14');
+				if (!defined('BS_COL_SM_PULL_8')) define('BS_COL_SM_PULL_8', 'col-sm-pull-16');
+				if (!defined('BS_COL_SM_PULL_9')) define('BS_COL_SM_PULL_9', 'col-sm-pull-18');
+				if (!defined('BS_COL_SM_PULL_10')) define('BS_COL_SM_PULL_10', 'col-sm-pull-20');
+				if (!defined('BS_COL_SM_PULL_11')) define('BS_COL_SM_PULL_11', 'col-sm-pull-22');
+				if (!defined('BS_COL_SM_PULL_12')) define('BS_COL_SM_PULL_12', 'col-sm-pull-24');
 
 				//	XS
-				if ( ! defined( 'BS_COL_XS_PULL_1' ) ) define( 'BS_COL_XS_PULL_1', 'col-xs-pull-2' );
-				if ( ! defined( 'BS_COL_XS_PULL_2' ) ) define( 'BS_COL_XS_PULL_2', 'col-xs-pull-4' );
-				if ( ! defined( 'BS_COL_XS_PULL_3' ) ) define( 'BS_COL_XS_PULL_3', 'col-xs-pull-6' );
-				if ( ! defined( 'BS_COL_XS_PULL_4' ) ) define( 'BS_COL_XS_PULL_4', 'col-xs-pull-8' );
-				if ( ! defined( 'BS_COL_XS_PULL_5' ) ) define( 'BS_COL_XS_PULL_5', 'col-xs-pull-10' );
-				if ( ! defined( 'BS_COL_XS_PULL_6' ) ) define( 'BS_COL_XS_PULL_6', 'col-xs-pull-12' );
-				if ( ! defined( 'BS_COL_XS_PULL_7' ) ) define( 'BS_COL_XS_PULL_7', 'col-xs-pull-14' );
-				if ( ! defined( 'BS_COL_XS_PULL_8' ) ) define( 'BS_COL_XS_PULL_8', 'col-xs-pull-16' );
-				if ( ! defined( 'BS_COL_XS_PULL_9' ) ) define( 'BS_COL_XS_PULL_9', 'col-xs-pull-18' );
-				if ( ! defined( 'BS_COL_XS_PULL_10' ) ) define( 'BS_COL_XS_PULL_10', 'col-xs-pull-20' );
-				if ( ! defined( 'BS_COL_XS_PULL_11' ) ) define( 'BS_COL_XS_PULL_11', 'col-xs-pull-22' );
-				if ( ! defined( 'BS_COL_XS_PULL_12' ) ) define( 'BS_COL_XS_PULL_12', 'col-xs-pull-24' );
+				if (!defined('BS_COL_XS_PULL_1')) define('BS_COL_XS_PULL_1', 'col-xs-pull-2');
+				if (!defined('BS_COL_XS_PULL_2')) define('BS_COL_XS_PULL_2', 'col-xs-pull-4');
+				if (!defined('BS_COL_XS_PULL_3')) define('BS_COL_XS_PULL_3', 'col-xs-pull-6');
+				if (!defined('BS_COL_XS_PULL_4')) define('BS_COL_XS_PULL_4', 'col-xs-pull-8');
+				if (!defined('BS_COL_XS_PULL_5')) define('BS_COL_XS_PULL_5', 'col-xs-pull-10');
+				if (!defined('BS_COL_XS_PULL_6')) define('BS_COL_XS_PULL_6', 'col-xs-pull-12');
+				if (!defined('BS_COL_XS_PULL_7')) define('BS_COL_XS_PULL_7', 'col-xs-pull-14');
+				if (!defined('BS_COL_XS_PULL_8')) define('BS_COL_XS_PULL_8', 'col-xs-pull-16');
+				if (!defined('BS_COL_XS_PULL_9')) define('BS_COL_XS_PULL_9', 'col-xs-pull-18');
+				if (!defined('BS_COL_XS_PULL_10')) define('BS_COL_XS_PULL_10', 'col-xs-pull-20');
+				if (!defined('BS_COL_XS_PULL_11')) define('BS_COL_XS_PULL_11', 'col-xs-pull-22');
+				if (!defined('BS_COL_XS_PULL_12')) define('BS_COL_XS_PULL_12', 'col-xs-pull-24');
 
 				// --------------------------------------------------------------------------
 
 				//	ORDERING - PUSH
 
 				//	LG
-				if ( ! defined( 'BS_COL_LG_PUSH_1' ) ) define( 'BS_COL_LG_PUSH_1', 'col-lg-push-2' );
-				if ( ! defined( 'BS_COL_LG_PUSH_2' ) ) define( 'BS_COL_LG_PUSH_2', 'col-lg-push-4' );
-				if ( ! defined( 'BS_COL_LG_PUSH_3' ) ) define( 'BS_COL_LG_PUSH_3', 'col-lg-push-6' );
-				if ( ! defined( 'BS_COL_LG_PUSH_4' ) ) define( 'BS_COL_LG_PUSH_4', 'col-lg-push-8' );
-				if ( ! defined( 'BS_COL_LG_PUSH_5' ) ) define( 'BS_COL_LG_PUSH_5', 'col-lg-push-10' );
-				if ( ! defined( 'BS_COL_LG_PUSH_6' ) ) define( 'BS_COL_LG_PUSH_6', 'col-lg-push-12' );
-				if ( ! defined( 'BS_COL_LG_PUSH_7' ) ) define( 'BS_COL_LG_PUSH_7', 'col-lg-push-14' );
-				if ( ! defined( 'BS_COL_LG_PUSH_8' ) ) define( 'BS_COL_LG_PUSH_8', 'col-lg-push-16' );
-				if ( ! defined( 'BS_COL_LG_PUSH_9' ) ) define( 'BS_COL_LG_PUSH_9', 'col-lg-push-18' );
-				if ( ! defined( 'BS_COL_LG_PUSH_10' ) ) define( 'BS_COL_LG_PUSH_10', 'col-lg-push-20' );
-				if ( ! defined( 'BS_COL_LG_PUSH_11' ) ) define( 'BS_COL_LG_PUSH_11', 'col-lg-push-22' );
-				if ( ! defined( 'BS_COL_LG_PUSH_12' ) ) define( 'BS_COL_LG_PUSH_12', 'col-lg-push-24' );
+				if (!defined('BS_COL_LG_PUSH_1')) define('BS_COL_LG_PUSH_1', 'col-lg-push-2');
+				if (!defined('BS_COL_LG_PUSH_2')) define('BS_COL_LG_PUSH_2', 'col-lg-push-4');
+				if (!defined('BS_COL_LG_PUSH_3')) define('BS_COL_LG_PUSH_3', 'col-lg-push-6');
+				if (!defined('BS_COL_LG_PUSH_4')) define('BS_COL_LG_PUSH_4', 'col-lg-push-8');
+				if (!defined('BS_COL_LG_PUSH_5')) define('BS_COL_LG_PUSH_5', 'col-lg-push-10');
+				if (!defined('BS_COL_LG_PUSH_6')) define('BS_COL_LG_PUSH_6', 'col-lg-push-12');
+				if (!defined('BS_COL_LG_PUSH_7')) define('BS_COL_LG_PUSH_7', 'col-lg-push-14');
+				if (!defined('BS_COL_LG_PUSH_8')) define('BS_COL_LG_PUSH_8', 'col-lg-push-16');
+				if (!defined('BS_COL_LG_PUSH_9')) define('BS_COL_LG_PUSH_9', 'col-lg-push-18');
+				if (!defined('BS_COL_LG_PUSH_10')) define('BS_COL_LG_PUSH_10', 'col-lg-push-20');
+				if (!defined('BS_COL_LG_PUSH_11')) define('BS_COL_LG_PUSH_11', 'col-lg-push-22');
+				if (!defined('BS_COL_LG_PUSH_12')) define('BS_COL_LG_PUSH_12', 'col-lg-push-24');
 
 				//	MD
-				if ( ! defined( 'BS_COL_MD_PUSH_1' ) ) define( 'BS_COL_MD_PUSH_1', 'col-md-push-2' );
-				if ( ! defined( 'BS_COL_MD_PUSH_2' ) ) define( 'BS_COL_MD_PUSH_2', 'col-md-push-4' );
-				if ( ! defined( 'BS_COL_MD_PUSH_3' ) ) define( 'BS_COL_MD_PUSH_3', 'col-md-push-6' );
-				if ( ! defined( 'BS_COL_MD_PUSH_4' ) ) define( 'BS_COL_MD_PUSH_4', 'col-md-push-8' );
-				if ( ! defined( 'BS_COL_MD_PUSH_5' ) ) define( 'BS_COL_MD_PUSH_5', 'col-md-push-10' );
-				if ( ! defined( 'BS_COL_MD_PUSH_6' ) ) define( 'BS_COL_MD_PUSH_6', 'col-md-push-12' );
-				if ( ! defined( 'BS_COL_MD_PUSH_7' ) ) define( 'BS_COL_MD_PUSH_7', 'col-md-push-14' );
-				if ( ! defined( 'BS_COL_MD_PUSH_8' ) ) define( 'BS_COL_MD_PUSH_8', 'col-md-push-16' );
-				if ( ! defined( 'BS_COL_MD_PUSH_9' ) ) define( 'BS_COL_MD_PUSH_9', 'col-md-push-18' );
-				if ( ! defined( 'BS_COL_MD_PUSH_10' ) ) define( 'BS_COL_MD_PUSH_10', 'col-md-push-20' );
-				if ( ! defined( 'BS_COL_MD_PUSH_11' ) ) define( 'BS_COL_MD_PUSH_11', 'col-md-push-22' );
-				if ( ! defined( 'BS_COL_MD_PUSH_12' ) ) define( 'BS_COL_MD_PUSH_12', 'col-md-push-24' );
+				if (!defined('BS_COL_MD_PUSH_1')) define('BS_COL_MD_PUSH_1', 'col-md-push-2');
+				if (!defined('BS_COL_MD_PUSH_2')) define('BS_COL_MD_PUSH_2', 'col-md-push-4');
+				if (!defined('BS_COL_MD_PUSH_3')) define('BS_COL_MD_PUSH_3', 'col-md-push-6');
+				if (!defined('BS_COL_MD_PUSH_4')) define('BS_COL_MD_PUSH_4', 'col-md-push-8');
+				if (!defined('BS_COL_MD_PUSH_5')) define('BS_COL_MD_PUSH_5', 'col-md-push-10');
+				if (!defined('BS_COL_MD_PUSH_6')) define('BS_COL_MD_PUSH_6', 'col-md-push-12');
+				if (!defined('BS_COL_MD_PUSH_7')) define('BS_COL_MD_PUSH_7', 'col-md-push-14');
+				if (!defined('BS_COL_MD_PUSH_8')) define('BS_COL_MD_PUSH_8', 'col-md-push-16');
+				if (!defined('BS_COL_MD_PUSH_9')) define('BS_COL_MD_PUSH_9', 'col-md-push-18');
+				if (!defined('BS_COL_MD_PUSH_10')) define('BS_COL_MD_PUSH_10', 'col-md-push-20');
+				if (!defined('BS_COL_MD_PUSH_11')) define('BS_COL_MD_PUSH_11', 'col-md-push-22');
+				if (!defined('BS_COL_MD_PUSH_12')) define('BS_COL_MD_PUSH_12', 'col-md-push-24');
 
 				//	SM
-				if ( ! defined( 'BS_COL_SM_PUSH_1' ) ) define( 'BS_COL_SM_PUSH_1', 'col-sm-push-2' );
-				if ( ! defined( 'BS_COL_SM_PUSH_2' ) ) define( 'BS_COL_SM_PUSH_2', 'col-sm-push-4' );
-				if ( ! defined( 'BS_COL_SM_PUSH_3' ) ) define( 'BS_COL_SM_PUSH_3', 'col-sm-push-6' );
-				if ( ! defined( 'BS_COL_SM_PUSH_4' ) ) define( 'BS_COL_SM_PUSH_4', 'col-sm-push-8' );
-				if ( ! defined( 'BS_COL_SM_PUSH_5' ) ) define( 'BS_COL_SM_PUSH_5', 'col-sm-push-10' );
-				if ( ! defined( 'BS_COL_SM_PUSH_6' ) ) define( 'BS_COL_SM_PUSH_6', 'col-sm-push-12' );
-				if ( ! defined( 'BS_COL_SM_PUSH_7' ) ) define( 'BS_COL_SM_PUSH_7', 'col-sm-push-14' );
-				if ( ! defined( 'BS_COL_SM_PUSH_8' ) ) define( 'BS_COL_SM_PUSH_8', 'col-sm-push-16' );
-				if ( ! defined( 'BS_COL_SM_PUSH_9' ) ) define( 'BS_COL_SM_PUSH_9', 'col-sm-push-18' );
-				if ( ! defined( 'BS_COL_SM_PUSH_10' ) ) define( 'BS_COL_SM_PUSH_10', 'col-sm-push-20' );
-				if ( ! defined( 'BS_COL_SM_PUSH_11' ) ) define( 'BS_COL_SM_PUSH_11', 'col-sm-push-22' );
-				if ( ! defined( 'BS_COL_SM_PUSH_12' ) ) define( 'BS_COL_SM_PUSH_12', 'col-sm-push-24' );
+				if (!defined('BS_COL_SM_PUSH_1')) define('BS_COL_SM_PUSH_1', 'col-sm-push-2');
+				if (!defined('BS_COL_SM_PUSH_2')) define('BS_COL_SM_PUSH_2', 'col-sm-push-4');
+				if (!defined('BS_COL_SM_PUSH_3')) define('BS_COL_SM_PUSH_3', 'col-sm-push-6');
+				if (!defined('BS_COL_SM_PUSH_4')) define('BS_COL_SM_PUSH_4', 'col-sm-push-8');
+				if (!defined('BS_COL_SM_PUSH_5')) define('BS_COL_SM_PUSH_5', 'col-sm-push-10');
+				if (!defined('BS_COL_SM_PUSH_6')) define('BS_COL_SM_PUSH_6', 'col-sm-push-12');
+				if (!defined('BS_COL_SM_PUSH_7')) define('BS_COL_SM_PUSH_7', 'col-sm-push-14');
+				if (!defined('BS_COL_SM_PUSH_8')) define('BS_COL_SM_PUSH_8', 'col-sm-push-16');
+				if (!defined('BS_COL_SM_PUSH_9')) define('BS_COL_SM_PUSH_9', 'col-sm-push-18');
+				if (!defined('BS_COL_SM_PUSH_10')) define('BS_COL_SM_PUSH_10', 'col-sm-push-20');
+				if (!defined('BS_COL_SM_PUSH_11')) define('BS_COL_SM_PUSH_11', 'col-sm-push-22');
+				if (!defined('BS_COL_SM_PUSH_12')) define('BS_COL_SM_PUSH_12', 'col-sm-push-24');
 
 				//	XS
-				if ( ! defined( 'BS_COL_XS_PUSH_1' ) ) define( 'BS_COL_XS_PUSH_1', 'col-xs-push-2' );
-				if ( ! defined( 'BS_COL_XS_PUSH_2' ) ) define( 'BS_COL_XS_PUSH_2', 'col-xs-push-4' );
-				if ( ! defined( 'BS_COL_XS_PUSH_3' ) ) define( 'BS_COL_XS_PUSH_3', 'col-xs-push-6' );
-				if ( ! defined( 'BS_COL_XS_PUSH_4' ) ) define( 'BS_COL_XS_PUSH_4', 'col-xs-push-8' );
-				if ( ! defined( 'BS_COL_XS_PUSH_5' ) ) define( 'BS_COL_XS_PUSH_5', 'col-xs-push-10' );
-				if ( ! defined( 'BS_COL_XS_PUSH_6' ) ) define( 'BS_COL_XS_PUSH_6', 'col-xs-push-12' );
-				if ( ! defined( 'BS_COL_XS_PUSH_7' ) ) define( 'BS_COL_XS_PUSH_7', 'col-xs-push-14' );
-				if ( ! defined( 'BS_COL_XS_PUSH_8' ) ) define( 'BS_COL_XS_PUSH_8', 'col-xs-push-16' );
-				if ( ! defined( 'BS_COL_XS_PUSH_9' ) ) define( 'BS_COL_XS_PUSH_9', 'col-xs-push-18' );
-				if ( ! defined( 'BS_COL_XS_PUSH_10' ) ) define( 'BS_COL_XS_PUSH_10', 'col-xs-push-20' );
-				if ( ! defined( 'BS_COL_XS_PUSH_11' ) ) define( 'BS_COL_XS_PUSH_11', 'col-xs-push-22' );
-				if ( ! defined( 'BS_COL_XS_PUSH_12' ) ) define( 'BS_COL_XS_PUSH_12', 'col-xs-push-24' );
+				if (!defined('BS_COL_XS_PUSH_1')) define('BS_COL_XS_PUSH_1', 'col-xs-push-2');
+				if (!defined('BS_COL_XS_PUSH_2')) define('BS_COL_XS_PUSH_2', 'col-xs-push-4');
+				if (!defined('BS_COL_XS_PUSH_3')) define('BS_COL_XS_PUSH_3', 'col-xs-push-6');
+				if (!defined('BS_COL_XS_PUSH_4')) define('BS_COL_XS_PUSH_4', 'col-xs-push-8');
+				if (!defined('BS_COL_XS_PUSH_5')) define('BS_COL_XS_PUSH_5', 'col-xs-push-10');
+				if (!defined('BS_COL_XS_PUSH_6')) define('BS_COL_XS_PUSH_6', 'col-xs-push-12');
+				if (!defined('BS_COL_XS_PUSH_7')) define('BS_COL_XS_PUSH_7', 'col-xs-push-14');
+				if (!defined('BS_COL_XS_PUSH_8')) define('BS_COL_XS_PUSH_8', 'col-xs-push-16');
+				if (!defined('BS_COL_XS_PUSH_9')) define('BS_COL_XS_PUSH_9', 'col-xs-push-18');
+				if (!defined('BS_COL_XS_PUSH_10')) define('BS_COL_XS_PUSH_10', 'col-xs-push-20');
+				if (!defined('BS_COL_XS_PUSH_11')) define('BS_COL_XS_PUSH_11', 'col-xs-push-22');
+				if (!defined('BS_COL_XS_PUSH_12')) define('BS_COL_XS_PUSH_12', 'col-xs-push-24');
 
-			break;
+				break;
 
 			case 12 :
 			default :
@@ -436,244 +437,243 @@ class NAILS_System_startup
 				//	COLUMNS
 
 				//	LG
-				if ( ! defined( 'BS_COL_LG_1' ) ) define( 'BS_COL_LG_1', 'col-lg-1' );
-				if ( ! defined( 'BS_COL_LG_2' ) ) define( 'BS_COL_LG_2', 'col-lg-2' );
-				if ( ! defined( 'BS_COL_LG_3' ) ) define( 'BS_COL_LG_3', 'col-lg-3' );
-				if ( ! defined( 'BS_COL_LG_4' ) ) define( 'BS_COL_LG_4', 'col-lg-4' );
-				if ( ! defined( 'BS_COL_LG_5' ) ) define( 'BS_COL_LG_5', 'col-lg-5' );
-				if ( ! defined( 'BS_COL_LG_6' ) ) define( 'BS_COL_LG_6', 'col-lg-6' );
-				if ( ! defined( 'BS_COL_LG_7' ) ) define( 'BS_COL_LG_7', 'col-lg-7' );
-				if ( ! defined( 'BS_COL_LG_8' ) ) define( 'BS_COL_LG_8', 'col-lg-8' );
-				if ( ! defined( 'BS_COL_LG_9' ) ) define( 'BS_COL_LG_9', 'col-lg-9' );
-				if ( ! defined( 'BS_COL_LG_10' ) ) define( 'BS_COL_LG_10', 'col-lg-10' );
-				if ( ! defined( 'BS_COL_LG_11' ) ) define( 'BS_COL_LG_11', 'col-lg-11' );
-				if ( ! defined( 'BS_COL_LG_12' ) ) define( 'BS_COL_LG_12', 'col-lg-12' );
+				if (!defined('BS_COL_LG_1')) define('BS_COL_LG_1', 'col-lg-1');
+				if (!defined('BS_COL_LG_2')) define('BS_COL_LG_2', 'col-lg-2');
+				if (!defined('BS_COL_LG_3')) define('BS_COL_LG_3', 'col-lg-3');
+				if (!defined('BS_COL_LG_4')) define('BS_COL_LG_4', 'col-lg-4');
+				if (!defined('BS_COL_LG_5')) define('BS_COL_LG_5', 'col-lg-5');
+				if (!defined('BS_COL_LG_6')) define('BS_COL_LG_6', 'col-lg-6');
+				if (!defined('BS_COL_LG_7')) define('BS_COL_LG_7', 'col-lg-7');
+				if (!defined('BS_COL_LG_8')) define('BS_COL_LG_8', 'col-lg-8');
+				if (!defined('BS_COL_LG_9')) define('BS_COL_LG_9', 'col-lg-9');
+				if (!defined('BS_COL_LG_10')) define('BS_COL_LG_10', 'col-lg-10');
+				if (!defined('BS_COL_LG_11')) define('BS_COL_LG_11', 'col-lg-11');
+				if (!defined('BS_COL_LG_12')) define('BS_COL_LG_12', 'col-lg-12');
 
 				//	MD
-				if ( ! defined( 'BS_COL_MD_1' ) ) define( 'BS_COL_MD_1', 'col-md-1' );
-				if ( ! defined( 'BS_COL_MD_2' ) ) define( 'BS_COL_MD_2', 'col-md-2' );
-				if ( ! defined( 'BS_COL_MD_3' ) ) define( 'BS_COL_MD_3', 'col-md-3' );
-				if ( ! defined( 'BS_COL_MD_4' ) ) define( 'BS_COL_MD_4', 'col-md-4' );
-				if ( ! defined( 'BS_COL_MD_5' ) ) define( 'BS_COL_MD_5', 'col-md-5' );
-				if ( ! defined( 'BS_COL_MD_6' ) ) define( 'BS_COL_MD_6', 'col-md-6' );
-				if ( ! defined( 'BS_COL_MD_7' ) ) define( 'BS_COL_MD_7', 'col-md-7' );
-				if ( ! defined( 'BS_COL_MD_8' ) ) define( 'BS_COL_MD_8', 'col-md-8' );
-				if ( ! defined( 'BS_COL_MD_9' ) ) define( 'BS_COL_MD_9', 'col-md-9' );
-				if ( ! defined( 'BS_COL_MD_10' ) ) define( 'BS_COL_MD_10', 'col-md-10' );
-				if ( ! defined( 'BS_COL_MD_11' ) ) define( 'BS_COL_MD_11', 'col-md-11' );
-				if ( ! defined( 'BS_COL_MD_12' ) ) define( 'BS_COL_MD_12', 'col-md-12' );
+				if (!defined('BS_COL_MD_1')) define('BS_COL_MD_1', 'col-md-1');
+				if (!defined('BS_COL_MD_2')) define('BS_COL_MD_2', 'col-md-2');
+				if (!defined('BS_COL_MD_3')) define('BS_COL_MD_3', 'col-md-3');
+				if (!defined('BS_COL_MD_4')) define('BS_COL_MD_4', 'col-md-4');
+				if (!defined('BS_COL_MD_5')) define('BS_COL_MD_5', 'col-md-5');
+				if (!defined('BS_COL_MD_6')) define('BS_COL_MD_6', 'col-md-6');
+				if (!defined('BS_COL_MD_7')) define('BS_COL_MD_7', 'col-md-7');
+				if (!defined('BS_COL_MD_8')) define('BS_COL_MD_8', 'col-md-8');
+				if (!defined('BS_COL_MD_9')) define('BS_COL_MD_9', 'col-md-9');
+				if (!defined('BS_COL_MD_10')) define('BS_COL_MD_10', 'col-md-10');
+				if (!defined('BS_COL_MD_11')) define('BS_COL_MD_11', 'col-md-11');
+				if (!defined('BS_COL_MD_12')) define('BS_COL_MD_12', 'col-md-12');
 
 				//	SM
-				if ( ! defined( 'BS_COL_SM_1' ) ) define( 'BS_COL_SM_1', 'col-sm-1' );
-				if ( ! defined( 'BS_COL_SM_2' ) ) define( 'BS_COL_SM_2', 'col-sm-2' );
-				if ( ! defined( 'BS_COL_SM_3' ) ) define( 'BS_COL_SM_3', 'col-sm-3' );
-				if ( ! defined( 'BS_COL_SM_4' ) ) define( 'BS_COL_SM_4', 'col-sm-4' );
-				if ( ! defined( 'BS_COL_SM_5' ) ) define( 'BS_COL_SM_5', 'col-sm-5' );
-				if ( ! defined( 'BS_COL_SM_6' ) ) define( 'BS_COL_SM_6', 'col-sm-6' );
-				if ( ! defined( 'BS_COL_SM_7' ) ) define( 'BS_COL_SM_7', 'col-sm-7' );
-				if ( ! defined( 'BS_COL_SM_8' ) ) define( 'BS_COL_SM_8', 'col-sm-8' );
-				if ( ! defined( 'BS_COL_SM_9' ) ) define( 'BS_COL_SM_9', 'col-sm-9' );
-				if ( ! defined( 'BS_COL_SM_10' ) ) define( 'BS_COL_SM_10', 'col-sm-10' );
-				if ( ! defined( 'BS_COL_SM_11' ) ) define( 'BS_COL_SM_11', 'col-sm-11' );
-				if ( ! defined( 'BS_COL_SM_12' ) ) define( 'BS_COL_SM_12', 'col-sm-12' );
+				if (!defined('BS_COL_SM_1')) define('BS_COL_SM_1', 'col-sm-1');
+				if (!defined('BS_COL_SM_2')) define('BS_COL_SM_2', 'col-sm-2');
+				if (!defined('BS_COL_SM_3')) define('BS_COL_SM_3', 'col-sm-3');
+				if (!defined('BS_COL_SM_4')) define('BS_COL_SM_4', 'col-sm-4');
+				if (!defined('BS_COL_SM_5')) define('BS_COL_SM_5', 'col-sm-5');
+				if (!defined('BS_COL_SM_6')) define('BS_COL_SM_6', 'col-sm-6');
+				if (!defined('BS_COL_SM_7')) define('BS_COL_SM_7', 'col-sm-7');
+				if (!defined('BS_COL_SM_8')) define('BS_COL_SM_8', 'col-sm-8');
+				if (!defined('BS_COL_SM_9')) define('BS_COL_SM_9', 'col-sm-9');
+				if (!defined('BS_COL_SM_10')) define('BS_COL_SM_10', 'col-sm-10');
+				if (!defined('BS_COL_SM_11')) define('BS_COL_SM_11', 'col-sm-11');
+				if (!defined('BS_COL_SM_12')) define('BS_COL_SM_12', 'col-sm-12');
 
 				//	XS
-				if ( ! defined( 'BS_COL_XS_1' ) ) define( 'BS_COL_XS_1', 'col-xs-1' );
-				if ( ! defined( 'BS_COL_XS_2' ) ) define( 'BS_COL_XS_2', 'col-xs-2' );
-				if ( ! defined( 'BS_COL_XS_3' ) ) define( 'BS_COL_XS_3', 'col-xs-3' );
-				if ( ! defined( 'BS_COL_XS_4' ) ) define( 'BS_COL_XS_4', 'col-xs-4' );
-				if ( ! defined( 'BS_COL_XS_5' ) ) define( 'BS_COL_XS_5', 'col-xs-5' );
-				if ( ! defined( 'BS_COL_XS_6' ) ) define( 'BS_COL_XS_6', 'col-xs-6' );
-				if ( ! defined( 'BS_COL_XS_7' ) ) define( 'BS_COL_XS_7', 'col-xs-7' );
-				if ( ! defined( 'BS_COL_XS_8' ) ) define( 'BS_COL_XS_8', 'col-xs-8' );
-				if ( ! defined( 'BS_COL_XS_9' ) ) define( 'BS_COL_XS_9', 'col-xs-9' );
-				if ( ! defined( 'BS_COL_XS_10' ) ) define( 'BS_COL_XS_10', 'col-xs-10' );
-				if ( ! defined( 'BS_COL_XS_11' ) ) define( 'BS_COL_XS_11', 'col-xs-11' );
-				if ( ! defined( 'BS_COL_XS_12' ) ) define( 'BS_COL_XS_12', 'col-xs-12' );
+				if (!defined('BS_COL_XS_1')) define('BS_COL_XS_1', 'col-xs-1');
+				if (!defined('BS_COL_XS_2')) define('BS_COL_XS_2', 'col-xs-2');
+				if (!defined('BS_COL_XS_3')) define('BS_COL_XS_3', 'col-xs-3');
+				if (!defined('BS_COL_XS_4')) define('BS_COL_XS_4', 'col-xs-4');
+				if (!defined('BS_COL_XS_5')) define('BS_COL_XS_5', 'col-xs-5');
+				if (!defined('BS_COL_XS_6')) define('BS_COL_XS_6', 'col-xs-6');
+				if (!defined('BS_COL_XS_7')) define('BS_COL_XS_7', 'col-xs-7');
+				if (!defined('BS_COL_XS_8')) define('BS_COL_XS_8', 'col-xs-8');
+				if (!defined('BS_COL_XS_9')) define('BS_COL_XS_9', 'col-xs-9');
+				if (!defined('BS_COL_XS_10')) define('BS_COL_XS_10', 'col-xs-10');
+				if (!defined('BS_COL_XS_11')) define('BS_COL_XS_11', 'col-xs-11');
+				if (!defined('BS_COL_XS_12')) define('BS_COL_XS_12', 'col-xs-12');
 
 				// --------------------------------------------------------------------------
 
 				//	OFFSETS
 
 				//	LG
-				if ( ! defined( 'BS_COL_LG_OFFSET_1' ) ) define( 'BS_COL_LG_OFFSET_1', 'col-lg-offset-1' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_2' ) ) define( 'BS_COL_LG_OFFSET_2', 'col-lg-offset-2' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_3' ) ) define( 'BS_COL_LG_OFFSET_3', 'col-lg-offset-3' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_4' ) ) define( 'BS_COL_LG_OFFSET_4', 'col-lg-offset-4' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_5' ) ) define( 'BS_COL_LG_OFFSET_5', 'col-lg-offset-5' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_6' ) ) define( 'BS_COL_LG_OFFSET_6', 'col-lg-offset-6' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_7' ) ) define( 'BS_COL_LG_OFFSET_7', 'col-lg-offset-7' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_8' ) ) define( 'BS_COL_LG_OFFSET_8', 'col-lg-offset-8' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_9' ) ) define( 'BS_COL_LG_OFFSET_9', 'col-lg-offset-9' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_10' ) ) define( 'BS_COL_LG_OFFSET_10', 'col-lg-offset-10' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_11' ) ) define( 'BS_COL_LG_OFFSET_11', 'col-lg-offset-11' );
-				if ( ! defined( 'BS_COL_LG_OFFSET_12' ) ) define( 'BS_COL_LG_OFFSET_12', 'col-lg-offset-12' );
+				if (!defined('BS_COL_LG_OFFSET_1')) define('BS_COL_LG_OFFSET_1', 'col-lg-offset-1');
+				if (!defined('BS_COL_LG_OFFSET_2')) define('BS_COL_LG_OFFSET_2', 'col-lg-offset-2');
+				if (!defined('BS_COL_LG_OFFSET_3')) define('BS_COL_LG_OFFSET_3', 'col-lg-offset-3');
+				if (!defined('BS_COL_LG_OFFSET_4')) define('BS_COL_LG_OFFSET_4', 'col-lg-offset-4');
+				if (!defined('BS_COL_LG_OFFSET_5')) define('BS_COL_LG_OFFSET_5', 'col-lg-offset-5');
+				if (!defined('BS_COL_LG_OFFSET_6')) define('BS_COL_LG_OFFSET_6', 'col-lg-offset-6');
+				if (!defined('BS_COL_LG_OFFSET_7')) define('BS_COL_LG_OFFSET_7', 'col-lg-offset-7');
+				if (!defined('BS_COL_LG_OFFSET_8')) define('BS_COL_LG_OFFSET_8', 'col-lg-offset-8');
+				if (!defined('BS_COL_LG_OFFSET_9')) define('BS_COL_LG_OFFSET_9', 'col-lg-offset-9');
+				if (!defined('BS_COL_LG_OFFSET_10')) define('BS_COL_LG_OFFSET_10', 'col-lg-offset-10');
+				if (!defined('BS_COL_LG_OFFSET_11')) define('BS_COL_LG_OFFSET_11', 'col-lg-offset-11');
+				if (!defined('BS_COL_LG_OFFSET_12')) define('BS_COL_LG_OFFSET_12', 'col-lg-offset-12');
 
 				//	MD
-				if ( ! defined( 'BS_COL_MD_OFFSET_1' ) ) define( 'BS_COL_MD_OFFSET_1', 'col-md-offset-1' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_2' ) ) define( 'BS_COL_MD_OFFSET_2', 'col-md-offset-2' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_3' ) ) define( 'BS_COL_MD_OFFSET_3', 'col-md-offset-3' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_4' ) ) define( 'BS_COL_MD_OFFSET_4', 'col-md-offset-4' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_5' ) ) define( 'BS_COL_MD_OFFSET_5', 'col-md-offset-5' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_6' ) ) define( 'BS_COL_MD_OFFSET_6', 'col-md-offset-6' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_7' ) ) define( 'BS_COL_MD_OFFSET_7', 'col-md-offset-7' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_8' ) ) define( 'BS_COL_MD_OFFSET_8', 'col-md-offset-8' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_9' ) ) define( 'BS_COL_MD_OFFSET_9', 'col-md-offset-9' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_10' ) ) define( 'BS_COL_MD_OFFSET_10', 'col-md-offset-10' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_11' ) ) define( 'BS_COL_MD_OFFSET_11', 'col-md-offset-11' );
-				if ( ! defined( 'BS_COL_MD_OFFSET_12' ) ) define( 'BS_COL_MD_OFFSET_12', 'col-md-offset-12' );
+				if (!defined('BS_COL_MD_OFFSET_1')) define('BS_COL_MD_OFFSET_1', 'col-md-offset-1');
+				if (!defined('BS_COL_MD_OFFSET_2')) define('BS_COL_MD_OFFSET_2', 'col-md-offset-2');
+				if (!defined('BS_COL_MD_OFFSET_3')) define('BS_COL_MD_OFFSET_3', 'col-md-offset-3');
+				if (!defined('BS_COL_MD_OFFSET_4')) define('BS_COL_MD_OFFSET_4', 'col-md-offset-4');
+				if (!defined('BS_COL_MD_OFFSET_5')) define('BS_COL_MD_OFFSET_5', 'col-md-offset-5');
+				if (!defined('BS_COL_MD_OFFSET_6')) define('BS_COL_MD_OFFSET_6', 'col-md-offset-6');
+				if (!defined('BS_COL_MD_OFFSET_7')) define('BS_COL_MD_OFFSET_7', 'col-md-offset-7');
+				if (!defined('BS_COL_MD_OFFSET_8')) define('BS_COL_MD_OFFSET_8', 'col-md-offset-8');
+				if (!defined('BS_COL_MD_OFFSET_9')) define('BS_COL_MD_OFFSET_9', 'col-md-offset-9');
+				if (!defined('BS_COL_MD_OFFSET_10')) define('BS_COL_MD_OFFSET_10', 'col-md-offset-10');
+				if (!defined('BS_COL_MD_OFFSET_11')) define('BS_COL_MD_OFFSET_11', 'col-md-offset-11');
+				if (!defined('BS_COL_MD_OFFSET_12')) define('BS_COL_MD_OFFSET_12', 'col-md-offset-12');
 
 				//	SM
-				if ( ! defined( 'BS_COL_SM_OFFSET_1' ) ) define( 'BS_COL_SM_OFFSET_1', 'col-sm-offset-1' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_2' ) ) define( 'BS_COL_SM_OFFSET_2', 'col-sm-offset-2' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_3' ) ) define( 'BS_COL_SM_OFFSET_3', 'col-sm-offset-3' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_4' ) ) define( 'BS_COL_SM_OFFSET_4', 'col-sm-offset-4' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_5' ) ) define( 'BS_COL_SM_OFFSET_5', 'col-sm-offset-5' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_6' ) ) define( 'BS_COL_SM_OFFSET_6', 'col-sm-offset-6' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_7' ) ) define( 'BS_COL_SM_OFFSET_7', 'col-sm-offset-7' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_8' ) ) define( 'BS_COL_SM_OFFSET_8', 'col-sm-offset-8' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_9' ) ) define( 'BS_COL_SM_OFFSET_9', 'col-sm-offset-9' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_10' ) ) define( 'BS_COL_SM_OFFSET_10', 'col-sm-offset-10' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_11' ) ) define( 'BS_COL_SM_OFFSET_11', 'col-sm-offset-11' );
-				if ( ! defined( 'BS_COL_SM_OFFSET_12' ) ) define( 'BS_COL_SM_OFFSET_12', 'col-sm-offset-12' );
+				if (!defined('BS_COL_SM_OFFSET_1')) define('BS_COL_SM_OFFSET_1', 'col-sm-offset-1');
+				if (!defined('BS_COL_SM_OFFSET_2')) define('BS_COL_SM_OFFSET_2', 'col-sm-offset-2');
+				if (!defined('BS_COL_SM_OFFSET_3')) define('BS_COL_SM_OFFSET_3', 'col-sm-offset-3');
+				if (!defined('BS_COL_SM_OFFSET_4')) define('BS_COL_SM_OFFSET_4', 'col-sm-offset-4');
+				if (!defined('BS_COL_SM_OFFSET_5')) define('BS_COL_SM_OFFSET_5', 'col-sm-offset-5');
+				if (!defined('BS_COL_SM_OFFSET_6')) define('BS_COL_SM_OFFSET_6', 'col-sm-offset-6');
+				if (!defined('BS_COL_SM_OFFSET_7')) define('BS_COL_SM_OFFSET_7', 'col-sm-offset-7');
+				if (!defined('BS_COL_SM_OFFSET_8')) define('BS_COL_SM_OFFSET_8', 'col-sm-offset-8');
+				if (!defined('BS_COL_SM_OFFSET_9')) define('BS_COL_SM_OFFSET_9', 'col-sm-offset-9');
+				if (!defined('BS_COL_SM_OFFSET_10')) define('BS_COL_SM_OFFSET_10', 'col-sm-offset-10');
+				if (!defined('BS_COL_SM_OFFSET_11')) define('BS_COL_SM_OFFSET_11', 'col-sm-offset-11');
+				if (!defined('BS_COL_SM_OFFSET_12')) define('BS_COL_SM_OFFSET_12', 'col-sm-offset-12');
 
 				//	XS
-				if ( ! defined( 'BS_COL_XS_OFFSET_1' ) ) define( 'BS_COL_XS_OFFSET_1', 'col-xs-offset-1' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_2' ) ) define( 'BS_COL_XS_OFFSET_2', 'col-xs-offset-2' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_3' ) ) define( 'BS_COL_XS_OFFSET_3', 'col-xs-offset-3' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_4' ) ) define( 'BS_COL_XS_OFFSET_4', 'col-xs-offset-4' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_5' ) ) define( 'BS_COL_XS_OFFSET_5', 'col-xs-offset-5' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_6' ) ) define( 'BS_COL_XS_OFFSET_6', 'col-xs-offset-6' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_7' ) ) define( 'BS_COL_XS_OFFSET_7', 'col-xs-offset-7' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_8' ) ) define( 'BS_COL_XS_OFFSET_8', 'col-xs-offset-8' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_9' ) ) define( 'BS_COL_XS_OFFSET_9', 'col-xs-offset-9' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_10' ) ) define( 'BS_COL_XS_OFFSET_10', 'col-xs-offset-10' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_11' ) ) define( 'BS_COL_XS_OFFSET_11', 'col-xs-offset-11' );
-				if ( ! defined( 'BS_COL_XS_OFFSET_12' ) ) define( 'BS_COL_XS_OFFSET_12', 'col-xs-offset-12' );
+				if (!defined('BS_COL_XS_OFFSET_1')) define('BS_COL_XS_OFFSET_1', 'col-xs-offset-1');
+				if (!defined('BS_COL_XS_OFFSET_2')) define('BS_COL_XS_OFFSET_2', 'col-xs-offset-2');
+				if (!defined('BS_COL_XS_OFFSET_3')) define('BS_COL_XS_OFFSET_3', 'col-xs-offset-3');
+				if (!defined('BS_COL_XS_OFFSET_4')) define('BS_COL_XS_OFFSET_4', 'col-xs-offset-4');
+				if (!defined('BS_COL_XS_OFFSET_5')) define('BS_COL_XS_OFFSET_5', 'col-xs-offset-5');
+				if (!defined('BS_COL_XS_OFFSET_6')) define('BS_COL_XS_OFFSET_6', 'col-xs-offset-6');
+				if (!defined('BS_COL_XS_OFFSET_7')) define('BS_COL_XS_OFFSET_7', 'col-xs-offset-7');
+				if (!defined('BS_COL_XS_OFFSET_8')) define('BS_COL_XS_OFFSET_8', 'col-xs-offset-8');
+				if (!defined('BS_COL_XS_OFFSET_9')) define('BS_COL_XS_OFFSET_9', 'col-xs-offset-9');
+				if (!defined('BS_COL_XS_OFFSET_10')) define('BS_COL_XS_OFFSET_10', 'col-xs-offset-10');
+				if (!defined('BS_COL_XS_OFFSET_11')) define('BS_COL_XS_OFFSET_11', 'col-xs-offset-11');
+				if (!defined('BS_COL_XS_OFFSET_12')) define('BS_COL_XS_OFFSET_12', 'col-xs-offset-12');
 
 				// --------------------------------------------------------------------------
 
 				//	ORDERING - PULL
 
 				//	LG
-				if ( ! defined( 'BS_COL_LG_PULL_1' ) ) define( 'BS_COL_LG_PULL_1', 'col-lg-pull-1' );
-				if ( ! defined( 'BS_COL_LG_PULL_2' ) ) define( 'BS_COL_LG_PULL_2', 'col-lg-pull-2' );
-				if ( ! defined( 'BS_COL_LG_PULL_3' ) ) define( 'BS_COL_LG_PULL_3', 'col-lg-pull-3' );
-				if ( ! defined( 'BS_COL_LG_PULL_4' ) ) define( 'BS_COL_LG_PULL_4', 'col-lg-pull-4' );
-				if ( ! defined( 'BS_COL_LG_PULL_5' ) ) define( 'BS_COL_LG_PULL_5', 'col-lg-pull-5' );
-				if ( ! defined( 'BS_COL_LG_PULL_6' ) ) define( 'BS_COL_LG_PULL_6', 'col-lg-pull-6' );
-				if ( ! defined( 'BS_COL_LG_PULL_7' ) ) define( 'BS_COL_LG_PULL_7', 'col-lg-pull-7' );
-				if ( ! defined( 'BS_COL_LG_PULL_8' ) ) define( 'BS_COL_LG_PULL_8', 'col-lg-pull-8' );
-				if ( ! defined( 'BS_COL_LG_PULL_9' ) ) define( 'BS_COL_LG_PULL_9', 'col-lg-pull-9' );
-				if ( ! defined( 'BS_COL_LG_PULL_10' ) ) define( 'BS_COL_LG_PULL_10', 'col-lg-pull-10' );
-				if ( ! defined( 'BS_COL_LG_PULL_11' ) ) define( 'BS_COL_LG_PULL_11', 'col-lg-pull-11' );
-				if ( ! defined( 'BS_COL_LG_PULL_12' ) ) define( 'BS_COL_LG_PULL_12', 'col-lg-pull-12' );
+				if (!defined('BS_COL_LG_PULL_1')) define('BS_COL_LG_PULL_1', 'col-lg-pull-1');
+				if (!defined('BS_COL_LG_PULL_2')) define('BS_COL_LG_PULL_2', 'col-lg-pull-2');
+				if (!defined('BS_COL_LG_PULL_3')) define('BS_COL_LG_PULL_3', 'col-lg-pull-3');
+				if (!defined('BS_COL_LG_PULL_4')) define('BS_COL_LG_PULL_4', 'col-lg-pull-4');
+				if (!defined('BS_COL_LG_PULL_5')) define('BS_COL_LG_PULL_5', 'col-lg-pull-5');
+				if (!defined('BS_COL_LG_PULL_6')) define('BS_COL_LG_PULL_6', 'col-lg-pull-6');
+				if (!defined('BS_COL_LG_PULL_7')) define('BS_COL_LG_PULL_7', 'col-lg-pull-7');
+				if (!defined('BS_COL_LG_PULL_8')) define('BS_COL_LG_PULL_8', 'col-lg-pull-8');
+				if (!defined('BS_COL_LG_PULL_9')) define('BS_COL_LG_PULL_9', 'col-lg-pull-9');
+				if (!defined('BS_COL_LG_PULL_10')) define('BS_COL_LG_PULL_10', 'col-lg-pull-10');
+				if (!defined('BS_COL_LG_PULL_11')) define('BS_COL_LG_PULL_11', 'col-lg-pull-11');
+				if (!defined('BS_COL_LG_PULL_12')) define('BS_COL_LG_PULL_12', 'col-lg-pull-12');
 
 				//	MD
-				if ( ! defined( 'BS_COL_MD_PULL_1' ) ) define( 'BS_COL_MD_PULL_1', 'col-md-pull-1' );
-				if ( ! defined( 'BS_COL_MD_PULL_2' ) ) define( 'BS_COL_MD_PULL_2', 'col-md-pull-2' );
-				if ( ! defined( 'BS_COL_MD_PULL_3' ) ) define( 'BS_COL_MD_PULL_3', 'col-md-pull-3' );
-				if ( ! defined( 'BS_COL_MD_PULL_4' ) ) define( 'BS_COL_MD_PULL_4', 'col-md-pull-4' );
-				if ( ! defined( 'BS_COL_MD_PULL_5' ) ) define( 'BS_COL_MD_PULL_5', 'col-md-pull-5' );
-				if ( ! defined( 'BS_COL_MD_PULL_6' ) ) define( 'BS_COL_MD_PULL_6', 'col-md-pull-6' );
-				if ( ! defined( 'BS_COL_MD_PULL_7' ) ) define( 'BS_COL_MD_PULL_7', 'col-md-pull-7' );
-				if ( ! defined( 'BS_COL_MD_PULL_8' ) ) define( 'BS_COL_MD_PULL_8', 'col-md-pull-8' );
-				if ( ! defined( 'BS_COL_MD_PULL_9' ) ) define( 'BS_COL_MD_PULL_9', 'col-md-pull-9' );
-				if ( ! defined( 'BS_COL_MD_PULL_10' ) ) define( 'BS_COL_MD_PULL_10', 'col-md-pull-10' );
-				if ( ! defined( 'BS_COL_MD_PULL_11' ) ) define( 'BS_COL_MD_PULL_11', 'col-md-pull-11' );
-				if ( ! defined( 'BS_COL_MD_PULL_12' ) ) define( 'BS_COL_MD_PULL_12', 'col-md-pull-12' );
+				if (!defined('BS_COL_MD_PULL_1')) define('BS_COL_MD_PULL_1', 'col-md-pull-1');
+				if (!defined('BS_COL_MD_PULL_2')) define('BS_COL_MD_PULL_2', 'col-md-pull-2');
+				if (!defined('BS_COL_MD_PULL_3')) define('BS_COL_MD_PULL_3', 'col-md-pull-3');
+				if (!defined('BS_COL_MD_PULL_4')) define('BS_COL_MD_PULL_4', 'col-md-pull-4');
+				if (!defined('BS_COL_MD_PULL_5')) define('BS_COL_MD_PULL_5', 'col-md-pull-5');
+				if (!defined('BS_COL_MD_PULL_6')) define('BS_COL_MD_PULL_6', 'col-md-pull-6');
+				if (!defined('BS_COL_MD_PULL_7')) define('BS_COL_MD_PULL_7', 'col-md-pull-7');
+				if (!defined('BS_COL_MD_PULL_8')) define('BS_COL_MD_PULL_8', 'col-md-pull-8');
+				if (!defined('BS_COL_MD_PULL_9')) define('BS_COL_MD_PULL_9', 'col-md-pull-9');
+				if (!defined('BS_COL_MD_PULL_10')) define('BS_COL_MD_PULL_10', 'col-md-pull-10');
+				if (!defined('BS_COL_MD_PULL_11')) define('BS_COL_MD_PULL_11', 'col-md-pull-11');
+				if (!defined('BS_COL_MD_PULL_12')) define('BS_COL_MD_PULL_12', 'col-md-pull-12');
 
 				//	SM
-				if ( ! defined( 'BS_COL_SM_PULL_1' ) ) define( 'BS_COL_SM_PULL_1', 'col-sm-pull-1' );
-				if ( ! defined( 'BS_COL_SM_PULL_2' ) ) define( 'BS_COL_SM_PULL_2', 'col-sm-pull-2' );
-				if ( ! defined( 'BS_COL_SM_PULL_3' ) ) define( 'BS_COL_SM_PULL_3', 'col-sm-pull-3' );
-				if ( ! defined( 'BS_COL_SM_PULL_4' ) ) define( 'BS_COL_SM_PULL_4', 'col-sm-pull-4' );
-				if ( ! defined( 'BS_COL_SM_PULL_5' ) ) define( 'BS_COL_SM_PULL_5', 'col-sm-pull-5' );
-				if ( ! defined( 'BS_COL_SM_PULL_6' ) ) define( 'BS_COL_SM_PULL_6', 'col-sm-pull-6' );
-				if ( ! defined( 'BS_COL_SM_PULL_7' ) ) define( 'BS_COL_SM_PULL_7', 'col-sm-pull-7' );
-				if ( ! defined( 'BS_COL_SM_PULL_8' ) ) define( 'BS_COL_SM_PULL_8', 'col-sm-pull-8' );
-				if ( ! defined( 'BS_COL_SM_PULL_9' ) ) define( 'BS_COL_SM_PULL_9', 'col-sm-pull-9' );
-				if ( ! defined( 'BS_COL_SM_PULL_10' ) ) define( 'BS_COL_SM_PULL_10', 'col-sm-pull-10' );
-				if ( ! defined( 'BS_COL_SM_PULL_11' ) ) define( 'BS_COL_SM_PULL_11', 'col-sm-pull-11' );
-				if ( ! defined( 'BS_COL_SM_PULL_12' ) ) define( 'BS_COL_SM_PULL_12', 'col-sm-pull-12' );
+				if (!defined('BS_COL_SM_PULL_1')) define('BS_COL_SM_PULL_1', 'col-sm-pull-1');
+				if (!defined('BS_COL_SM_PULL_2')) define('BS_COL_SM_PULL_2', 'col-sm-pull-2');
+				if (!defined('BS_COL_SM_PULL_3')) define('BS_COL_SM_PULL_3', 'col-sm-pull-3');
+				if (!defined('BS_COL_SM_PULL_4')) define('BS_COL_SM_PULL_4', 'col-sm-pull-4');
+				if (!defined('BS_COL_SM_PULL_5')) define('BS_COL_SM_PULL_5', 'col-sm-pull-5');
+				if (!defined('BS_COL_SM_PULL_6')) define('BS_COL_SM_PULL_6', 'col-sm-pull-6');
+				if (!defined('BS_COL_SM_PULL_7')) define('BS_COL_SM_PULL_7', 'col-sm-pull-7');
+				if (!defined('BS_COL_SM_PULL_8')) define('BS_COL_SM_PULL_8', 'col-sm-pull-8');
+				if (!defined('BS_COL_SM_PULL_9')) define('BS_COL_SM_PULL_9', 'col-sm-pull-9');
+				if (!defined('BS_COL_SM_PULL_10')) define('BS_COL_SM_PULL_10', 'col-sm-pull-10');
+				if (!defined('BS_COL_SM_PULL_11')) define('BS_COL_SM_PULL_11', 'col-sm-pull-11');
+				if (!defined('BS_COL_SM_PULL_12')) define('BS_COL_SM_PULL_12', 'col-sm-pull-12');
 
 				//	XS
-				if ( ! defined( 'BS_COL_XS_PULL_1' ) ) define( 'BS_COL_XS_PULL_1', 'col-xs-pull-1' );
-				if ( ! defined( 'BS_COL_XS_PULL_2' ) ) define( 'BS_COL_XS_PULL_2', 'col-xs-pull-2' );
-				if ( ! defined( 'BS_COL_XS_PULL_3' ) ) define( 'BS_COL_XS_PULL_3', 'col-xs-pull-3' );
-				if ( ! defined( 'BS_COL_XS_PULL_4' ) ) define( 'BS_COL_XS_PULL_4', 'col-xs-pull-4' );
-				if ( ! defined( 'BS_COL_XS_PULL_5' ) ) define( 'BS_COL_XS_PULL_5', 'col-xs-pull-5' );
-				if ( ! defined( 'BS_COL_XS_PULL_6' ) ) define( 'BS_COL_XS_PULL_6', 'col-xs-pull-6' );
-				if ( ! defined( 'BS_COL_XS_PULL_7' ) ) define( 'BS_COL_XS_PULL_7', 'col-xs-pull-7' );
-				if ( ! defined( 'BS_COL_XS_PULL_8' ) ) define( 'BS_COL_XS_PULL_8', 'col-xs-pull-8' );
-				if ( ! defined( 'BS_COL_XS_PULL_9' ) ) define( 'BS_COL_XS_PULL_9', 'col-xs-pull-9' );
-				if ( ! defined( 'BS_COL_XS_PULL_10' ) ) define( 'BS_COL_XS_PULL_10', 'col-xs-pull-10' );
-				if ( ! defined( 'BS_COL_XS_PULL_11' ) ) define( 'BS_COL_XS_PULL_11', 'col-xs-pull-11' );
-				if ( ! defined( 'BS_COL_XS_PULL_12' ) ) define( 'BS_COL_XS_PULL_12', 'col-xs-pull-12' );
+				if (!defined('BS_COL_XS_PULL_1')) define('BS_COL_XS_PULL_1', 'col-xs-pull-1');
+				if (!defined('BS_COL_XS_PULL_2')) define('BS_COL_XS_PULL_2', 'col-xs-pull-2');
+				if (!defined('BS_COL_XS_PULL_3')) define('BS_COL_XS_PULL_3', 'col-xs-pull-3');
+				if (!defined('BS_COL_XS_PULL_4')) define('BS_COL_XS_PULL_4', 'col-xs-pull-4');
+				if (!defined('BS_COL_XS_PULL_5')) define('BS_COL_XS_PULL_5', 'col-xs-pull-5');
+				if (!defined('BS_COL_XS_PULL_6')) define('BS_COL_XS_PULL_6', 'col-xs-pull-6');
+				if (!defined('BS_COL_XS_PULL_7')) define('BS_COL_XS_PULL_7', 'col-xs-pull-7');
+				if (!defined('BS_COL_XS_PULL_8')) define('BS_COL_XS_PULL_8', 'col-xs-pull-8');
+				if (!defined('BS_COL_XS_PULL_9')) define('BS_COL_XS_PULL_9', 'col-xs-pull-9');
+				if (!defined('BS_COL_XS_PULL_10')) define('BS_COL_XS_PULL_10', 'col-xs-pull-10');
+				if (!defined('BS_COL_XS_PULL_11')) define('BS_COL_XS_PULL_11', 'col-xs-pull-11');
+				if (!defined('BS_COL_XS_PULL_12')) define('BS_COL_XS_PULL_12', 'col-xs-pull-12');
 
 				// --------------------------------------------------------------------------
 
 				//	ORDERING - PUSH
 
 				//	LG
-				if ( ! defined( 'BS_COL_LG_PUSH_1' ) ) define( 'BS_COL_LG_PUSH_1', 'col-lg-push-1' );
-				if ( ! defined( 'BS_COL_LG_PUSH_2' ) ) define( 'BS_COL_LG_PUSH_2', 'col-lg-push-2' );
-				if ( ! defined( 'BS_COL_LG_PUSH_3' ) ) define( 'BS_COL_LG_PUSH_3', 'col-lg-push-3' );
-				if ( ! defined( 'BS_COL_LG_PUSH_4' ) ) define( 'BS_COL_LG_PUSH_4', 'col-lg-push-4' );
-				if ( ! defined( 'BS_COL_LG_PUSH_5' ) ) define( 'BS_COL_LG_PUSH_5', 'col-lg-push-5' );
-				if ( ! defined( 'BS_COL_LG_PUSH_6' ) ) define( 'BS_COL_LG_PUSH_6', 'col-lg-push-6' );
-				if ( ! defined( 'BS_COL_LG_PUSH_7' ) ) define( 'BS_COL_LG_PUSH_7', 'col-lg-push-7' );
-				if ( ! defined( 'BS_COL_LG_PUSH_8' ) ) define( 'BS_COL_LG_PUSH_8', 'col-lg-push-8' );
-				if ( ! defined( 'BS_COL_LG_PUSH_9' ) ) define( 'BS_COL_LG_PUSH_9', 'col-lg-push-9' );
-				if ( ! defined( 'BS_COL_LG_PUSH_10' ) ) define( 'BS_COL_LG_PUSH_10', 'col-lg-push-10' );
-				if ( ! defined( 'BS_COL_LG_PUSH_11' ) ) define( 'BS_COL_LG_PUSH_11', 'col-lg-push-11' );
-				if ( ! defined( 'BS_COL_LG_PUSH_12' ) ) define( 'BS_COL_LG_PUSH_12', 'col-lg-push-12' );
+				if (!defined('BS_COL_LG_PUSH_1')) define('BS_COL_LG_PUSH_1', 'col-lg-push-1');
+				if (!defined('BS_COL_LG_PUSH_2')) define('BS_COL_LG_PUSH_2', 'col-lg-push-2');
+				if (!defined('BS_COL_LG_PUSH_3')) define('BS_COL_LG_PUSH_3', 'col-lg-push-3');
+				if (!defined('BS_COL_LG_PUSH_4')) define('BS_COL_LG_PUSH_4', 'col-lg-push-4');
+				if (!defined('BS_COL_LG_PUSH_5')) define('BS_COL_LG_PUSH_5', 'col-lg-push-5');
+				if (!defined('BS_COL_LG_PUSH_6')) define('BS_COL_LG_PUSH_6', 'col-lg-push-6');
+				if (!defined('BS_COL_LG_PUSH_7')) define('BS_COL_LG_PUSH_7', 'col-lg-push-7');
+				if (!defined('BS_COL_LG_PUSH_8')) define('BS_COL_LG_PUSH_8', 'col-lg-push-8');
+				if (!defined('BS_COL_LG_PUSH_9')) define('BS_COL_LG_PUSH_9', 'col-lg-push-9');
+				if (!defined('BS_COL_LG_PUSH_10')) define('BS_COL_LG_PUSH_10', 'col-lg-push-10');
+				if (!defined('BS_COL_LG_PUSH_11')) define('BS_COL_LG_PUSH_11', 'col-lg-push-11');
+				if (!defined('BS_COL_LG_PUSH_12')) define('BS_COL_LG_PUSH_12', 'col-lg-push-12');
 
 				//	MD
-				if ( ! defined( 'BS_COL_MD_PUSH_1' ) ) define( 'BS_COL_MD_PUSH_1', 'col-md-push-1' );
-				if ( ! defined( 'BS_COL_MD_PUSH_2' ) ) define( 'BS_COL_MD_PUSH_2', 'col-md-push-2' );
-				if ( ! defined( 'BS_COL_MD_PUSH_3' ) ) define( 'BS_COL_MD_PUSH_3', 'col-md-push-3' );
-				if ( ! defined( 'BS_COL_MD_PUSH_4' ) ) define( 'BS_COL_MD_PUSH_4', 'col-md-push-4' );
-				if ( ! defined( 'BS_COL_MD_PUSH_5' ) ) define( 'BS_COL_MD_PUSH_5', 'col-md-push-5' );
-				if ( ! defined( 'BS_COL_MD_PUSH_6' ) ) define( 'BS_COL_MD_PUSH_6', 'col-md-push-6' );
-				if ( ! defined( 'BS_COL_MD_PUSH_7' ) ) define( 'BS_COL_MD_PUSH_7', 'col-md-push-7' );
-				if ( ! defined( 'BS_COL_MD_PUSH_8' ) ) define( 'BS_COL_MD_PUSH_8', 'col-md-push-8' );
-				if ( ! defined( 'BS_COL_MD_PUSH_9' ) ) define( 'BS_COL_MD_PUSH_9', 'col-md-push-9' );
-				if ( ! defined( 'BS_COL_MD_PUSH_10' ) ) define( 'BS_COL_MD_PUSH_10', 'col-md-push-10' );
-				if ( ! defined( 'BS_COL_MD_PUSH_11' ) ) define( 'BS_COL_MD_PUSH_11', 'col-md-push-11' );
-				if ( ! defined( 'BS_COL_MD_PUSH_12' ) ) define( 'BS_COL_MD_PUSH_12', 'col-md-push-12' );
+				if (!defined('BS_COL_MD_PUSH_1')) define('BS_COL_MD_PUSH_1', 'col-md-push-1');
+				if (!defined('BS_COL_MD_PUSH_2')) define('BS_COL_MD_PUSH_2', 'col-md-push-2');
+				if (!defined('BS_COL_MD_PUSH_3')) define('BS_COL_MD_PUSH_3', 'col-md-push-3');
+				if (!defined('BS_COL_MD_PUSH_4')) define('BS_COL_MD_PUSH_4', 'col-md-push-4');
+				if (!defined('BS_COL_MD_PUSH_5')) define('BS_COL_MD_PUSH_5', 'col-md-push-5');
+				if (!defined('BS_COL_MD_PUSH_6')) define('BS_COL_MD_PUSH_6', 'col-md-push-6');
+				if (!defined('BS_COL_MD_PUSH_7')) define('BS_COL_MD_PUSH_7', 'col-md-push-7');
+				if (!defined('BS_COL_MD_PUSH_8')) define('BS_COL_MD_PUSH_8', 'col-md-push-8');
+				if (!defined('BS_COL_MD_PUSH_9')) define('BS_COL_MD_PUSH_9', 'col-md-push-9');
+				if (!defined('BS_COL_MD_PUSH_10')) define('BS_COL_MD_PUSH_10', 'col-md-push-10');
+				if (!defined('BS_COL_MD_PUSH_11')) define('BS_COL_MD_PUSH_11', 'col-md-push-11');
+				if (!defined('BS_COL_MD_PUSH_12')) define('BS_COL_MD_PUSH_12', 'col-md-push-12');
 
 				//	SM
-				if ( ! defined( 'BS_COL_SM_PUSH_1' ) ) define( 'BS_COL_SM_PUSH_1', 'col-sm-push-1' );
-				if ( ! defined( 'BS_COL_SM_PUSH_2' ) ) define( 'BS_COL_SM_PUSH_2', 'col-sm-push-2' );
-				if ( ! defined( 'BS_COL_SM_PUSH_3' ) ) define( 'BS_COL_SM_PUSH_3', 'col-sm-push-3' );
-				if ( ! defined( 'BS_COL_SM_PUSH_4' ) ) define( 'BS_COL_SM_PUSH_4', 'col-sm-push-4' );
-				if ( ! defined( 'BS_COL_SM_PUSH_5' ) ) define( 'BS_COL_SM_PUSH_5', 'col-sm-push-5' );
-				if ( ! defined( 'BS_COL_SM_PUSH_6' ) ) define( 'BS_COL_SM_PUSH_6', 'col-sm-push-6' );
-				if ( ! defined( 'BS_COL_SM_PUSH_7' ) ) define( 'BS_COL_SM_PUSH_7', 'col-sm-push-7' );
-				if ( ! defined( 'BS_COL_SM_PUSH_8' ) ) define( 'BS_COL_SM_PUSH_8', 'col-sm-push-8' );
-				if ( ! defined( 'BS_COL_SM_PUSH_9' ) ) define( 'BS_COL_SM_PUSH_9', 'col-sm-push-9' );
-				if ( ! defined( 'BS_COL_SM_PUSH_10' ) ) define( 'BS_COL_SM_PUSH_10', 'col-sm-push-10' );
-				if ( ! defined( 'BS_COL_SM_PUSH_11' ) ) define( 'BS_COL_SM_PUSH_11', 'col-sm-push-11' );
-				if ( ! defined( 'BS_COL_SM_PUSH_12' ) ) define( 'BS_COL_SM_PUSH_12', 'col-sm-push-12' );
+				if (!defined('BS_COL_SM_PUSH_1')) define('BS_COL_SM_PUSH_1', 'col-sm-push-1');
+				if (!defined('BS_COL_SM_PUSH_2')) define('BS_COL_SM_PUSH_2', 'col-sm-push-2');
+				if (!defined('BS_COL_SM_PUSH_3')) define('BS_COL_SM_PUSH_3', 'col-sm-push-3');
+				if (!defined('BS_COL_SM_PUSH_4')) define('BS_COL_SM_PUSH_4', 'col-sm-push-4');
+				if (!defined('BS_COL_SM_PUSH_5')) define('BS_COL_SM_PUSH_5', 'col-sm-push-5');
+				if (!defined('BS_COL_SM_PUSH_6')) define('BS_COL_SM_PUSH_6', 'col-sm-push-6');
+				if (!defined('BS_COL_SM_PUSH_7')) define('BS_COL_SM_PUSH_7', 'col-sm-push-7');
+				if (!defined('BS_COL_SM_PUSH_8')) define('BS_COL_SM_PUSH_8', 'col-sm-push-8');
+				if (!defined('BS_COL_SM_PUSH_9')) define('BS_COL_SM_PUSH_9', 'col-sm-push-9');
+				if (!defined('BS_COL_SM_PUSH_10')) define('BS_COL_SM_PUSH_10', 'col-sm-push-10');
+				if (!defined('BS_COL_SM_PUSH_11')) define('BS_COL_SM_PUSH_11', 'col-sm-push-11');
+				if (!defined('BS_COL_SM_PUSH_12')) define('BS_COL_SM_PUSH_12', 'col-sm-push-12');
 
 				//	XS
-				if ( ! defined( 'BS_COL_XS_PUSH_1' ) ) define( 'BS_COL_XS_PUSH_1', 'col-xs-push-1' );
-				if ( ! defined( 'BS_COL_XS_PUSH_2' ) ) define( 'BS_COL_XS_PUSH_2', 'col-xs-push-2' );
-				if ( ! defined( 'BS_COL_XS_PUSH_3' ) ) define( 'BS_COL_XS_PUSH_3', 'col-xs-push-3' );
-				if ( ! defined( 'BS_COL_XS_PUSH_4' ) ) define( 'BS_COL_XS_PUSH_4', 'col-xs-push-4' );
-				if ( ! defined( 'BS_COL_XS_PUSH_5' ) ) define( 'BS_COL_XS_PUSH_5', 'col-xs-push-5' );
-				if ( ! defined( 'BS_COL_XS_PUSH_6' ) ) define( 'BS_COL_XS_PUSH_6', 'col-xs-push-6' );
-				if ( ! defined( 'BS_COL_XS_PUSH_7' ) ) define( 'BS_COL_XS_PUSH_7', 'col-xs-push-7' );
-				if ( ! defined( 'BS_COL_XS_PUSH_8' ) ) define( 'BS_COL_XS_PUSH_8', 'col-xs-push-8' );
-				if ( ! defined( 'BS_COL_XS_PUSH_9' ) ) define( 'BS_COL_XS_PUSH_9', 'col-xs-push-9' );
-				if ( ! defined( 'BS_COL_XS_PUSH_10' ) ) define( 'BS_COL_XS_PUSH_10', 'col-xs-push-10' );
-				if ( ! defined( 'BS_COL_XS_PUSH_11' ) ) define( 'BS_COL_XS_PUSH_11', 'col-xs-push-11' );
-				if ( ! defined( 'BS_COL_XS_PUSH_12' ) ) define( 'BS_COL_XS_PUSH_12', 'col-xs-push-12' );
+				if (!defined('BS_COL_XS_PUSH_1')) define('BS_COL_XS_PUSH_1', 'col-xs-push-1');
+				if (!defined('BS_COL_XS_PUSH_2')) define('BS_COL_XS_PUSH_2', 'col-xs-push-2');
+				if (!defined('BS_COL_XS_PUSH_3')) define('BS_COL_XS_PUSH_3', 'col-xs-push-3');
+				if (!defined('BS_COL_XS_PUSH_4')) define('BS_COL_XS_PUSH_4', 'col-xs-push-4');
+				if (!defined('BS_COL_XS_PUSH_5')) define('BS_COL_XS_PUSH_5', 'col-xs-push-5');
+				if (!defined('BS_COL_XS_PUSH_6')) define('BS_COL_XS_PUSH_6', 'col-xs-push-6');
+				if (!defined('BS_COL_XS_PUSH_7')) define('BS_COL_XS_PUSH_7', 'col-xs-push-7');
+				if (!defined('BS_COL_XS_PUSH_8')) define('BS_COL_XS_PUSH_8', 'col-xs-push-8');
+				if (!defined('BS_COL_XS_PUSH_9')) define('BS_COL_XS_PUSH_9', 'col-xs-push-9');
+				if (!defined('BS_COL_XS_PUSH_10')) define('BS_COL_XS_PUSH_10', 'col-xs-push-10');
+				if (!defined('BS_COL_XS_PUSH_11')) define('BS_COL_XS_PUSH_11', 'col-xs-push-11');
+				if (!defined('BS_COL_XS_PUSH_12')) define('BS_COL_XS_PUSH_12', 'col-xs-push-12');
 
-			break;
-
-		endswitch;
+				break;
+		}
 	}
 
 
@@ -682,11 +682,10 @@ class NAILS_System_startup
 
 	protected function _set_module_locations()
 	{
-		if ( empty( $this->_module_locations ) ) :
+		if (empty($this->_module_locations)) {
 
 			$this->_module_locations = array();
-
-		endif;
+		}
 
 		// --------------------------------------------------------------------------
 
@@ -702,42 +701,41 @@ class NAILS_System_startup
 		$this->_module_locations[FCPATH . APPPATH . 'modules/']	= '../modules/';
 
 		//	Individual "official" Nails module locations
-		foreach( $_modules AS $module ) :
+		foreach($_modules as $module) {
 
 			$this->_module_locations[FCPATH . 'vendor/' . $module . '/'] = '../../vendor/' . $module . '/';
-
-		endforeach;
+		}
 
 		// --------------------------------------------------------------------------
 
-		//	This hook happens before the config class loads (but the config file has
-		//	already been loaded).CI provides an interface to pass items to the config
-		//	file via the index.php file; we're going to leverage that here to set
-		//	the module locations.
+		/**
+		 * This hook happens before the config class loads (but the config file has
+		 * already been loaded).CI provides an interface to pass items to the config
+		 * file via the index.php file; we're going to leverage that here to set
+		 * the module locations.
+		 */
 
 		global $assign_to_config;
 
 		$_key = 'modules_locations';
 
-		if ( empty( $assign_to_config ) ) :
+		if (empty($assign_to_config)) {
 
 			$assign_to_config = array();
+		}
 
-		endif;
-
-		if ( isset( $assign_to_config[$_key] ) && is_array( $assign_to_config[$_key] ) ) :
+		if (isset($assign_to_config[$_key]) && is_array($assign_to_config[$_key])) {
 
 			//	Already set, merge the arrays
-			$assign_to_config[$_key] = array_merge( $assign_to_config[$_key], $this->_module_locations );
+			$assign_to_config[$_key] = array_merge($assign_to_config[$_key], $this->_module_locations);
 
-		else :
+		} else {
 
 			//	Not set (or is set but not "proper", overwrite it as it's
 			//	probably wrong anyway)
 
 			$assign_to_config[$_key] = $this->_module_locations;
-
-		endif;
+		}
 	}
 }
 
@@ -766,13 +764,12 @@ class NAILS_System_startup
  *
  **/
 
-if ( ! defined( 'NAILS_ALLOW_EXTENSION_SYSTEM_STARTUP' ) ) :
+if (!defined('NAILS_ALLOW_EXTENSION_SYSTEM_STARTUP')) {
 
 	class System_startup extends NAILS_System_startup
 	{
 	}
-
-endif;
+}
 
 /* End of file System_startup.php */
 /* Location: ./modules/system/hooks/System_startup.php */

@@ -109,11 +109,10 @@ class NAILS_User_group_model extends NAILS_Model
 
 		$_group = $this->get_all( NULL, NULL, $_data );
 
-		if ( ! $_group ) :
+		if ( ! $_group ) {
 
-			show_fatal_error( 'No Default Group Set', 'A default user group must be set.' );
-
-		endif;
+			showFatalError('No Default Group Set', 'A default user group must be set.');
+		}
 
 		$this->_default_group = $_group[0];
 
