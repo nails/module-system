@@ -1993,7 +1993,7 @@ class NAILS_User_model extends NAILS_Model
 
 		if ((bool) $this->db->affected_rows()) {
 
-			$this->setCacheUser($user_id);
+			$this->setCacheUser($user->id);
 			return true;
 
 		} else {
