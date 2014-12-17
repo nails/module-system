@@ -333,6 +333,54 @@ class NAILS_Datetime_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
+	public function user_rdate( $timestamp = NULL, $format = 'date' )
+	{
+		//	Has a specific timestamp been given?
+		if ( NULL === $timestamp ) :
+
+			$timestamp = date( 'Y-m-d H:i:s' );
+
+		else :
+
+			$_format = $format == 'date' ? 'Y-m-d' : 'Y-m-d H:i:s';
+
+			//	Are we dealing with a UNIX timestamp or a datetime?
+			if ( ! is_numeric( $timestamp ) ) :
+
+				$timestamp = date( $_format, strtotime( $timestamp ) );
+
+			else :
+
+				$timestamp = date( $_format, $timestamp );
+
+			endif;
+
+		endif;
+
+		// --------------------------------------------------------------------------
+
+		//	Create the new DateTime object
+		$_datetime = new DateTime( $timestamp, new DateTimeZone( $this->timezone_user ) );
+
+		// --------------------------------------------------------------------------
+
+		//	If the user's timezone is different from the Nails. timezone then set it so.
+		if ( $this->timezone_nails != $this->timezone_user ) :
+
+			$_datetime->setTimeZone( new DateTimeZone( $this->timezone_nails ) );
+
+		endif;
+
+		// --------------------------------------------------------------------------
+
+		//	Return the formatted date
+		return $format == 'date' ? $_datetime->format( 'Y-m-d' ) : $_datetime->format( 'Y-m-d H:i:s' );
+	}
+
+
+	// --------------------------------------------------------------------------
+
+
 	public function user_datetime( $timestamp = NULL, $format_date = NULL, $format_time = NULL )
 	{
 		//	Has a specific timestamp been given?
@@ -397,8 +445,8 @@ class NAILS_Datetime_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
-	public function user_rdate( $timestamp = NULL, $format = 'date' )
-	{
+	public function user_rdatetime( $timestamp = NULL, $format_date = NULL, $format_time = NULL )
+	{dump($timestamp);
 		//	Has a specific timestamp been given?
 		if ( NULL === $timestamp ) :
 
@@ -406,20 +454,36 @@ class NAILS_Datetime_model extends NAILS_Model
 
 		else :
 
-			$_format = $format == 'date' ? 'Y-m-d' : 'Y-m-d H:i:s';
-
 			//	Are we dealing with a UNIX timestamp or a datetime?
-			if ( ! is_numeric( $timestamp ) ) :
+			if ( $timestamp && ! is_numeric( $timestamp ) ) :
 
-				$timestamp = date( $_format, strtotime( $timestamp ) );
+				if ( ! $timestamp || $timestamp == '0000-00-00 00:00:00' ) :
+
+					return '';
+
+				endif;
+
+				$timestamp = date( 'Y-m-d H:i:s', strtotime( $timestamp ) );
 
 			else :
 
-				$timestamp = date( $_format, $timestamp );
+				if ( ! $timestamp ) :
+
+					return '';
+
+				endif;
+
+				$timestamp = date( 'Y-m-d H:i:s', $timestamp );
 
 			endif;
 
 		endif;
+
+		// --------------------------------------------------------------------------
+
+		//	Has a date/time format been supplied? If so overwrite the defaults
+		$_format_date	= is_null( $format_date ) ? $this->_format_date : $format_date;
+		$_format_time	= is_null( $format_time ) ? $this->_format_time : $format_time;
 
 		// --------------------------------------------------------------------------
 
@@ -438,7 +502,7 @@ class NAILS_Datetime_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Return the formatted date
-		return $format == 'date' ? $_datetime->format( 'Y-m-d' ) : $_datetime->format( 'Y-m-d H:i:s' );
+		return $_datetime->format( $_format_date . ' ' . $_format_time );
 	}
 
 
