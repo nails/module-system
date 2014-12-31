@@ -68,7 +68,7 @@ class NAILS_User_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	if no user is logged in, see if there's a remembered user to be logged in
-		if (! $this->is_logged_in()) :
+		if (!$this->is_logged_in()) :
 
 			$this->_login_remembered_user();
 
@@ -91,7 +91,7 @@ class NAILS_User_model extends NAILS_Model
 		//	Is remember me functionality enabled?
 		$this->config->load('auth/auth');
 
-		if (! $this->config->item('auth_enable_remember_me')) :
+		if (!$this->config->item('auth_enable_remember_me')) :
 
 			return false;
 
@@ -140,10 +140,10 @@ class NAILS_User_model extends NAILS_Model
 	 * @return	mixed
 	 *
 	 **/
-	public function active_user($keys = false, $delimiter = ' ' )
+	public function active_user($keys = false, $delimiter = ' ')
 	{
 		//	Only look for a value if we're logged in
-		if (! $this->is_logged_in()) :
+		if (!$this->is_logged_in()) :
 
 			return false;
 
@@ -314,7 +314,7 @@ class NAILS_User_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Test user
-		if (! $_user) :
+		if (!$_user) :
 
 			$this->_set_error($_error);
 			return false;
@@ -527,7 +527,7 @@ class NAILS_User_model extends NAILS_Model
 
 		endif;
 
-		if (! $_acl) :
+		if (!$_acl) :
 
 			return false;
 
@@ -602,7 +602,7 @@ class NAILS_User_model extends NAILS_Model
 		//	Execute Query
 		$q = $this->db->get(NAILS_DB_PREFIX . 'user u');
 
-		if (! $q) :
+		if (!$q) :
 
 			return array();
 
@@ -862,14 +862,14 @@ class NAILS_User_model extends NAILS_Model
 
 		endif;
 
-		if (! empty($search[ 'keywords' ])) :
+		if (!empty($search[ 'keywords' ])) :
 
 			$search[ 'keywords' ] = $this->db->escape_like_str($search[ 'keywords' ]);
 
 		endif;
 
 		//	If there is a search term to use then build the search query
-		if (! empty($search[ 'keywords' ])) :
+		if (!empty($search[ 'keywords' ])) :
 
 			//	Parse the keywords, look for specific column searches
 			preg_match_all('/\(([a-zA-Z0-9\.\- \_]+)=\"(.+?)\"\)/', $search['keywords'], $_matches);
@@ -938,7 +938,7 @@ class NAILS_User_model extends NAILS_Model
 
 				$_where  = '(';
 
-				if (! empty($search[ 'columns' ])) :
+				if (!empty($search[ 'columns' ])) :
 
 					//	We have some specifics
 					foreach($search[ 'columns' ] AS $col) :
@@ -1138,7 +1138,7 @@ class NAILS_User_model extends NAILS_Model
 	 **/
 	public function get_by_email($email, $extended = false)
 	{
-		if (! is_string($email)) :
+		if (!is_string($email)) :
 
 			return false;
 
@@ -1177,7 +1177,7 @@ class NAILS_User_model extends NAILS_Model
 	 **/
 	public function get_by_username($username, $extended = false)
 	{
-		if (! is_string($username)) :
+		if (!is_string($username)) :
 
 			return false;
 
@@ -1243,7 +1243,7 @@ class NAILS_User_model extends NAILS_Model
 	 * @return	object
 	 *
 	 **/
-	public function get_by_referral($referral_code, $extended = false )
+	public function get_by_referral($referral_code, $extended = false)
 	{
 		$this->db->where('u.referral', $referral_code);
 		$user = $this->get_all($extended);
@@ -1336,11 +1336,11 @@ class NAILS_User_model extends NAILS_Model
 			unset($data->id_md5);
 
 			//	If we're updating the user's password we should generate a new hash
-			if ( array_key_exists('password', $data)) :
+			if (array_key_exists('password', $data)) :
 
 				$_hash = $this->user_password_model->generate_hash($data['password']);
 
-				if (! $_hash) :
+				if (!$_hash) :
 
 					$this->_set_error($this->user_password_model->last_error());
 					return false;
@@ -1440,7 +1440,7 @@ class NAILS_User_model extends NAILS_Model
 			if ($this->config->item('auth_two_factor_enable') && $_data_reset_security_questions) :
 
 				$this->db->where('user_id', (int) $_uid);
-				if (! $this->db->delete(NAILS_DB_PREFIX . 'user_auth_two_factor_question')) :
+				if (!$this->db->delete(NAILS_DB_PREFIX . 'user_auth_two_factor_question')) :
 
 					//	Rollback immediately in case there's email or password changes which
 					//	might send an email.
@@ -1530,7 +1530,7 @@ class NAILS_User_model extends NAILS_Model
 			// --------------------------------------------------------------------------
 
 			//	How'd we get on?
-			if (! $_rollback && $this->db->trans_status() !== false) :
+			if (!$_rollback && $this->db->trans_status() !== false) :
 
 				$this->db->trans_commit();
 
@@ -1613,7 +1613,7 @@ class NAILS_User_model extends NAILS_Model
 			//	If there's a remember me cookie then update that too, but only if the password
 			//	or email address has changed
 
-			if ((isset($data['email']) || ! empty($_password_updated)) && $this->is_remembered()) :
+			if ((isset($data['email']) || !empty($_password_updated)) && $this->is_remembered()) :
 
 				$this->set_remember_cookie();
 
@@ -1712,7 +1712,7 @@ class NAILS_User_model extends NAILS_Model
 		$_email		= trim(strtolower($email));
 		$_u			= $this->get_by_id($_user_id);
 
-		if (! $_u) :
+		if (!$_u) :
 
 			$this->_set_error('Invalid User ID');
 			return false;
@@ -1722,7 +1722,7 @@ class NAILS_User_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Make sure the email is valid
-		if (! valid_email($_email)) :
+		if (!valid_email($_email)) :
 
 			$this->_set_error('"' . $_email . '" is not a valid email address');
 			return false;
@@ -1752,7 +1752,7 @@ class NAILS_User_model extends NAILS_Model
 				endif;
 
 				//	Resend verification email?
-				if ($send_email && ! $_test->is_verified) :
+				if ($send_email && !$_test->is_verified) :
 
 					$this->email_add_send_verify($_test->id);
 
@@ -1803,7 +1803,7 @@ class NAILS_User_model extends NAILS_Model
 			endif;
 
 			//	Send off the verification email
-			if ($send_email && ! $is_verified) :
+			if ($send_email && !$is_verified) :
 
 				$this->email_add_send_verify($_email_id);
 
@@ -1841,7 +1841,7 @@ class NAILS_User_model extends NAILS_Model
 
 		endif;
 
-		if (! empty($user_id)) :
+		if (!empty($user_id)) :
 
 			$this->db->where('ue.user_id', $user_id);
 
@@ -1851,7 +1851,7 @@ class NAILS_User_model extends NAILS_Model
 
 		$_e = $this->db->get(NAILS_DB_PREFIX . 'user_email ue')->row();
 
-		if (! $_e) :
+		if (!$_e) :
 
 			$this->_set_error('Invalid Email.');
 			return false;
@@ -1874,12 +1874,12 @@ class NAILS_User_model extends NAILS_Model
 		$_email->data['user_id']	= $_e->user_id;
 		$_email->data['code']		= $_e->code;
 
-		if (! $this->emailer->send($_email, true)) :
+		if (!$this->emailer->send($_email, true)) :
 
 			//	Failed to send using the group email, try using the generic email template
 			$_email->type = 'verify_email';
 
-			if (! $this->emailer->send($_email, true)) :
+			if (!$this->emailer->send($_email, true)) :
 
 				//	Email failed to send, for now, do nothing.
 				$this->_set_error('The verification email failed to send.');
@@ -1915,7 +1915,7 @@ class NAILS_User_model extends NAILS_Model
 
 		endif;
 
-		if (! empty($user_id)) :
+		if (!empty($user_id)) :
 
 			$this->db->where('user_id', $user_id);
 
@@ -1946,46 +1946,43 @@ class NAILS_User_model extends NAILS_Model
 	 * @param  string $code     The verification code as generated by email_add()
 	 * @return bool             true on successful verification, false on failure
 	 */
-	public function email_verify($id_email, $code)
+	public function email_verify($idEmail, $code)
 	{
 		//	Check user exists
-		if (is_numeric($id_email)) :
+		if (is_numeric($idEmail)) {
 
-			$_user = $this->get_by_id($id_email);
+			$user = $this->get_by_id($idEmail);
 
-		else :
+		} else {
 
-			$_user = $this->get_by_email($id_email);
+			$user = $this->get_by_email($idEmail);
+		}
 
-		endif;
-
-		if (! $_user) :
+		if (!$user) {
 
 			$this->_set_error('User does not exist.');
 			return false;
-
-		endif;
+		}
 
 		// --------------------------------------------------------------------------
 
 		//	Check if email has already been verified
-		$this->db->where('user_id', $_user->id);
+		$this->db->where('user_id', $user->id);
 		$this->db->where('is_verified', true);
 		$this->db->where('code', $code);
 
-		if ($this->db->count_all_results(NAILS_DB_PREFIX . 'user_email')) :
+		if ($this->db->count_all_results(NAILS_DB_PREFIX . 'user_email')) {
 
 			$this->_set_error('Email has already been verified.');
 			return false;
-
-		endif;
+		}
 
 		// --------------------------------------------------------------------------
 
 		//	Go ahead and set as verified
 		$this->db->set('is_verified', true);
 		$this->db->set('date_verified', 'NOW()', false);
-		$this->db->where('user_id', $_user->id);
+		$this->db->where('user_id', $user->id);
 		$this->db->where('is_verified', false);
 		$this->db->where('code', $code);
 
@@ -2027,7 +2024,7 @@ class NAILS_User_model extends NAILS_Model
 
 		endif;
 
-		if (! is_null($user_id)) :
+		if (!is_null($user_id)) :
 
 			$this->db->where('user_id', $user_id);
 
@@ -2035,7 +2032,7 @@ class NAILS_User_model extends NAILS_Model
 
 		$_email = $this->db->get(NAILS_DB_PREFIX . 'user_email')->row();
 
-		if (! $_email) :
+		if (!$_email) :
 
 			return false;
 
@@ -2138,7 +2135,7 @@ class NAILS_User_model extends NAILS_Model
 		//	Is remember me functionality enabled?
 		$this->config->load('auth/auth');
 
-		if (! $this->config->item('auth_enable_remember_me')) :
+		if (!$this->config->item('auth_enable_remember_me')) :
 
 			return false;
 
@@ -2146,9 +2143,9 @@ class NAILS_User_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
-		if (! $id || ! $password || ! $email) :
+		if (!$id || !$password || !$email) :
 
-			if (! active_user('id') ||  ! active_user('password') || ! active_user('email')) :
+			if (!active_user('id') ||  !active_user('password') || !active_user('email')) :
 
 				return false;
 
@@ -2228,7 +2225,7 @@ class NAILS_User_model extends NAILS_Model
 		$this->db->order_by('last_requested', 'DESC');
 		$_questions = $this->db->get(NAILS_DB_PREFIX . 'user_auth_two_factor_question')->result();
 
-		if (! $_questions) :
+		if (!$_questions) :
 
 			$this->_set_error('No security questions available for this user.');
 			return false;
@@ -2289,7 +2286,7 @@ class NAILS_User_model extends NAILS_Model
 		$this->db->where('user_id', $user_id);
 		$_question = $this->db->get(NAILS_DB_PREFIX . 'user_auth_two_factor_question')->row();
 
-		if (! $_question) :
+		if (!$_question) :
 
 			return false;
 
@@ -2395,7 +2392,7 @@ class NAILS_User_model extends NAILS_Model
 
 			$_admin = $this->session->userdata('admin_recovery');
 
-			if (! empty($_admin->logged_in_as)) :
+			if (!empty($_admin->logged_in_as)) :
 
 				$_me = $_admin->logged_in_as;
 
@@ -2412,11 +2409,11 @@ class NAILS_User_model extends NAILS_Model
 		endif;
 
 		//	Is anybody home? Hello...?
-		if (! $_me) :
+		if (!$_me) :
 
 			$_me = $this->_me;
 
-			if (! $_me) :
+			if (!$_me) :
 
 				return false;
 
@@ -2431,7 +2428,7 @@ class NAILS_User_model extends NAILS_Model
 		//	If the user is isn't found (perhaps deleted) or has been suspended then
 		//	obviously don't proceed with the log in
 
-		if (! $_me || ! empty($_me->is_suspended)) :
+		if (!$_me || !empty($_me->is_suspended)) :
 
 			$this->clear_remember_cookie();
 			$this->clear_active_user();
@@ -2477,12 +2474,12 @@ class NAILS_User_model extends NAILS_Model
 	 **/
 	public function extra_table_insert($table, $data, $user_id = false)
 	{
-		$_uid = ! $user_id ? (int) active_user('id') : $user_id ;
+		$_uid = !$user_id ? (int) active_user('id') : $user_id ;
 
 		// --------------------------------------------------------------------------
 
 		//	Unable to determine user ID
-		if (! $_uid) :
+		if (!$_uid) :
 
 			return false;
 
@@ -2517,12 +2514,12 @@ class NAILS_User_model extends NAILS_Model
 	 **/
 	public function extra_table_fetch($table, $id = null, $user_id = null)
 	{
-		$_uid = ! $user_id ? (int) active_user('id') : $user_id ;
+		$_uid = !$user_id ? (int) active_user('id') : $user_id ;
 
 		// --------------------------------------------------------------------------
 
 		//	Unable to determine user ID
-		if (! $_uid) :
+		if (!$_uid) :
 
 			return false;
 
@@ -2563,12 +2560,12 @@ class NAILS_User_model extends NAILS_Model
 	 **/
 	public function extra_table_update($table, $data, $user_id = false)
 	{
-		$_uid = ! $user_id ? (int) active_user('id') : $user_id ;
+		$_uid = !$user_id ? (int) active_user('id') : $user_id ;
 
 		// --------------------------------------------------------------------------
 
 		//	Unable to determine user ID
-		if (! $_uid) :
+		if (!$_uid) :
 
 			return false;
 
@@ -2580,7 +2577,7 @@ class NAILS_User_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
-		if (! isset($data->id) || empty($data->id)) :
+		if (!isset($data->id) || empty($data->id)) :
 
 			return false;
 
@@ -2612,12 +2609,12 @@ class NAILS_User_model extends NAILS_Model
 	 **/
 	public function extra_table_delete($table, $id, $user_id = false)
 	{
-		$_uid = ! $user_id ? (int) active_user('id') : $user_id ;
+		$_uid = !$user_id ? (int) active_user('id') : $user_id ;
 
 		// --------------------------------------------------------------------------
 
 		//	Unable to determine user ID
-		if (! $_uid) :
+		if (!$_uid) :
 
 			return false;
 
@@ -2625,7 +2622,7 @@ class NAILS_User_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
-		if (! isset($id) || empty($id)) :
+		if (!isset($id) || empty($id)) :
 
 			return false;
 
@@ -2729,7 +2726,7 @@ class NAILS_User_model extends NAILS_Model
 
 			$_password = $this->user_password_model->generate_null_hash();
 
-			if (! $_password) :
+			if (!$_password) :
 
 				$this->_set_error($this->user_password_model->last_error());
 				return false;
@@ -2740,7 +2737,7 @@ class NAILS_User_model extends NAILS_Model
 
 			$_password = $this->user_password_model->generate_hash($data['password']);
 
-			if (! $_password) :
+			if (!$_password) :
 
 				$this->_set_error($this->user_password_model->last_error());
 				return false;
@@ -2752,7 +2749,7 @@ class NAILS_User_model extends NAILS_Model
 		//	Do we need to inform the user of their password? This might be set
 		//	if an admin created the account, or if the system generated a new password
 
-		$_inform_user_pw = ! empty($data['inform_user_pw']) ? true : false;
+		$_inform_user_pw = !empty($data['inform_user_pw']) ? true : false;
 
 		// --------------------------------------------------------------------------
 
@@ -2769,7 +2766,7 @@ class NAILS_User_model extends NAILS_Model
 
 		$_group = $this->user_group_model->get_by_id($_user_data['group_id']);
 
-		if (! $_group) :
+		if (!$_group) :
 
 			$this->_set_error('Invalid Group ID specified.');
 			return false;
@@ -2782,16 +2779,16 @@ class NAILS_User_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
-		if (! empty($data['username'])) :
+		if (!empty($data['username'])) :
 
 			$_user_data['username'] = strtolower($data['username']);
 
 		endif;
 
-		if (! empty($data['email'])) :
+		if (!empty($data['email'])) :
 
 			$_email				= $data['email'];
-			$_email_is_verified	= ! empty($data['email_is_verified']);
+			$_email_is_verified	= !empty($data['email_is_verified']);
 
 		endif;
 
@@ -2803,16 +2800,16 @@ class NAILS_User_model extends NAILS_Model
 		$_user_data['last_ip']			= $_user_data['ip_address'];
 		$_user_data['created']			= date('Y-m-d H:i:s');
 		$_user_data['last_update']		= date('Y-m-d H:i:s');
-		$_user_data['is_suspended']		= ! empty($data['is_suspended']);
-		$_user_data['temp_pw']			= ! empty($data['temp_pw']);
+		$_user_data['is_suspended']		= !empty($data['is_suspended']);
+		$_user_data['temp_pw']			= !empty($data['temp_pw']);
 
 		//	Referral code
 		$_user_data['referral']			= $this->_generate_referral();
 
 		//	Other data
-		$_user_data['salutation']		= ! empty($data['salutation'])	? $data['salutation']	: null ;
-		$_user_data['first_name']		= ! empty($data['first_name'])	? $data['first_name']	: null ;
-		$_user_data['last_name']		= ! empty($data['last_name'])		? $data['last_name']	: null ;
+		$_user_data['salutation']		= !empty($data['salutation'])	? $data['salutation']	: null ;
+		$_user_data['first_name']		= !empty($data['first_name'])	? $data['first_name']	: null ;
+		$_user_data['last_name']		= !empty($data['last_name'])		? $data['last_name']	: null ;
 
 		if (isset($data['gender'])) :
 
@@ -2866,7 +2863,7 @@ class NAILS_User_model extends NAILS_Model
 
 		$this->db->set($_user_data);
 
-		if (! $this->db->insert(NAILS_DB_PREFIX . 'user')) :
+		if (!$this->db->insert(NAILS_DB_PREFIX . 'user')) :
 
 			$this->_set_error('Failed to create base user object.');
 			$this->db->trans_rollback();
@@ -2884,7 +2881,7 @@ class NAILS_User_model extends NAILS_Model
 		$this->db->set('id_md5', md5($_id));
 		$this->db->where('id', $_id);
 
-		if (! $this->db->update(NAILS_DB_PREFIX . 'user')) :
+		if (!$this->db->update(NAILS_DB_PREFIX . 'user')) :
 
 			$this->_set_error('Failed to update base user object.');
 			$this->db->trans_rollback();
@@ -2903,7 +2900,7 @@ class NAILS_User_model extends NAILS_Model
 
 		endif;
 
-		if (! $this->db->insert(NAILS_DB_PREFIX . 'user_meta')) :
+		if (!$this->db->insert(NAILS_DB_PREFIX . 'user_meta')) :
 
 			$this->_set_error('Failed to create user meta data object.');
 			$this->db->trans_rollback();
@@ -2914,11 +2911,11 @@ class NAILS_User_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Finally add the email address to the user_email table
-		if (! empty($_email)) :
+		if (!empty($_email)) :
 
 			$_code = $this->email_add($_email, $_id, true, $_email_is_verified, false);
 
-			if (! $_code) :
+			if (!$_code) :
 
 				//	Error will be set by email_add();
 				$this->db->trans_rollback();
@@ -2947,36 +2944,36 @@ class NAILS_User_model extends NAILS_Model
 
 				endif;
 
-				if (! empty($data['password']) && ! empty($_inform_user_pw)) :
+				if (!empty($data['password']) && !empty($_inform_user_pw)) :
 
 					$_email->data['password'] = $data['password'];
 
 					//	Is this a temp password? We should let them know that too
 					if ($_user_data['temp_pw']) :
 
-						$_email->data['temp_pw'] = ! empty($_user_data['temp_pw']);
+						$_email->data['temp_pw'] = !empty($_user_data['temp_pw']);
 
 					endif;
 
 				endif;
 
 				//	If the email isn't verified we'll want to include a note asking them to do so
-				if (! $_email_is_verified) :
+				if (!$_email_is_verified) :
 
 					$_email->data['verification_code']	= $_code;
 
 				endif;
 
-				if (! $this->emailer->send($_email, true)) :
+				if (!$this->emailer->send($_email, true)) :
 
 					//	Failed to send using the group email, try using the generic email template
 					$_email->type = 'new_user';
 
-					if (! $this->emailer->send($_email, true)) :
+					if (!$this->emailer->send($_email, true)) :
 
 						//	Email failed to send, musn't exist, oh well.
 						$_error  = 'Failed to send welcome email.';
-						$_error .= ! empty($_inform_user_pw) ? ' Inform the user their password is <strong>' . $data['password'] . '</strong>' : '';
+						$_error .= !empty($_inform_user_pw) ? ' Inform the user their password is <strong>' . $data['password'] . '</strong>' : '';
 
 						$this->_set_error($_error);
 
@@ -3123,7 +3120,7 @@ class NAILS_User_model extends NAILS_Model
 	{
 		/**
 		 * Check username doesn't contain invalid characters - we're actively looking
-		 * for characters which are invalid so we can say "Hey! The following
+		 * for characters which are invalid so we can say "Hey!The following
 		 * characters are invalid" rather than making the user guess, y'know, 'cause
 		 * we're good guys.
 		 */
@@ -3429,7 +3426,7 @@ class NAILS_User_model extends NAILS_Model
  *
  **/
 
-if (! defined('NAILS_ALLOW_EXTENSION_USER_MODEL')) :
+if (!defined('NAILS_ALLOW_EXTENSION_USER_MODEL')) :
 
 	class User_model extends NAILS_User_model
 	{
