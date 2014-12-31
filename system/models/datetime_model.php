@@ -1,851 +1,728 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-/**
- * Name:		Datetime_model
- *
- * Description:	This model contains all methods for handling dates, times and timezones
- *
- **/
-
-/**
- * OVERLOADING NAILS' MODELS
- *
- * Note the name of this class; done like this to allow apps to extend this class.
- * Read full explanation at the bottom of this file.
- *
- **/
+<?php
 
 class NAILS_Datetime_model extends NAILS_Model
 {
-	public $timezone_nails;
-	public $timezone_user;
-	protected $_format_date;
-	protected $_format_time;
+    public $timezone_nails;
+    public $timezone_user;
+    protected $formatDate;
+    protected $formatTime;
 
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+    public function __construct()
+    {
+        parent::__construct();
+        $this->config->load('system/datetime');
+    }
 
+    /**
+     * DATE FORMAT
+     * The Following methods deal with formatting dates
+     */
 
-	public function __construct()
-	{
-		parent::__construct();
-		$this->config->load( 'system/datetime' );
-	}
+    public function get_date_format_default()
+    {
+        $default    = $this->config->item('datetime_format_date_default');
+        $dateFormat = $this->get_date_format_by_slug($default);
 
+        return !empty($dateFormat) ? $dateFormat : false;
+    }
 
-	// --------------------------------------------------------------------------
-	//	DATE FORMAT
-	// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
+    public function get_date_format_default_slug()
+    {
+        $default = $this->get_date_format_default();
+        return empty($default->slug) ? false : $default->slug;
+    }
 
-	public function get_date_format_default()
-	{
-		$_default		= $this->config->item( 'datetime_format_date_default' );
-		$_date_format	= $this->get_date_format_by_slug( $_default );
+    // --------------------------------------------------------------------------
 
-		return ! empty( $_date_format ) ? $_date_format : FALSE;
-	}
+    public function get_date_format_default_label()
+    {
+        $default = $this->get_date_format_default();
+        return empty($default->label) ? false : $default->label;
+    }
 
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+    public function get_date_format_default_format()
+    {
+        $default = $this->get_date_format_default();
+        return empty($default->format) ? false : $default->format;
+    }
 
+    // --------------------------------------------------------------------------
 
-	public function get_date_format_default_slug()
-	{
-		$_default = $this->get_date_format_default();
-		return empty( $_default->slug ) ? FALSE : $_default->slug;
-	}
+    public function get_all_date_format()
+    {
+        $formats = $this->config->item('datetime_format_date');
 
+        foreach ($formats as $format) {
 
-	// --------------------------------------------------------------------------
+            $format->example = date($format->format);
+        }
 
+        return $formats;
+    }
 
-	public function get_date_format_default_label()
-	{
-		$_default = $this->get_date_format_default();
-		return empty( $_default->label ) ? FALSE : $_default->label;
-	}
+    // --------------------------------------------------------------------------
 
+    public function get_all_date_format_flat()
+    {
+        $out     = array();
+        $formats = $this->get_all_date_format();
 
-	// --------------------------------------------------------------------------
+        foreach ($formats as $format) {
 
+            $out[$format->slug] = $format->label;
+        }
 
-	public function get_date_format_default_format()
-	{
-		$_default = $this->get_date_format_default();
-		return empty( $_default->format ) ? FALSE : $_default->format;
-	}
+        return $out;
+    }
 
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+    public function get_date_format_by_slug($slug)
+    {
+        $formats = $this->get_all_date_format();
 
+        return !empty($formats[$slug]) ? $formats[$slug] : false;
+    }
 
-	public function get_all_date_format()
-	{
-		$_formats = $this->config->item( 'datetime_format_date' );
+    /**
+     * TIME FORMAT
+     * The Following methods deal with formatting times
+     */
 
-		foreach ( $_formats AS $format ) :
+    public function get_time_format_default()
+    {
+        $default    = $this->config->item('datetime_format_time_default');
+        $timeFormat = $this->get_time_format_by_slug($default);
 
-			$format->example = date( $format->format );
+        return !empty($timeFormat) ? $timeFormat : false;
+    }
 
-		endforeach;
+    // --------------------------------------------------------------------------
 
-		return $_formats;
-	}
+    public function get_time_format_default_slug()
+    {
+        $default = $this->get_time_format_default();
+        return empty($default->slug) ? false : $default->slug;
+    }
 
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+    public function get_time_format_default_label()
+    {
+        $default = $this->get_time_format_default();
+        return empty($default->label) ? false : $default->label;
+    }
 
-	public function get_all_date_format_flat()
-	{
-		$_out		= array();
-		$_formats	= $this->get_all_date_format();
+    // --------------------------------------------------------------------------
 
-		foreach ( $_formats AS $format ) :
+    public function get_time_format_default_format()
+    {
+        $default = $this->get_time_format_default();
+        return empty($default->format) ? false : $default->format;
+    }
 
-			$_out[$format->slug] = $format->label;
+    // --------------------------------------------------------------------------
 
-		endforeach;
+    public function get_all_time_format()
+    {
+        $formats = $this->config->item('datetime_format_time');
 
-		// --------------------------------------------------------------------------
+        if ($this->timezone_user) {
 
-		return $_out;
-	}
+            foreach ($formats as $format) {
 
+                $time = strtotime($this->convert_datetime(time(), $this->timezone_user));
+                $format->example = date($format->format, $time);
+            }
+        }
 
-	// --------------------------------------------------------------------------
+        return $formats;
+    }
 
+    // --------------------------------------------------------------------------
 
-	public function get_date_format_by_slug( $slug )
-	{
-		$_formats = $this->get_all_date_format();
+    public function get_all_time_format_flat()
+    {
+        $out     = array();
+        $formats = $this->get_all_time_format();
 
-		return ! empty( $_formats[$slug] ) ? $_formats[$slug] : FALSE;
-	}
+        foreach ($formats as $format) {
 
+            $out[$format->slug] = $format->label;
+        }
 
-	// --------------------------------------------------------------------------
-	//	TIME FORMAT
-	// --------------------------------------------------------------------------
+        return $out;
+    }
 
+    // --------------------------------------------------------------------------
 
-	public function get_time_format_default()
-	{
-		$_default		= $this->config->item( 'datetime_format_time_default' );
-		$_time_format	= $this->get_time_format_by_slug( $_default );
+    public function get_time_format_by_slug($slug)
+    {
+        $formats = $this->get_all_time_format();
+        return !empty($formats[$slug]) ? $formats[$slug] : false;
+    }
 
-		return ! empty( $_time_format ) ? $_time_format : FALSE;
-	}
+    /**
+     * GENERIC FORMAT METHODS
+     */
 
+    public function set_formats($dateSlug, $timeSlug)
+    {
+        $this->set_date_format($dateSlug);
+        $this->set_time_format($timeSlug);
+    }
 
-	// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
+    public function set_date_format($slug)
+    {
+        $dateFormat = $this->get_date_format_by_slug($slug);
 
-	public function get_time_format_default_slug()
-	{
-		$_default = $this->get_time_format_default();
-		return empty( $_default->slug ) ? FALSE : $_default->slug;
-	}
+        if (empty($dateFormat)) {
 
+            $dateFormat = $this->get_date_format_default();
+        }
 
-	// --------------------------------------------------------------------------
+        $this->_format_date = $dateFormat->format;
+    }
 
+    // --------------------------------------------------------------------------
 
-	public function get_time_format_default_label()
-	{
-		$_default = $this->get_time_format_default();
-		return empty( $_default->label ) ? FALSE : $_default->label;
-	}
+    public function set_time_format($slug)
+    {
+        $timeFormat = $this->get_time_format_by_slug($slug);
 
+        if (empty($timeFormat)) {
 
-	// --------------------------------------------------------------------------
+            $timeFormat = $this->get_time_format_default();
+        }
 
+        $this->_format_time = $timeFormat->format;
+    }
 
-	public function get_time_format_default_format()
-	{
-		$_default = $this->get_time_format_default();
-		return empty( $_default->format ) ? FALSE : $_default->format;
-	}
+    /**
+     * USER METHODS
+     */
 
+    public function user_date($timestamp = null, $formatDate = null)
+    {
+        //  Has a specific timestamp been given?
+        if (is_null($timestamp)) {
 
-	// --------------------------------------------------------------------------
+            $timestamp = date('Y-m-d');
 
+        } else {
 
-	public function get_all_time_format()
-	{
-		$_formats = $this->config->item( 'datetime_format_time' );
+            //  Are we dealing with a UNIX timestamp or a datetime?
+            if (!is_numeric($timestamp)) {
 
-		if ( $this->timezone_user ) :
+                if (!$timestamp || $timestamp == '0000-00-00') {
 
-			foreach ( $_formats AS $format ) :
+                    return '';
+                }
 
-				$format->example = date( $format->format, strtotime( $this->convert_datetime( time(), $this->timezone_user ) ) );
+                $timestamp = date('Y-m-d', strtotime($timestamp));
 
-			endforeach;
+            } else {
 
-		endif;
+                if (!$timestamp) {
 
-		return $_formats;
-	}
+                    return '';
+                }
 
+                $timestamp = date('Y-m-d', $timestamp);
+            }
+        }
 
-	// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-	public function get_all_time_format_flat()
-	{
-		$_out		= array();
-		$_formats	= $this->get_all_time_format();
+        //  Has a date/time format been supplied? If so overwrite the defaults
+        $formatDate = is_null($formatDate) ? $this->_format_date : $formatDate;
 
-		foreach ( $_formats AS $format ) :
+        // --------------------------------------------------------------------------
 
-			$_out[$format->slug] = $format->label;
+        //  Create the new DateTime object
+        $datetime = new DateTime($timestamp, new DateTimeZone($this->timezone_nails));
 
-		endforeach;
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        //  If the user's timezone is different from the Nails. timezone then set it so.
+        if ($this->timezone_nails != $this->timezone_user) {
 
-		return $_out;
-	}
+            $datetime->setTimeZone(new DateTimeZone($this->timezone_user));
+        }
 
+        // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+        //  Return the formatted date
+        return $datetime->format($formatDate);
+    }
 
+    // --------------------------------------------------------------------------
 
-	public function get_time_format_by_slug( $slug )
-	{
-		$_formats = $this->get_all_time_format();
+    public function user_rdate($timestamp = null, $format = 'date')
+    {
+        //  Has a specific timestamp been given?
+        if (is_null($timestamp)) {
 
-		return ! empty( $_formats[$slug] ) ? $_formats[$slug] : FALSE;
-	}
+            $timestamp = date('Y-m-d H:i:s');
 
+        } else {
 
-	// --------------------------------------------------------------------------
-	//	GENERIC FORMAT METHODS
-	// --------------------------------------------------------------------------
+            $format = $format == 'date' ? 'Y-m-d' : 'Y-m-d H:i:s';
 
+            //  Are we dealing with a UNIX timestamp or a datetime?
+            if (!is_numeric($timestamp)) {
 
-	public function set_formats( $date_slug, $time_slug )
-	{
-		$this->set_date_format( $date_slug );
-		$this->set_time_format( $time_slug );
-	}
+                $timestamp = date($format, strtotime($timestamp));
 
+            } else {
 
-	// --------------------------------------------------------------------------
+                $timestamp = date($format, $timestamp);
+            }
+        }
 
+        // --------------------------------------------------------------------------
 
-	public function set_date_format( $slug )
-	{
-		$_date_format = $this->get_date_format_by_slug( $slug );
+        //  Create the new DateTime object
+        $datetime = new DateTime($timestamp, new DateTimeZone($this->timezone_user));
 
-		if ( empty( $_date_format ) ) :
+        // --------------------------------------------------------------------------
 
-			$_date_format = $this->get_date_format_default();
+        //  If the user's timezone is different from the Nails. timezone then set it so.
+        if ($this->timezone_nails != $this->timezone_user) {
 
-		endif;
+            $datetime->setTimeZone(new DateTimeZone($this->timezone_nails));
+        }
 
-		$this->_format_date = $_date_format->format;
-	}
+        // --------------------------------------------------------------------------
 
+        //  Return the formatted date
+        return $format == 'date' ? $datetime->format('Y-m-d') : $datetime->format('Y-m-d H:i:s');
+    }
 
-	// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
+    public function user_datetime($timestamp = null, $formatDate = null, $formatTime = null)
+    {
+        //  Has a specific timestamp been given?
+        if (is_null($timestamp)) {
 
-	public function set_time_format( $slug )
-	{
-		$_time_format = $this->get_time_format_by_slug( $slug );
+            $timestamp = date('Y-m-d H:i:s');
 
-		if ( empty( $_time_format ) ) :
+        } else {
 
-			$_time_format = $this->get_time_format_default();
+            //  Are we dealing with a UNIX timestamp or a datetime?
+            if ($timestamp && !is_numeric($timestamp)) {
 
-		endif;
+                if (!$timestamp || $timestamp == '0000-00-00 00:00:00') {
 
-		$this->_format_time = $_time_format->format;
-	}
+                    return '';
+                }
 
+                $timestamp = date('Y-m-d H:i:s', strtotime($timestamp));
 
-	// --------------------------------------------------------------------------
-	//	USER METHODS
-	// --------------------------------------------------------------------------
+            } else {
 
+                if (!$timestamp) {
 
-	public function user_date( $timestamp = NULL, $format_date = NULL )
-	{
-		//	Has a specific timestamp been given?
-		if ( NULL === $timestamp ) :
+                    return '';
+                }
 
-			$timestamp = date( 'Y-m-d' );
+                $timestamp = date('Y-m-d H:i:s', $timestamp);
+            }
+        }
 
-		else :
+        // --------------------------------------------------------------------------
 
-			//	Are we dealing with a UNIX timestamp or a datetime?
-			if ( ! is_numeric( $timestamp ) ) :
+        //  Has a date/time format been supplied? If so overwrite the defaults
+        $formatDate = is_null($formatDate) ? $this->_format_date : $formatDate;
+        $formatTime = is_null($formatTime) ? $this->_format_time : $formatTime;
 
-				if ( ! $timestamp || $timestamp == '0000-00-00' ) :
+        // --------------------------------------------------------------------------
 
-					return '';
+        //  Create the new DateTime object
+        $datetime = new DateTime($timestamp, new DateTimeZone($this->timezone_nails));
 
-				endif;
+        // --------------------------------------------------------------------------
 
-				$timestamp = date( 'Y-m-d', strtotime( $timestamp ) );
+        //  If the user's timezone is different from the Nails. timezone then set it so.
+        if ($this->timezone_nails != $this->timezone_user) {
 
-			else :
+            $datetime->setTimeZone(new DateTimeZone($this->timezone_user));
+        }
 
-				if ( ! $timestamp ) :
+        // --------------------------------------------------------------------------
 
-					return '';
+        //  Return the formatted date
+        return $datetime->format($formatDate . ' ' . $formatTime);
+    }
 
-				endif;
+    // --------------------------------------------------------------------------
 
-				$timestamp = date( 'Y-m-d', $timestamp );
+    public function user_rdatetime($timestamp = null, $formatDate = null, $formatTime = null)
+    {
+        //  Has a specific timestamp been given?
+        if (is_null($timestamp)) {
 
-			endif;
+            $timestamp = date('Y-m-d H:i:s');
 
-		endif;
+        } else {
 
-		// --------------------------------------------------------------------------
+            //  Are we dealing with a UNIX timestamp or a datetime?
+            if ($timestamp && !is_numeric($timestamp)) {
 
-		//	Has a date/time format been supplied? If so overwrite the defaults
-		$_format_date = NULL === $format_date ? $this->_format_date : $format_date;
+                if (!$timestamp || $timestamp == '0000-00-00 00:00:00') {
 
-		// --------------------------------------------------------------------------
+                    return '';
+                }
 
-		//	Create the new DateTime object
-		$_datetime = new DateTime( $timestamp, new DateTimeZone( $this->timezone_nails ) );
+                $timestamp = date('Y-m-d H:i:s', strtotime($timestamp));
 
-		// --------------------------------------------------------------------------
+            } else {
 
-		//	If the user's timezone is different from the Nails. timezone then set it so.
-		if ( $this->timezone_nails != $this->timezone_user ) :
+                if (!$timestamp) {
 
-			$_datetime->setTimeZone( new DateTimeZone( $this->timezone_user ) );
+                    return '';
+                }
 
-		endif;
+                $timestamp = date('Y-m-d H:i:s', $timestamp);
+            }
+        }
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		//	Return the formatted date
-		return $_datetime->format( $_format_date );
-	}
+        //  Has a date/time format been supplied? If so overwrite the defaults
+        $formatDate = is_null($formatDate) ? $this->_format_date : $formatDate;
+        $formatTime = is_null($formatTime) ? $this->_format_time : $formatTime;
 
+        // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+        //  Create the new DateTime object
+        $datetime = new DateTime($timestamp, new DateTimeZone($this->timezone_user));
 
+        // --------------------------------------------------------------------------
 
-	public function user_rdate( $timestamp = NULL, $format = 'date' )
-	{
-		//	Has a specific timestamp been given?
-		if ( NULL === $timestamp ) :
+        //  If the user's timezone is different from the Nails. timezone then set it so.
+        if ($this->timezone_nails != $this->timezone_user) {
 
-			$timestamp = date( 'Y-m-d H:i:s' );
+            $datetime->setTimeZone(new DateTimeZone($this->timezone_nails));
+        }
 
-		else :
+        // --------------------------------------------------------------------------
 
-			$_format = $format == 'date' ? 'Y-m-d' : 'Y-m-d H:i:s';
+        //  Return the formatted date
+        return $datetime->format($formatDate . ' ' . $formatTime);
+    }
 
-			//	Are we dealing with a UNIX timestamp or a datetime?
-			if ( ! is_numeric( $timestamp ) ) :
+    /**
+     * TIMEZONE METHODS
+     */
 
-				$timestamp = date( $_format, strtotime( $timestamp ) );
+    public function get_timezone_default()
+    {
+        $default = $this->config->item('datetime_timezone_default');
 
-			else :
+        if ($default) {
 
-				$timestamp = date( $_format, $timestamp );
+            return $default;
 
-			endif;
+        } else {
 
-		endif;
+            return date_default_timezone_get();
+        }
+    }
 
-		// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
-		//	Create the new DateTime object
-		$_datetime = new DateTime( $timestamp, new DateTimeZone( $this->timezone_user ) );
+    public function set_timezones($tzNails, $tzUser)
+    {
+        $this->set_nails_timezone($tzNails);
+        $this->set_user_timezone($tzUser);
+    }
 
-		// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
-		//	If the user's timezone is different from the Nails. timezone then set it so.
-		if ( $this->timezone_nails != $this->timezone_user ) :
+    public function set_nails_timezone($tz)
+    {
+        $this->timezone_nails = $tz;
+    }
 
-			$_datetime->setTimeZone( new DateTimeZone( $this->timezone_nails ) );
+    // --------------------------------------------------------------------------
 
-		endif;
+    public function set_user_timezone($tz)
+    {
+        $this->timezone_user = $tz;
+    }
 
-		// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
-		//	Return the formatted date
-		return $format == 'date' ? $_datetime->format( 'Y-m-d' ) : $_datetime->format( 'Y-m-d H:i:s' );
-	}
+    public function get_all_timezone()
+    {
+        //  Hat-tip to: https://gist.github.com/serverdensity/82576
+        $zones     = DateTimeZone::listIdentifiers();
+        $locations = array('UTC' => 'Coordinated Universal Time (UTC/GMT)');
 
+        foreach ($zones as $zone) {
 
-	// --------------------------------------------------------------------------
+            // 0 => Continent, 1 => City
+            $zoneExploded = explode('/', $zone);
 
+            $zoneAcceptable   = array();
+            $zoneAcceptable[] = 'Africa';
+            $zoneAcceptable[] = 'America';
+            $zoneAcceptable[] = 'Antarctica';
+            $zoneAcceptable[] = 'Arctic';
+            $zoneAcceptable[] = 'Asia';
+            $zoneAcceptable[] = 'Atlantic';
+            $zoneAcceptable[] = 'Australia';
+            $zoneAcceptable[] = 'Europe';
+            $zoneAcceptable[] = 'Indian';
+            $zoneAcceptable[] = 'Pacific';
 
-	public function user_datetime( $timestamp = NULL, $format_date = NULL, $format_time = NULL )
-	{
-		//	Has a specific timestamp been given?
-		if ( NULL === $timestamp ) :
+            // Only use "friendly" continent names
+            if (in_array($zoneExploded[0], $zoneAcceptable)) {
 
-			$timestamp = date( 'Y-m-d H:i:s' );
+                if (isset($zoneExploded[1]) != '') {
 
-		else :
+                    $area = str_replace('_', ' ', $zoneExploded[1]);
 
-			//	Are we dealing with a UNIX timestamp or a datetime?
-			if ( $timestamp && ! is_numeric( $timestamp ) ) :
+                    if (!empty($zoneExploded[2])) {
 
-				if ( ! $timestamp || $timestamp == '0000-00-00 00:00:00' ) :
+                        $area = $area . ' (' . str_replace('_', ' ', $zoneExploded[2]) . ')';
+                    }
 
-					return '';
+                    // Creates array(DateTimeZone => 'Friendly name')
+                    $locations[$zoneExploded[0]][$zone] = $area;
+                }
+            }
+        }
 
-				endif;
+        return $locations;
+    }
 
-				$timestamp = date( 'Y-m-d H:i:s', strtotime( $timestamp ) );
+    // --------------------------------------------------------------------------
 
-			else :
+    public function get_all_timezone_flat()
+    {
+        $locations = $this->get_all_timezone();
+        $out       = array();
 
-				if ( ! $timestamp ) :
+        foreach ($locations as $key => $value) {
 
-					return '';
+            if (is_array($value)) {
 
-				endif;
+                foreach ($value as $subKey => $subValue) {
 
-				$timestamp = date( 'Y-m-d H:i:s', $timestamp );
+                    if (is_string($subValue)) {
 
-			endif;
+                        $out[$subKey] = $subValue;
+                    }
+                }
 
-		endif;
+            } else {
 
-		// --------------------------------------------------------------------------
+                $out[$key] = $value;
+            }
 
-		//	Has a date/time format been supplied? If so overwrite the defaults
-		$_format_date	= is_null( $format_date ) ? $this->_format_date : $format_date;
-		$_format_time	= is_null( $format_time ) ? $this->_format_time : $format_time;
+        }
 
-		// --------------------------------------------------------------------------
+        return $out;
+    }
 
-		//	Create the new DateTime object
-		$_datetime = new DateTime( $timestamp, new DateTimeZone( $this->timezone_nails ) );
+    /**
+     * OTHER METHODS
+     */
 
-		// --------------------------------------------------------------------------
+    static function nice_time($date = false, $tense = true, $optBadMsg = null, $greaterOneWeek = null, $lessTenMins = null)
+    {
+        if (empty($date) || $date == '0000-00-00') {
 
-		//	If the user's timezone is different from the Nails. timezone then set it so.
-		if ( $this->timezone_nails != $this->timezone_user ) :
+            if ($optBadMsg) {
 
-			$_datetime->setTimeZone( new DateTimeZone( $this->timezone_user ) );
+                return $optBadMsg;
 
-		endif;
+            } else {
 
-		// --------------------------------------------------------------------------
+                return 'No date supplied';
+            }
+        }
 
-		//	Return the formatted date
-		return $_datetime->format( $_format_date . ' ' . $_format_time );
-	}
+        $periods = array('second', 'minute', 'hour', 'day', 'week', 'month', 'year', 'decade');
+        $lengths = array(60,60,24,7,'4.35', 12, 10);
+        $now     = time();
 
+        if (is_int($date)) {
 
-	// --------------------------------------------------------------------------
+            $unix_date = $date;
 
+        } else {
 
-	public function user_rdatetime( $timestamp = NULL, $format_date = NULL, $format_time = NULL )
-	{dump($timestamp);
-		//	Has a specific timestamp been given?
-		if ( NULL === $timestamp ) :
+            $unix_date = strtotime($date);
+        }
 
-			$timestamp = date( 'Y-m-d H:i:s' );
+        //  Check date supplied is valid
+        if (empty($unix_date)) {
 
-		else :
+            if ($optBadMsg) {
 
-			//	Are we dealing with a UNIX timestamp or a datetime?
-			if ( $timestamp && ! is_numeric( $timestamp ) ) :
+                return $optBadMsg;
 
-				if ( ! $timestamp || $timestamp == '0000-00-00 00:00:00' ) :
+            } else {
 
-					return '';
+                return 'Bad date supplied ('.$date.')';
+            }
+        }
 
-				endif;
+        //  If date is effectively null
+        if ($date == '0000-00-00 00:00:00') {
 
-				$timestamp = date( 'Y-m-d H:i:s', strtotime( $timestamp ) );
+            return 'Unknown';
+        }
 
-			else :
+        //  Determine past or future date
+        if ($now >= $unix_date) {
 
-				if ( ! $timestamp ) :
+            $difference = $now - $unix_date;
 
-					return '';
+            if ($tense === true) {
 
-				endif;
+                $tense = 'ago';
+            }
 
-				$timestamp = date( 'Y-m-d H:i:s', $timestamp );
+        } else {
 
-			endif;
+            $difference = $unix_date - $now;
 
-		endif;
+            if ($tense === true) {
 
-		// --------------------------------------------------------------------------
+                $tense = 'from now';
+            }
+        }
 
-		//	Has a date/time format been supplied? If so overwrite the defaults
-		$_format_date	= is_null( $format_date ) ? $this->_format_date : $format_date;
-		$_format_time	= is_null( $format_time ) ? $this->_format_time : $format_time;
+        for ($j = 0; $difference >= $lengths[$j] && $j < count($lengths)-1; $j++) {
 
-		// --------------------------------------------------------------------------
+            $difference /= $lengths[$j];
+        }
 
-		//	Create the new DateTime object
-		$_datetime = new DateTime( $timestamp, new DateTimeZone( $this->timezone_user ) );
+        $difference = round($difference);
 
-		// --------------------------------------------------------------------------
+        if ($difference != 1) {
 
-		//	If the user's timezone is different from the Nails. timezone then set it so.
-		if ( $this->timezone_nails != $this->timezone_user ) :
+            $periods[$j] .= 's';
+        }
 
-			$_datetime->setTimeZone( new DateTimeZone( $this->timezone_nails ) );
+        // If it's greater than 1 week and $greaterOneWeek is defined, return that
+        if (substr($periods[$j], 0, 4) == 'week' && $greaterOneWeek !== null) {
 
-		endif;
+            return $greaterOneWeek;
+        }
 
-		// --------------------------------------------------------------------------
+        // If it's less than 20 seconds, return 'Just now'
+        if (is_null($lessTenMins) && substr($periods[$j], 0, 6) == 'second' && $difference <=20) {
 
-		//	Return the formatted date
-		return $_datetime->format( $_format_date . ' ' . $_format_time );
-	}
+            return 'a moment ago';
+        }
 
+        //  If $lessTenMins is set then return that if less than 10 minutes
+        if (!is_null($lessTenMins)
+                &&
+                (
+                    (substr($periods[$j], 0, 6) == 'minute' && $difference <= 10) ||
+                    (substr($periods[$j], 0, 6) == 'second' && $difference <= 60)
+                )
+            ) {
 
-	// --------------------------------------------------------------------------
-	//	TIMEZONE METHODS
-	// --------------------------------------------------------------------------
+            return $lessTenMins;
+        }
 
+        if ($difference . ' ' . $periods[$j] . ' ' . $tense == '1 day ago') {
 
-	public function get_timezone_default()
-	{
-		$_default = $this->config->item( 'datetime_timezone_default' );
+            return 'yesterday';
 
-		if ( $_default ) :
+        } elseif ($difference . ' ' . $periods[$j] . ' ' . $tense == '1 day from now') {
 
-			return $_default;
+            return 'tomorrow';
 
-		else :
+        } else {
 
-			return date_default_timezone_get();
+            return $difference . ' ' . $periods[$j] . ' ' . $tense;
+        }
+    }
 
-		endif;
-	}
+    // --------------------------------------------------------------------------
 
+    static function get_code_from_timezone($timezone)
+    {
+        $abbreviations = DateTimeZone::listAbbreviations();
 
-	// --------------------------------------------------------------------------
+        foreach($abbreviations AS $code => $values) {
 
+            foreach ($values as $v) {
 
-	public function set_timezones( $tz_nails, $tz_user )
-	{
-		$this->set_nails_timezone( $tz_nails );
-		$this->set_user_timezone( $tz_user );
-	}
+                if ($v['timezone_id'] == $timezone) {
 
+                    return strtoupper($code);
+                }
+            }
+        }
+    }
 
-	// --------------------------------------------------------------------------
+    /**
+     * CONVERSION METHODS
+     */
 
+    static function convert_datetime($timestamp, $toTz, $fromTz = 'UTC')
+    {
+        //  Has a specific timestamp been given?
+        if (is_null($timestamp)) {
 
-	public function set_nails_timezone( $tz )
-	{
-		$this->timezone_nails = $tz;
-	}
+            $timestamp = date('Y-m-d H:i:s');
 
+        } else {
 
-	// --------------------------------------------------------------------------
+            //  Are we dealing with a UNIX timestamp or a datetime?
+            if (!is_numeric($timestamp)) {
 
+                if (!$timestamp || $timestamp == '0000-00-00') {
 
-	public function set_user_timezone( $tz )
-	{
-		$this->timezone_user = $tz;
-	}
+                    return '';
+                }
 
+                $timestamp = date('Y-m-d H:i:s', strtotime($timestamp));
 
-	// --------------------------------------------------------------------------
+            } else {
 
+                if (!$timestamp) {
 
-	public function get_all_timezone()
-	{
-		//	Hat-tip to: https://gist.github.com/serverdensity/82576
-		$_zones		= DateTimeZone::listIdentifiers();
-		$_locations	= array( 'UTC' => 'Coordinated Universal Time (UTC/GMT)' );
+                    return '';
+                }
 
-		foreach ( $_zones as $zone ) :
+                $timestamp = date('Y-m-d H:i:s', $timestamp);
+            }
+        }
 
-			$zoneExploded = explode( '/', $zone ); // 0 => Continent, 1 => City
+        // --------------------------------------------------------------------------
 
-			// Only use "friendly" continent names
-			if ( $zoneExploded[0] == 'Africa' || $zoneExploded[0] == 'America' || $zoneExploded[0] == 'Antarctica' || $zoneExploded[0] == 'Arctic' || $zoneExploded[0] == 'Asia' || $zoneExploded[0] == 'Atlantic' || $zoneExploded[0] == 'Australia' || $zoneExploded[0] == 'Europe' || $zoneExploded[0] == 'Indian' || $zoneExploded[0] == 'Pacific' ) :
+        //  Perform the conversion
+        $fromTz = new DateTimeZone($fromTz);
+        $out    = new Datetime($timestamp, $fromTz);
 
-				if ( isset( $zoneExploded[1] ) != '' ) :
+        //  Set the output timezone
+        $toTz = new DateTimeZone($toTz);
+        $out->setTimeZone($toTz);
 
-					$area = str_replace( '_', ' ', $zoneExploded[1] );
-
-					if ( ! empty( $zoneExploded[2] ) ) :
-
-						$area = $area . ' (' . str_replace('_', ' ', $zoneExploded[2]) . ')';
-
-					endif;
-
-					$_locations[$zoneExploded[0]][$zone] = $area; // Creates array(DateTimeZone => 'Friendly name')
-
-				endif;
-
-			endif;
-
-		endforeach;
-
-		return $_locations;
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	public function get_all_timezone_flat()
-	{
-		//	Hat-tip to: https://gist.github.com/serverdensity/82576
-		$_zones		= DateTimeZone::listIdentifiers();
-		$_locations	= array( 'UTC' => 'Coordinated Universal Time (UTC/GMT)' );
-
-		foreach ( $_zones as $zone ) :
-
-			$zoneExploded = explode( '/', $zone ); // 0 => Continent, 1 => City
-
-			// Only use "friendly" continent names
-			if ( $zoneExploded[0] == 'Africa' || $zoneExploded[0] == 'America' || $zoneExploded[0] == 'Antarctica' || $zoneExploded[0] == 'Arctic' || $zoneExploded[0] == 'Asia' || $zoneExploded[0] == 'Atlantic' || $zoneExploded[0] == 'Australia' || $zoneExploded[0] == 'Europe' || $zoneExploded[0] == 'Indian' || $zoneExploded[0] == 'Pacific' ) :
-
-				if ( isset( $zoneExploded[1] ) != '' ) :
-
-					$area = str_replace( '_', ' ', $zoneExploded[1] );
-
-					if ( ! empty( $zoneExploded[2] ) ) :
-
-						$area = $area . ' (' . str_replace('_', ' ', $zoneExploded[2]) . ')';
-
-					endif;
-
-					$_locations[$zone] = $zoneExploded[0] . ' - ' . $area; // Creates array(DateTimeZone => 'Friendly name')
-
-				endif;
-
-			endif;
-
-		endforeach;
-
-		return $_locations;
-	}
-
-
-	// --------------------------------------------------------------------------
-	//	OTHER METHODS
-	// --------------------------------------------------------------------------
-
-
-	static function nice_time( $date = FALSE, $tense = TRUE, $opt_bad_msg = NULL, $greater_1_week = NULL, $less_10_mins = NULL )
-	{
-		if ( empty( $date ) || $date == '0000-00-00' ) :
-
-			if ( $opt_bad_msg ) :
-
-				return $opt_bad_msg;
-
-			else :
-
-				return 'No date supplied';
-
-			endif;
-
-		endif;
-
-		$periods	= array( 'second', 'minute', 'hour', 'day', 'week', 'month', 'year', 'decade' );
-		$lengths	= array( 60,60,24,7,'4.35', 12, 10 );
-		$now		= time();
-
-		if ( is_int( $date ) ) :
-
-			$unix_date = $date;
-
-		else :
-
-			$unix_date = strtotime( $date );
-
-		endif;
-
-		//	Check date supplied is valid
-		if ( empty( $unix_date ) ) :
-
-			if ( $opt_bad_msg ) :
-
-				return $opt_bad_msg;
-
-			else :
-
-				return 'Bad date supplied ('.$date.')';
-
-			endif;
-
-		endif;
-
-		//	If date is effectively NULL
-		if ( $date == '0000-00-00 00:00:00' ) :
-
-			return 'Unknown';
-
-		endif;
-
-		//	Determine past or future date
-		if ( $now >= $unix_date ) :
-
-			$difference = $now - $unix_date;
-
-			if ( $tense === TRUE ) :
-
-				$tense = 'ago';
-
-			endif;
-
-		else :
-
-			$difference = $unix_date - $now;
-			if ( $tense === TRUE ) :
-
-				$tense = 'from now';
-
-			endif;
-
-		endif;
-
-		for ( $j = 0; $difference >= $lengths[$j] && $j < count( $lengths )-1; $j++ ) :
-
-			$difference /= $lengths[$j];
-
-		endfor;
-
-		$difference = round( $difference );
-
-		if ( $difference != 1 ) :
-
-			$periods[$j] .= 's';
-
-		endif;
-
-		// If it's greater than 1 week and $greater_1_week is defined, return that
-		if ( substr( $periods[$j], 0, 4 ) == 'week' && $greater_1_week !== NULL ) :
-
-			return $greater_1_week;
-
-		endif;
-
-		// If it's less than 20 seconds, return 'Just now'
-		if ( NULL === $less_10_mins && substr( $periods[$j], 0, 6 ) == 'second' && $difference <=20 ) :
-
-			return 'a moment ago';
-
-		endif;
-
-		//	If $less_10_mins is set then return that if less than 10 minutes
-		if ( NULL !== $less_10_mins
-				&&
-				(
-					( substr( $periods[$j], 0, 6 ) == 'minute' && $difference <= 10 ) ||
-					( substr( $periods[$j], 0, 6 ) == 'second' && $difference <= 60 )
-				)
-			) :
-
-			return $less_10_mins;
-
-		endif;
-
-		if ( $difference . ' ' . $periods[$j] . ' ' . $tense == '1 day ago' ) :
-
-			return 'yesterday';
-
-		elseif ( $difference . ' ' . $periods[$j] . ' ' . $tense == '1 day from now' ) :
-
-			return 'tomorrow';
-
-		else :
-
-			return $difference . ' ' . $periods[$j] . ' ' . $tense;
-
-		endif;
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	static function get_code_from_timezone( $timezone )
-	{
-		$_abbreviations = DateTimeZone::listAbbreviations();
-
-		foreach( $_abbreviations AS $code => $values ) :
-
-			foreach ( $values AS $v ):
-
-				if ( $v['timezone_id'] == $timezone ) :
-
-					return strtoupper( $code );
-
-				endif;
-
-			endforeach;
-
-		endforeach;
-	}
-
-
-	// --------------------------------------------------------------------------
-	//	CONVERSION METHODS
-	// --------------------------------------------------------------------------
-
-
-	static function convert_datetime( $timestamp, $to_tz, $from_tz = 'UTC' )
-	{
-		//	Has a specific timestamp been given?
-		if ( NULL === $timestamp ) :
-
-			$timestamp = date( 'Y-m-d H:i:s' );
-
-		else :
-
-			//	Are we dealing with a UNIX timestamp or a datetime?
-			if ( ! is_numeric( $timestamp ) ) :
-
-				if ( ! $timestamp || $timestamp == '0000-00-00' ) :
-
-					return '';
-
-				endif;
-
-				$timestamp = date( 'Y-m-d H:i:s', strtotime( $timestamp ) );
-
-			else :
-
-				if ( ! $timestamp ) :
-
-					return '';
-
-				endif;
-
-				$timestamp = date( 'Y-m-d H:i:s', $timestamp );
-
-			endif;
-
-		endif;
-
-		// --------------------------------------------------------------------------
-
-		//	Perform the conversion
-		$_from_tz	= new DateTimeZone( $from_tz );
-		$_out		= new Datetime( $timestamp, $_from_tz );
-
-		//	Set the output timezone
-		$_to_tz		= new DateTimeZone( $to_tz );
-		$_out->setTimeZone( $_to_tz );
-
-		return $_out->format( 'Y-m-d H:i:s' );
-	}
+        return $out->format('Y-m-d H:i:s');
+    }
 }
 
-
 // --------------------------------------------------------------------------
-
 
 /**
  * OVERLOADING NAILS' MODELS
@@ -871,14 +748,9 @@ class NAILS_Datetime_model extends NAILS_Model
  *
  **/
 
-if ( ! defined( 'NAILS_ALLOW_EXTENSION_DATETIME_MODEL' ) ) :
+if (!defined('NAILS_ALLOW_EXTENSION_DATETIME_MODEL')) {
 
-	class Datetime_model extends NAILS_Datetime_model
-	{
-	}
-
-endif;
-
-
-/* End of file datetime_model.php */
-/* Location: ./system/application/models/datetime_model.php */
+    class Datetime_model extends NAILS_Datetime_model
+    {
+    }
+}
