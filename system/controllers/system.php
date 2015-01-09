@@ -1,41 +1,33 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-/**
- * Name:		System
- *
- * Description:	Used for various misc. functionality
- *
- **/
-
-//	Include _system.php; executes common functionality
-require_once '_system.php';
-
-/**
- * OVERLOADING NAILS' SYSTEM MODULES
- *
- * Note the name of this class; done like this to allow apps to extend this class.
- * Read full explanation at the bottom of this file.
- *
- **/
+<?php
 
 class NAILS_System extends NAILS_System_Controller
 {
-	/**
-	 * Handle 404 errors
-	 *
-	 * @access	public
-	 * @param	none
-	 * @return	void
-	 **/
-	public function render_404()
-	{
-		show_404();
-	}
+    /**
+     * Constructs the controlelr
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        // --------------------------------------------------------------------------
+
+        //  Load language file
+        $this->lang->load('system');
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Handles 404 errors
+     * @return void
+     */
+    public function render_404()
+    {
+        show_404();
+    }
 }
 
-
 // --------------------------------------------------------------------------
-
 
 /**
  * OVERLOADING NAILS' SYSTEM MODULES
@@ -61,13 +53,9 @@ class NAILS_System extends NAILS_System_Controller
  *
  **/
 
-if ( ! defined( 'NAILS_ALLOW_EXTENSION_SYSTEM' ) ) :
+if (! defined('NAILS_ALLOW_EXTENSION_SYSTEM')) {
 
-	class System extends NAILS_System
-	{
-	}
-
-endif;
-
-/* End of file system.php */
-/* Location: ./application/modules/system/controllers/system.php */
+    class System extends NAILS_System
+    {
+    }
+}

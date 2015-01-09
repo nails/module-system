@@ -1,11 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-/**
- * Name:		CORE_NAILS_Language_Model
- *
- * Description:	This model contains all methods for handling languages
- *
- **/
+<?php
 
 /**
  * OVERLOADING NAILS' MODELS
@@ -17,117 +10,98 @@
 
 class NAILS_Language_model extends NAILS_Model
 {
-	public function __construct()
-	{
-		parent::__construct();
-		$this->config->load( 'system/languages' );
-	}
+    public function __construct()
+    {
+        parent::__construct();
+        $this->config->load('system/languages');
+    }
 
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+    public function get_default()
+    {
+        $_default   = $this->config->item('languages_default');
+        $_language  = $this->get_by_code($_default);
 
+        return !empty($_language) ? $_language : false;
+    }
 
-	public function get_default()
-	{
-		$_default	= $this->config->item( 'languages_default' );
-		$_language	= $this->get_by_code( $_default );
+    // --------------------------------------------------------------------------
 
-		return ! empty( $_language ) ? $_language : FALSE;
-	}
+    public function get_default_code()
+    {
+        $_default = $this->get_default();
+        return empty($_default->code) ? false : $_default->code;
+    }
 
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+    public function get_default_label()
+    {
+        $_default = $this->get_default();
+        return empty($_default->label) ? false : $_default->label;
+    }
 
+    // --------------------------------------------------------------------------
 
-	public function get_default_code()
-	{
-		$_default = $this->get_default();
-		return empty( $_default->code ) ? FALSE : $_default->code;
-	}
+    public function get_all()
+    {
+        return $this->config->item('languages');
+    }
 
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+    public function get_all_flat()
+    {
+        $_out       = array();
+        $_languages = $this->get_all();
 
+        foreach ($_languages as $l) {
 
-	public function get_default_label()
-	{
-		$_default = $this->get_default();
-		return empty( $_default->label ) ? FALSE : $_default->label;
-	}
+            $_out[$l->code] = $l->label;
+        }
 
+        return $_out;
+    }
 
-	// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
+    public function get_all_enabled()
+    {
+        $_enabled   = $this->config->item('languages_enabled');
+        $_out       = array();
 
-	public function get_all()
-	{
-		return $this->config->item( 'languages' );
-	}
+        foreach ($_enabled as $e) {
 
+            $_out[] = $this->get_by_code($e);
+        }
 
-	// --------------------------------------------------------------------------
+        return array_filter($_out);
+    }
 
+    // --------------------------------------------------------------------------
 
-	public function get_all_flat()
-	{
-		$_out		= array();
-		$_languages	= $this->get_all();
+    public function get_all_enabled_flat()
+    {
+        $_out       = array();
+        $_languages = $this->get_all_enabled();
 
-		foreach( $_languages AS $l ) :
+        foreach ($_languages as $l) {
 
-			$_out[$l->code] = $l->label;
+            $_out[$l->code] = $l->label;
+        }
 
-		endforeach;
+        return $_out;
+    }
 
-		return $_out;
-	}
+    // --------------------------------------------------------------------------
 
+    public function get_by_code($code)
+    {
+        $_languages = $this->get_all();
 
-	// --------------------------------------------------------------------------
-
-
-	public function get_all_enabled()
-	{
-		$_enabled	= $this->config->item( 'languages_enabled' );
-		$_out		= array();
-
-		foreach( $_enabled AS $e ) :
-
-			$_out[] = $this->get_by_code( $e );
-
-		endforeach;
-
-		return array_filter( $_out );
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	public function get_all_enabled_flat()
-	{
-		$_out		= array();
-		$_languages	= $this->get_all_enabled();
-
-		foreach( $_languages AS $l ) :
-
-			$_out[$l->code] = $l->label;
-
-		endforeach;
-
-		return $_out;
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	public function get_by_code( $code )
-	{
-		$_languages = $this->get_all();
-
-		return ! empty( $_languages[$code] ) ? $_languages[$code] : FALSE;
-	}
+        return !empty($_languages[$code]) ? $_languages[$code] : false;
+    }
 }
 
 
@@ -158,14 +132,9 @@ class NAILS_Language_model extends NAILS_Model
  *
  **/
 
-if ( ! defined( 'NAILS_ALLOW_EXTENSION_LANGUAGE_MODEL' ) ) :
+if (!defined('NAILS_ALLOW_EXTENSION_LANGUAGE_MODEL')) {
 
-	class Language_model extends NAILS_Language_model
-	{
-	}
-
-endif;
-
-
-/* End of file language_model.php */
-/* Location: ./system/application/models/language_model.php */
+    class Language_model extends NAILS_Language_model
+    {
+    }
+}

@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * OVERLOADING NAILS' MODELS
+ *
+ * Note the name of this class; done like this to allow apps to extend this class.
+ * Read full explanation at the bottom of this file.
+ *
+ **/
+
 class NAILS_Datetime_model extends NAILS_Model
 {
     public $timezone_nails;
@@ -540,7 +548,7 @@ class NAILS_Datetime_model extends NAILS_Model
      * OTHER METHODS
      */
 
-    static function nice_time($date = false, $tense = true, $optBadMsg = null, $greaterOneWeek = null, $lessTenMins = null)
+    public static function nice_time($date = false, $tense = true, $optBadMsg = null, $greaterOneWeek = null, $lessTenMins = null)
     {
         if (empty($date) || $date == '0000-00-00') {
 
@@ -658,11 +666,11 @@ class NAILS_Datetime_model extends NAILS_Model
 
     // --------------------------------------------------------------------------
 
-    static function get_code_from_timezone($timezone)
+    public static function get_code_from_timezone($timezone)
     {
         $abbreviations = DateTimeZone::listAbbreviations();
 
-        foreach($abbreviations AS $code => $values) {
+        foreach ($abbreviations as $code => $values) {
 
             foreach ($values as $v) {
 
@@ -678,7 +686,7 @@ class NAILS_Datetime_model extends NAILS_Model
      * CONVERSION METHODS
      */
 
-    static function convert_datetime($timestamp, $toTz, $fromTz = 'UTC')
+    public static function convert_datetime($timestamp, $toTz, $fromTz = 'UTC')
     {
         //  Has a specific timestamp been given?
         if (is_null($timestamp)) {
