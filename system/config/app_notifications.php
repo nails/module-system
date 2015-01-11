@@ -1,7 +1,13 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /**
- * Define app notifications for this module.
+ * This config file defines app notifications for this module.
+ *
+ * @package     Nails
+ * @subpackage  module-system
+ * @category    Config
+ * @author      Nails Dev Team
+ * @link
  */
 
 $config['notification_definitions'] = array();
@@ -20,6 +26,3 @@ $config['notification_definitions']['app']->options['default']->tip				= '';
 $config['notification_definitions']['app']->options['default']->email_subject	= '';
 $config['notification_definitions']['app']->options['default']->email_tpl		= '';
 $config['notification_definitions']['app']->options['default']->email_message	= '';
-
-/* End of file app_notifications.php */
-/* Location: ./module-system/system/config/app_notifications.php */

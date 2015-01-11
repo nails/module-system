@@ -1,26 +1,18 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
-/*
-|--------------------------------------------------------------------------
-| TIMEZONES
-|--------------------------------------------------------------------------
-|
-| Set the default timezone for the app.
-|
-*/
+/**
+ * This config file defines timezones and date/time formats
+ *
+ * @package     Nails
+ * @subpackage  module-system
+ * @category    Config
+ * @author      Nails Dev Team
+ * @link
+ */
 
 $config['datetime_timezone_default']	= 'Europe/London';
 
-
-/*
-|--------------------------------------------------------------------------
-| DATE/TIME FORMATS
-|--------------------------------------------------------------------------
-|
-| The following date/time formats are supported
-|
-*/
-
+//  Date/Time formats
 $config['datetime_format_date']			= array();
 $config['datetime_format_date_default']	= 'DD/MM/YYYY';
 
@@ -77,8 +69,3 @@ $config['datetime_format_time']['12H']					= new stdClass();
 $config['datetime_format_time']['12H']->slug			= '12H';
 $config['datetime_format_time']['12H']->label			= '12 Hour';
 $config['datetime_format_time']['12H']->format			= 'g:i:s A';
-
-
-
-/* End of file date_format.php */
-/* Location: ./config/date_format.php */

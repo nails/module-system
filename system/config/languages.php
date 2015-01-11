@@ -1,17 +1,21 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
-/*
-|--------------------------------------------------------------------------
-| LANGUAGES
-|--------------------------------------------------------------------------
-|
-| This config file contains an ISO 639-2 list of languages.
-|
-*/
+/**
+ * This config file defines ISO 639-2 languages
+ *
+ * @package     Nails
+ * @subpackage  module-system
+ * @category    Config
+ * @author      Nails Dev Team
+ * @link
+ */
 
-//	The default language for this app, If using anything other than English
-//	ensure there are language files available (incluidng Nails lang files
-//	and CodeIgniter lang files).
+
+/**
+ * The default language for this app, If using anything other than English
+ * ensure there are language files available (incluidng Nails lang files
+ * and CodeIgniter lang files).
+ */
 
 $config['languages_default'] = 'english';
 
@@ -27,8 +31,10 @@ $config['languages'] = array();
 
 // --------------------------------------------------------------------------
 
-//	English is a special case; due to CodeIgniter expecting the word english
-//	(rather than the code 'eng') english must be specified in full.
+/**
+ * English is a special case; due to CodeIgniter expecting the word english
+ * (rather than the code 'eng') english must be specified in full.
+ */
 
 $config['languages']['english']			= new stdClass();
 $config['languages']['english']->code	= 'english';
@@ -1918,6 +1924,3 @@ $config['languages']['zun']->label	= 'Zuni';
 $config['languages']['zza']			= new stdClass();
 $config['languages']['zza']->code	= 'zza';
 $config['languages']['zza']->label	= 'Zaza; Dimili; Dimli; Kirdki; Kirmanjki; Zazaki';
-
-/* End of file languages.php */
-/* Location: ./config/languages.php */

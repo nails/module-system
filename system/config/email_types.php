@@ -1,7 +1,13 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /**
- * Define email types for this module.
+ * This config file defines email types for this module.
+ *
+ * @package     Nails
+ * @subpackage  module-system
+ * @category    Config
+ * @author      Nails Dev Team
+ * @link
  */
 
 $config['email_types'] = array();

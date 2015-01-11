@@ -1,14 +1,16 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
-/*
-|--------------------------------------------------------------------------
-| CONTINENTS
-|--------------------------------------------------------------------------
-|
-| The following is an ISO list of continents
-|
-*/
+/**
+ * This config file defines continents and countries
+ *
+ * @package     Nails
+ * @subpackage  module-system
+ * @category    Config
+ * @author      Nails Dev Team
+ * @link
+ */
 
+//  Continents
 $config['continents'] = array();
 
 $config['continents']['AF']	= 'Africa';
@@ -20,18 +22,7 @@ $config['continents']['NA']	= 'North America';
 $config['continents']['SA']	= 'South America';
 
 
-// --------------------------------------------------------------------------
-
-
-/*
-|--------------------------------------------------------------------------
-| COUNTRIES
-|--------------------------------------------------------------------------
-|
-| This config file contains an ISO list of countries.
-|
-*/
-
+//  Countries
 $config['countries'] = array();
 
 //	Special treatment :>
@@ -1980,7 +1971,3 @@ $config['countries']['ZW']->number		= '716';
 $config['countries']['ZW']->label		= 'Zimbabwe';
 $config['countries']['ZW']->continent	= 'AF';
 $config['countries']['ZW']->currency	= 'ZWL';
-
-
-/* End of file countries.php */
-/* Location: ./config/countries.php */
